@@ -101,10 +101,19 @@ app.use((req, res) => {
 // Error handler
 app.use((err, req, res, next) => {
   logger.error('Unhandled error:', err);
-  res.status(500).json({
+
+  const statusCode = err.statusCode || 500;
+  const response = {
     error: 'Internal Server Error',
     message: 'An unexpected error occurred'
-  });
+  };
+
+  if (process.env.NODE_ENV !== 'production') {
+    response.message = err.message;
+    response.stack = err.stack;
+  }
+
+  res.status(statusCode).json(response);
 });
 
 // Start server

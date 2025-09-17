@@ -29,9 +29,7 @@ jobs:
       run: npm audit --audit-level=moderate
 
     - name: Run security scan
-      run: |
-        npm install -g nsp
-        nsp check || exit 0
+      run: npm audit --audit-level=high
 
   # Test job
   test:

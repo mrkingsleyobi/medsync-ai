@@ -9,19 +9,13 @@ module.exports = {
     jest: true
   },
   extends: [
-    'airbnb',
-    'airbnb/hooks'
+    'airbnb-base'
   ],
   parserOptions: {
-    ecmaFeatures: {
-      jsx: true
-    },
     ecmaVersion: 12,
     sourceType: 'module'
   },
   plugins: [
-    'react',
-    'jsx-a11y',
     'import'
   ],
   rules: {
@@ -38,35 +32,14 @@ module.exports = {
       ExportDeclaration: { multiline: true, consistent: true }
     }],
 
-    // React specific rules
-    'react/jsx-filename-extension': [1, { extensions: ['.js', '.jsx'] }],
-    'react/prop-types': 'off',
-    'react/react-in-jsx-scope': 'off',
-    'react/jsx-props-no-spreading': 'off',
-    'react/require-default-props': 'off',
-
     // Import rules
     'import/prefer-default-export': 'off',
     'import/no-unresolved': 'off',
     'import/extensions': 'off',
 
-    // Accessibility rules
-    'jsx-a11y/label-has-associated-control': ['error', {
-      labelComponents: [],
-      labelAttributes: [],
-      controlComponents: [],
-      assert: 'either',
-      depth: 25
-    }],
-
     // Healthcare-specific considerations
     'no-process-env': 'warn', // Warn about direct environment variable access
     'no-sync': 'error' // Disallow synchronous methods for better performance
-  },
-  settings: {
-    react: {
-      version: 'detect'
-    }
   },
   overrides: [
     {

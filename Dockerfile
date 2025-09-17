@@ -4,6 +4,9 @@
 # Use Node.js 18 LTS as base image
 FROM node:18-alpine
 
+# Install curl for health check
+RUN apk add --no-cache curl
+
 # Set working directory
 WORKDIR /app
 
@@ -22,13 +25,13 @@ RUN mkdir -p logs
 # Expose port
 EXPOSE 3000
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
+# Create non-root user and group
+RUN addgroup -S appgroup -g 1001
+RUN adduser -S appuser -u 1001 -G appgroup
 
 # Change ownership of app directory
-RUN chown -R nextjs:nodejs /app
-USER nextjs
+RUN chown -R appuser:appgroup /app
+USER appuser
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \

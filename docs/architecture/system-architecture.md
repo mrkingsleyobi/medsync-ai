@@ -54,11 +54,10 @@ The MediSync Healthcare AI Platform follows a microservices architecture with di
 - **Administrative Service**: Handles administrative tasks
 - **Health Monitoring Service**: Manages health monitoring features
 
-### 4. Synaptic Neural Mesh
-- Distributed intelligence network
-- Agent coordination and communication
-- Byzantine fault tolerance
-- Quantum-resistant cryptography
+### 4. Microservices Layer
+- A set of Node.js/Express services providing RESTful APIs
+- Currently includes placeholder endpoints for core services
+- Designed for horizontal scaling and containerization
 
 ### 5. AI Orchestration Layer
 - **Claude Flow**: Workflow orchestration
