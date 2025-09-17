@@ -99,7 +99,7 @@ app.use((req, res) => {
 });
 
 // Error handler
-app.use((err, req, res, next) => {
+app.use((err, req, res, next) => {  // eslint-disable-line no-unused-vars
   logger.error('Unhandled error:', err);
 
   const statusCode = err.statusCode || 500;
@@ -108,7 +108,7 @@ app.use((err, req, res, next) => {
     message: 'An unexpected error occurred'
   };
 
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== 'production') {  // eslint-disable-line no-process-env
     response.message = err.message;
     response.stack = err.stack;
   }
@@ -119,6 +119,7 @@ app.use((err, req, res, next) => {
 // Start server
 app.listen(PORT, () => {
   logger.info(`MediSync API server running on port ${PORT}`);
+  // eslint-disable-next-line no-console
   console.log(`🚀 MediSync API server running on port ${PORT}`);
 });
 
