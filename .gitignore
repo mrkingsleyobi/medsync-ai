@@ -3,8 +3,6 @@
 .claude/settings.local.json
 .mcp.json
 claude-flow.config.json
-.swarm/
-.hive-mind/
 memory/claude-flow-data.json
 memory/sessions/*
 !memory/sessions/README.md
