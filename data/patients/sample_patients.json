@@ -1,0 +1,133 @@
+{
+  "patients": [
+    {
+      "id": "PAT-001",
+      "name": "Sarah Johnson",
+      "age": 45,
+      "gender": "Female",
+      "medical_history": [
+        {
+          "condition": "Hypertension",
+          "diagnosed_date": "2018-03-15",
+          "severity": "Moderate",
+          "current_treatment": "Lisinopril 10mg daily"
+        },
+        {
+          "condition": "Type 2 Diabetes",
+          "diagnosed_date": "2020-07-22",
+          "severity": "Mild",
+          "current_treatment": "Metformin 500mg twice daily"
+        }
+      ],
+      "allergies": ["Penicillin", "Shellfish"],
+      "current_medications": [
+        {
+          "name": "Lisinopril",
+          "dosage": "10mg",
+          "frequency": "daily",
+          "prescribed_date": "2023-01-10"
+        },
+        {
+          "name": "Metformin",
+          "dosage": "500mg",
+          "frequency": "twice daily",
+          "prescribed_date": "2023-01-10"
+        },
+        {
+          "name": "Atorvastatin",
+          "dosage": "20mg",
+          "frequency": "daily",
+          "prescribed_date": "2023-01-10"
+        }
+      ],
+      "recent_vitals": {
+        "blood_pressure": "135/85",
+        "heart_rate": 72,
+        "temperature": 98.6,
+        "weight": 165,
+        "height": 65,
+        "bmi": 27.5
+      },
+      "last_visit": "2023-06-15",
+      "next_appointment": "2023-09-15"
+    },
+    {
+      "id": "PAT-002",
+      "name": "Michael Chen",
+      "age": 32,
+      "gender": "Male",
+      "medical_history": [
+        {
+          "condition": "Asthma",
+          "diagnosed_date": "2010-11-05",
+          "severity": "Mild",
+          "current_treatment": "Albuterol inhaler as needed"
+        }
+      ],
+      "allergies": ["Dust mites", "Pollen"],
+      "current_medications": [
+        {
+          "name": "Albuterol Inhaler",
+          "dosage": "90 mcg",
+          "frequency": "as needed",
+          "prescribed_date": "2023-03-20"
+        }
+      ],
+      "recent_vitals": {
+        "blood_pressure": "120/80",
+        "heart_rate": 68,
+        "temperature": 98.2,
+        "weight": 175,
+        "height": 70,
+        "bmi": 25.1
+      },
+      "last_visit": "2023-05-20",
+      "next_appointment": "2023-08-20"
+    },
+    {
+      "id": "PAT-003",
+      "name": "Emma Rodriguez",
+      "age": 68,
+      "gender": "Female",
+      "medical_history": [
+        {
+          "condition": "Osteoarthritis",
+          "diagnosed_date": "2015-09-12",
+          "severity": "Moderate",
+          "current_treatment": "Physical therapy and acetaminophen"
+        },
+        {
+          "condition": "Cataracts",
+          "diagnosed_date": "2022-01-30",
+          "severity": "Mild",
+          "current_treatment": "Regular monitoring"
+        }
+      ],
+      "allergies": ["Sulfa drugs"],
+      "current_medications": [
+        {
+          "name": "Acetaminophen",
+          "dosage": "500mg",
+          "frequency": "every 6 hours as needed",
+          "prescribed_date": "2023-02-15"
+        },
+        {
+          "name": "Calcium + Vitamin D",
+          "dosage": "600mg + 400 IU",
+          "frequency": "daily",
+          "prescribed_date": "2023-02-15"
+        }
+      ],
+      "recent_vitals": {
+        "blood_pressure": "145/90",
+        "heart_rate": 78,
+        "temperature": 98.4,
+        "weight": 155,
+        "height": 62,
+        "bmi": 28.3
+      },
+      "last_visit": "2023-06-30",
+      "next_appointment": "2023-09-30"
+    }
+  ]
+}

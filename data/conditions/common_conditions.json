@@ -1,0 +1,49 @@
+{
+  "conditions": [
+    {
+      "name": "Hypertension",
+      "icd10": "I10",
+      "description": "High blood pressure",
+      "symptoms": ["Headaches", "Dizziness", "Shortness of breath", "Chest pain"],
+      "risk_factors": ["Age", "Family history", "Obesity", "Sedentary lifestyle"],
+      "treatments": ["ACE inhibitors", "Beta blockers", "Calcium channel blockers", "Diuretics"],
+      "prevention": ["Regular exercise", "Healthy diet", "Weight management", "Stress reduction"]
+    },
+    {
+      "name": "Type 2 Diabetes",
+      "icd10": "E11",
+      "description": "Chronic condition affecting how the body processes blood sugar",
+      "symptoms": ["Increased thirst", "Frequent urination", "Fatigue", "Blurred vision"],
+      "risk_factors": ["Overweight", "Sedentary lifestyle", "Family history", "Age over 45"],
+      "treatments": ["Metformin", "Insulin therapy", "Sulfonylureas", "GLP-1 receptor agonists"],
+      "prevention": ["Healthy diet", "Regular exercise", "Weight management", "Regular screening"]
+    },
+    {
+      "name": "Asthma",
+      "icd10": "J45",
+      "description": "Chronic inflammatory disease of the airways",
+      "symptoms": ["Wheezing", "Shortness of breath", "Chest tightness", "Coughing"],
+      "risk_factors": ["Genetics", "Environmental triggers", "Respiratory infections", "Obesity"],
+      "treatments": ["Inhaled corticosteroids", "Bronchodilators", "Leukotriene modifiers", "Biologics"],
+      "prevention": ["Avoid triggers", "Regular medication", "Vaccinations", "Healthy lifestyle"]
+    },
+    {
+      "name": "Osteoarthritis",
+      "icd10": "M19",
+      "description": "Degenerative joint disease",
+      "symptoms": ["Joint pain", "Stiffness", "Swelling", "Reduced range of motion"],
+      "risk_factors": ["Age", "Obesity", "Joint injuries", "Genetics"],
+      "treatments": ["Pain relievers", "NSAIDs", "Physical therapy", "Joint replacement surgery"],
+      "prevention": ["Exercise", "Weight management", "Joint protection", "Healthy diet"]
+    },
+    {
+      "name": "Depression",
+      "icd10": "F32",
+      "description": "Mood disorder causing persistent feelings of sadness and loss of interest",
+      "symptoms": ["Persistent sadness", "Loss of interest", "Fatigue", "Sleep disturbances"],
+      "risk_factors": ["Genetics", "Trauma", "Stress", "Chronic illness"],
+      "treatments": ["Antidepressants", "Psychotherapy", "Cognitive behavioral therapy", "ECT"],
+      "prevention": ["Social support", "Stress management", "Regular exercise", "Healthy sleep habits"]
+    }
+  ]
+}

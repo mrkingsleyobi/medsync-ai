@@ -1,0 +1,34 @@
+{
+  "medical_images": [
+    {
+      "id": "IMG-001",
+      "patient_id": "PAT-001",
+      "type": "X-ray",
+      "body_part": "Chest",
+      "date": "2023-06-15",
+      "findings": "Mild cardiomegaly, clear lung fields",
+      "recommendations": "Follow-up in 6 months",
+      "confidence_score": 0.92
+    },
+    {
+      "id": "IMG-002",
+      "patient_id": "PAT-002",
+      "type": "CT",
+      "body_part": "Chest",
+      "date": "2023-05-20",
+      "findings": "No acute findings, mild bronchial thickening",
+      "recommendations": "Continue asthma management",
+      "confidence_score": 0.88
+    },
+    {
+      "id": "IMG-003",
+      "patient_id": "PAT-003",
+      "type": "X-ray",
+      "body_part": "Knee",
+      "date": "2023-06-30",
+      "findings": "Joint space narrowing, osteophyte formation",
+      "recommendations": "Consider orthopedic referral",
+      "confidence_score": 0.95
+    }
+  ]
+}

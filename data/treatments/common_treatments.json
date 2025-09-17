@@ -1,0 +1,44 @@
+{
+  "treatments": [
+    {
+      "name": "Lisinopril",
+      "drug_class": "ACE Inhibitor",
+      "indications": ["Hypertension", "Heart failure", "Post-heart attack"],
+      "dosage_forms": ["Tablet"],
+      "typical_dosage": "10-40mg daily",
+      "contraindications": ["Pregnancy", "Angioedema history", "Severe renal impairment"],
+      "side_effects": ["Dry cough", "Dizziness", "Hyperkalemia", "Renal impairment"],
+      "interactions": ["Potassium supplements", "NSAIDs", "Diuretics"]
+    },
+    {
+      "name": "Metformin",
+      "drug_class": "Biguanide",
+      "indications": ["Type 2 Diabetes"],
+      "dosage_forms": ["Tablet", "Extended-release tablet"],
+      "typical_dosage": "500-2000mg daily",
+      "contraindications": ["Severe renal impairment", "Metabolic acidosis", "Alcoholism"],
+      "side_effects": ["GI upset", "Diarrhea", "Nausea", "Vitamin B12 deficiency"],
+      "interactions": ["Contrast media", "Alcohol", "Cimetidine"]
+    },
+    {
+      "name": "Albuterol",
+      "drug_class": "Beta-2 agonist",
+      "indications": ["Asthma", "COPD"],
+      "dosage_forms": ["Inhaler", "Nebulizer solution"],
+      "typical_dosage": "90-180mcg every 4-6 hours",
+      "contraindications": ["Hypersensitivity", "Cardiac arrhythmias"],
+      "side_effects": ["Tremor", "Nervousness", "Palpitations", "Headache"],
+      "interactions": ["Beta-blockers", "Monoamine oxidase inhibitors", "Tricyclic antidepressants"]
+    },
+    {
+      "name": "Acetaminophen",
+      "drug_class": "Analgesic/Antipyretic",
+      "indications": ["Pain", "Fever"],
+      "dosage_forms": ["Tablet", "Liquid", "Suppository"],
+      "typical_dosage": "325-1000mg every 4-6 hours",
+      "contraindications": ["Severe hepatic impairment", "Hypersensitivity"],
+      "side_effects": ["Liver toxicity (high doses)", "Allergic reactions", "Skin reactions"],
+      "interactions": ["Alcohol", "Warfarin", "Carbamazepine"]
+    }
+  ]
+}

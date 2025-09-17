@@ -1,0 +1,58 @@
+{
+  "research_papers": [
+    {
+      "title": "Machine Learning Approaches for Early Detection of Diabetic Retinopathy",
+      "authors": ["Smith, J.", "Johnson, A.", "Brown, M."],
+      "journal": "Journal of Medical AI",
+      "year": 2023,
+      "abstract": "This study evaluates deep learning models for automated detection of diabetic retinopathy from retinal fundus photographs. A convolutional neural network achieved 96.7% accuracy in classifying retinal images, demonstrating potential for screening applications.",
+      "keywords": ["diabetic retinopathy", "deep learning", "computer vision", "screening"],
+      "clinical_relevance": "High",
+      "evidence_level": "A"
+    },
+    {
+      "title": "Telemedicine Interventions for Hypertension Management in Rural Populations",
+      "authors": ["Davis, R.", "Wilson, K.", "Miller, P."],
+      "journal": "American Journal of Hypertension",
+      "year": 2023,
+      "abstract": "A randomized controlled trial examining the effectiveness of telemedicine-based hypertension management in rural communities. Patients receiving telemedicine care showed significantly better blood pressure control compared to standard care.",
+      "keywords": ["telemedicine", "hypertension", "rural health", "remote monitoring"],
+      "clinical_relevance": "High",
+      "evidence_level": "A"
+    },
+    {
+      "title": "Personalized Medicine in Asthma: Genetic Predictors of Treatment Response",
+      "authors": ["Taylor, S.", "Anderson, L.", "Clark, R."],
+      "journal": "Respiratory Medicine",
+      "year": 2023,
+      "abstract": "This study identifies genetic variants associated with differential response to inhaled corticosteroids in asthma patients. Findings suggest potential for genetic testing to guide personalized asthma treatment.",
+      "keywords": ["asthma", "personalized medicine", "genetics", "pharmacogenomics"],
+      "clinical_relevance": "Moderate",
+      "evidence_level": "B"
+    }
+  ],
+  "clinical_trials": [
+    {
+      "title": "AI-Assisted Early Detection of Osteoarthritis Progression",
+      "nct_number": "NCT05432198",
+      "phase": "Phase 2",
+      "status": "Recruiting",
+      "condition": "Osteoarthritis",
+      "intervention": "Machine learning analysis of X-ray images",
+      "eligibility": "Adults aged 50-80 with early osteoarthritis",
+      "locations": ["Mayo Clinic", "Johns Hopkins", "UCSF"],
+      "contact": "research@clinic.edu"
+    },
+    {
+      "title": "Digital Therapeutics for Type 2 Diabetes Management",
+      "nct_number": "NCT05432199",
+      "phase": "Phase 3",
+      "status": "Active, not recruiting",
+      "condition": "Type 2 Diabetes",
+      "intervention": "Mobile app-based diabetes management program",
+      "eligibility": "Adults with Type 2 Diabetes and HbA1c 7.5-10.0%",
+      "locations": ["Multiple sites nationwide"],
+      "contact": "diabetes-trial@research.org"
+    }
+  ]
+}
