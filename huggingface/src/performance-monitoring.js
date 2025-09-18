@@ -13,19 +13,9 @@ class ModelPerformanceMonitoring {
       ...config
     };
 
-    // Create metrics storage directory if it doesn't exist
-    if (!fs.existsSync(this.config.metricsStorageDir)) {
-      fs.mkdirSync(this.config.metricsStorageDir, { recursive: true });
-    }
-
     // In-memory metrics storage
     this.metrics = new Map();
     this.performanceHistory = new Map();
-
-    // Start metrics collection if enabled
-    if (this.config.collectionInterval > 0) {
-      this.startMetricsCollection();
-    }
 
     console.log('Model Performance Monitoring initialized', {
       metricsStorageDir: this.config.metricsStorageDir,
@@ -34,11 +24,34 @@ class ModelPerformanceMonitoring {
   }
 
   /**
+   * Initialize the monitoring system asynchronously
+   * @returns {Promise<void>}
+   */
+  async initialize() {
+    // Create metrics storage directory if it doesn't exist
+    try {
+      await fs.promises.mkdir(this.config.metricsStorageDir, { recursive: true });
+      console.log('Metrics storage directory created', { dir: this.config.metricsStorageDir });
+    } catch (error) {
+      console.error('Failed to create metrics storage directory', { error: error.message });
+    }
+
+    // Start metrics collection if enabled
+    if (this.config.collectionInterval > 0) {
+      this.startMetricsCollection();
+    }
+  }
+
+  /**
    * Start automatic metrics collection
    */
   startMetricsCollection() {
-    this.collectionIntervalId = setInterval(() => {
-      this.collectSystemMetrics();
+    this.collectionIntervalId = setInterval(async () => {
+      try {
+        await this.collectSystemMetrics();
+      } catch (error) {
+        console.error('Failed to collect system metrics', { error: error.message });
+      }
     }, this.config.collectionInterval);
 
     console.log('Metrics collection started', { interval: this.config.collectionInterval });
@@ -99,7 +112,9 @@ class ModelPerformanceMonitoring {
     }
 
     // Store metrics to disk
-    this.saveMetricsToFile(modelId, modelMetrics);
+    this.saveMetricsToFile(modelId, modelMetrics).catch(error => {
+      console.error('Failed to save metrics to file', { modelId, error: error.message });
+    });
 
     console.log('Inference metrics recorded', { modelId, ...metrics });
   }
@@ -107,7 +122,7 @@ class ModelPerformanceMonitoring {
   /**
    * Record system metrics
    */
-  collectSystemMetrics() {
+  async collectSystemMetrics() {
     const systemMetrics = {
       timestamp: new Date().toISOString(),
       memoryUsage: process.memoryUsage(),
@@ -119,9 +134,13 @@ class ModelPerformanceMonitoring {
     const metricsFile = path.join(this.config.metricsStorageDir, 'system-metrics.json');
     let existingMetrics = [];
 
-    if (fs.existsSync(metricsFile)) {
-      const data = fs.readFileSync(metricsFile, 'utf8');
-      existingMetrics = JSON.parse(data);
+    try {
+      if (fs.existsSync(metricsFile)) {
+        const data = await fs.promises.readFile(metricsFile, 'utf8');
+        existingMetrics = JSON.parse(data);
+      }
+    } catch (error) {
+      console.error('Failed to read existing system metrics', { error: error.message });
     }
 
     existingMetrics.push(systemMetrics);
@@ -131,7 +150,11 @@ class ModelPerformanceMonitoring {
       existingMetrics = existingMetrics.slice(-1000);
     }
 
-    fs.writeFileSync(metricsFile, JSON.stringify(existingMetrics, null, 2));
+    try {
+      await fs.promises.writeFile(metricsFile, JSON.stringify(existingMetrics, null, 2));
+    } catch (error) {
+      console.error('Failed to write system metrics', { error: error.message });
+    }
 
     console.log('System metrics collected', {
       memory: `${(systemMetrics.memoryUsage.heapUsed / 1024 / 1024).toFixed(2)} MB`,
@@ -304,21 +327,29 @@ class ModelPerformanceMonitoring {
    * @param {string} modelId - Model identifier
    * @param {Object} metrics - Metrics data
    */
-  saveMetricsToFile(modelId, metrics) {
+  async saveMetricsToFile(modelId, metrics) {
     const metricsFile = path.join(this.config.metricsStorageDir, `${modelId}-metrics.json`);
-    fs.writeFileSync(metricsFile, JSON.stringify(metrics, null, 2));
+    try {
+      await fs.promises.writeFile(metricsFile, JSON.stringify(metrics, null, 2));
+    } catch (error) {
+      console.error('Failed to save metrics to file', { modelId, error: error.message });
+    }
   }
 
   /**
    * Load metrics from file
    * @param {string} modelId - Model identifier
-   * @returns {Object} Metrics data
+   * @returns {Promise<Object>} Metrics data
    */
-  loadMetricsFromFile(modelId) {
+  async loadMetricsFromFile(modelId) {
     const metricsFile = path.join(this.config.metricsStorageDir, `${modelId}-metrics.json`);
-    if (fs.existsSync(metricsFile)) {
-      const data = fs.readFileSync(metricsFile, 'utf8');
-      return JSON.parse(data);
+    try {
+      if (fs.existsSync(metricsFile)) {
+        const data = await fs.promises.readFile(metricsFile, 'utf8');
+        return JSON.parse(data);
+      }
+    } catch (error) {
+      console.error('Failed to load metrics from file', { modelId, error: error.message });
     }
     return null;
   }
@@ -353,22 +384,54 @@ class ModelPerformanceMonitoring {
   /**
    * Clean up old metrics files
    */
-  cleanupOldMetrics() {
+  async cleanupOldMetrics() {
+    // Parse retention period from config (e.g., '7d', '30d', '1w')
+    let retentionDays = 7; // default to 7 days
+    if (this.config.retentionPeriod) {
+      const match = this.config.retentionPeriod.match(/^(\d+)([dwmy])$/);
+      if (match) {
+        const value = parseInt(match[1]);
+        const unit = match[2];
+        switch (unit) {
+          case 'd': // days
+            retentionDays = value;
+            break;
+          case 'w': // weeks
+            retentionDays = value * 7;
+            break;
+          case 'm': // months (approximate)
+            retentionDays = value * 30;
+            break;
+          case 'y': // years (approximate)
+            retentionDays = value * 365;
+            break;
+        }
+      }
+    }
+
     const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - 7); // 7 days ago
+    cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
 
     const metricsDir = this.config.metricsStorageDir;
-    if (fs.existsSync(metricsDir)) {
-      const files = fs.readdirSync(metricsDir);
-      files.forEach(file => {
-        const filePath = path.join(metricsDir, file);
-        const stats = fs.statSync(filePath);
+    try {
+      if (fs.existsSync(metricsDir)) {
+        const files = await fs.promises.readdir(metricsDir);
+        for (const file of files) {
+          const filePath = path.join(metricsDir, file);
+          try {
+            const stats = await fs.promises.stat(filePath);
 
-        if (stats.mtime < cutoffDate) {
-          fs.unlinkSync(filePath);
-          console.log('Old metrics file cleaned up', { file });
+            if (stats.mtime < cutoffDate) {
+              await fs.promises.unlink(filePath);
+              console.log('Old metrics file cleaned up', { file });
+            }
+          } catch (error) {
+            console.error('Failed to process file', { file, error: error.message });
+          }
         }
-      });
+      }
+    } catch (error) {
+      console.error('Failed to clean up old metrics files', { error: error.message });
     }
   }
 }

@@ -70,7 +70,10 @@ class MedicalImageClassification {
       throw new Error('HuggingFace API key not configured');
     }
 
-    if (!fs.existsSync(imagePath)) {
+    try {
+      // Check if file exists
+      await fs.promises.access(imagePath, fs.constants.F_OK);
+    } catch (error) {
       throw new Error(`Image file not found: ${imagePath}`);
     }
 
@@ -81,7 +84,7 @@ class MedicalImageClassification {
 
     try {
       // Read image file
-      const imageData = fs.readFileSync(imagePath);
+      const imageData = await fs.promises.readFile(imagePath);
 
       const result = await this.hf.imageClassification({
         model: modelConfig.name,

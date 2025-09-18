@@ -13,11 +13,6 @@ class ModelVersioningSystem {
       ...config
     };
 
-    // Create version storage directory if it doesn't exist
-    if (!fs.existsSync(this.config.versionStorageDir)) {
-      fs.mkdirSync(this.config.versionStorageDir, { recursive: true });
-    }
-
     // In-memory registry of model versions
     this.modelVersions = new Map();
     this.modelMetadata = new Map();
@@ -26,6 +21,20 @@ class ModelVersioningSystem {
       versionStorageDir: this.config.versionStorageDir,
       maxVersions: this.config.maxVersions
     });
+  }
+
+  /**
+   * Initialize the versioning system asynchronously
+   * @returns {Promise<void>}
+   */
+  async initialize() {
+    // Create version storage directory if it doesn't exist
+    try {
+      await fs.promises.mkdir(this.config.versionStorageDir, { recursive: true });
+      console.log('Version storage directory created', { dir: this.config.versionStorageDir });
+    } catch (error) {
+      console.error('Failed to create version storage directory', { error: error.message });
+    }
   }
 
   /**
@@ -145,7 +154,9 @@ class ModelVersioningSystem {
         this.modelMetadata.delete(versionId);
 
         // Clean up any stored files for this version
-        this.cleanupVersionFiles(modelId, version);
+        this.cleanupVersionFiles(modelId, version).catch(error => {
+          console.error('Failed to clean up version files', { modelId, version, error: error.message });
+        });
 
         console.log('Model version deleted', { modelId, version });
         return removedVersion;
@@ -224,15 +235,26 @@ class ModelVersioningSystem {
    * @returns {number} Comparison result
    */
   compareVersions(v1, v2) {
-    const parts1 = v1.split('.').map(Number);
-    const parts2 = v2.split('.').map(Number);
+    const parts1 = v1.split('.');
+    const parts2 = v2.split('.');
 
     for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
-      const part1 = parts1[i] || 0;
-      const part2 = parts2[i] || 0;
+      const part1 = parts1[i] || '';
+      const part2 = parts2[i] || '';
 
-      if (part1 > part2) return 1;
-      if (part1 < part2) return -1;
+      // Try to parse as numbers first
+      const num1 = parseInt(part1, 10);
+      const num2 = parseInt(part2, 10);
+
+      // If both are valid numbers, compare numerically
+      if (!isNaN(num1) && !isNaN(num2)) {
+        if (num1 > num2) return 1;
+        if (num1 < num2) return -1;
+      } else {
+        // If not numbers, compare as strings
+        if (part1 > part2) return 1;
+        if (part1 < part2) return -1;
+      }
     }
 
     return 0;
@@ -247,7 +269,9 @@ class ModelVersioningSystem {
     versions.forEach(version => {
       const versionId = this.generateVersionId(modelId, version.version);
       this.modelMetadata.delete(versionId);
-      this.cleanupVersionFiles(modelId, version.version);
+      this.cleanupVersionFiles(modelId, version.version).catch(error => {
+        console.error('Failed to clean up version files', { modelId, version: version.version, error: error.message });
+      });
     });
 
     console.log('Old versions cleaned up', { modelId, count: versions.length });
@@ -258,11 +282,15 @@ class ModelVersioningSystem {
    * @param {string} modelId - Model identifier
    * @param {string} version - Version string
    */
-  cleanupVersionFiles(modelId, version) {
+  async cleanupVersionFiles(modelId, version) {
     const versionDir = path.join(this.config.versionStorageDir, modelId, version);
-    if (fs.existsSync(versionDir)) {
-      fs.rmSync(versionDir, { recursive: true });
-      console.log('Version files cleaned up', { modelId, version });
+    try {
+      if (fs.existsSync(versionDir)) {
+        await fs.promises.rm(versionDir, { recursive: true });
+        console.log('Version files cleaned up', { modelId, version });
+      }
+    } catch (error) {
+      console.error('Failed to clean up version files', { modelId, version, error: error.message });
     }
   }
 
@@ -272,30 +300,40 @@ class ModelVersioningSystem {
    * @param {string} version - Version string
    * @param {Object} modelData - Model data to save
    */
-  saveModelVersion(modelId, version, modelData) {
+  async saveModelVersion(modelId, version, modelData) {
     const versionDir = path.join(this.config.versionStorageDir, modelId, version);
-    if (!fs.existsSync(versionDir)) {
-      fs.mkdirSync(versionDir, { recursive: true });
+    try {
+      await fs.promises.mkdir(versionDir, { recursive: true });
+    } catch (error) {
+      console.error('Failed to create version directory', { modelId, version, error: error.message });
+      return;
     }
 
     const modelPath = path.join(versionDir, 'model.json');
-    fs.writeFileSync(modelPath, JSON.stringify(modelData, null, 2));
-
-    console.log('Model version saved to disk', { modelId, version, path: modelPath });
+    try {
+      await fs.promises.writeFile(modelPath, JSON.stringify(modelData, null, 2));
+      console.log('Model version saved to disk', { modelId, version, path: modelPath });
+    } catch (error) {
+      console.error('Failed to save model version to disk', { modelId, version, error: error.message });
+    }
   }
 
   /**
    * Load model version from disk
    * @param {string} modelId - Model identifier
    * @param {string} version - Version string
-   * @returns {Object} Model data
+   * @returns {Promise<Object>} Model data
    */
-  loadModelVersion(modelId, version) {
+  async loadModelVersion(modelId, version) {
     const modelPath = path.join(this.config.versionStorageDir, modelId, version, 'model.json');
-    if (fs.existsSync(modelPath)) {
-      const data = fs.readFileSync(modelPath, 'utf8');
-      console.log('Model version loaded from disk', { modelId, version, path: modelPath });
-      return JSON.parse(data);
+    try {
+      if (fs.existsSync(modelPath)) {
+        const data = await fs.promises.readFile(modelPath, 'utf8');
+        console.log('Model version loaded from disk', { modelId, version, path: modelPath });
+        return JSON.parse(data);
+      }
+    } catch (error) {
+      console.error('Failed to load model version from disk', { modelId, version, error: error.message });
     }
     return null;
   }
