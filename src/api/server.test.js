@@ -5,7 +5,7 @@ const request = require('supertest');
 const { app, server } = require('./server');
 
 describe('MediSync API Server', () => {
-  afterAll((done) => {
+  afterAll(done => {
     server.close(done);
   });
 
