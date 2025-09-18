@@ -2,12 +2,10 @@
 // This file contains basic tests for the server setup
 
 const request = require('supertest');
-const { app, server } = require('./server');
+const { app } = require('./server');
 
 describe('MediSync API Server', () => {
-  afterAll(done => {
-    server.close(done);
-  });
+  // No need to close server as we're using the app directly
 
   describe('GET /health', () => {
     it('should return 200 and health status', async () => {
@@ -31,8 +29,9 @@ describe('MediSync API Server', () => {
     it('should return 200 and clinical service message', async () => {
       const response = await request(app).get('/api/clinical');
       expect(response.status).toBe(200);
-      expect(response.body.message).toBe('Clinical Decision Support Service - Coming Soon');
+      expect(response.body.message).toBe('Clinical Decision Support Service');
       expect(response.body.service).toBe('Clinical Decision Support Service');
+      expect(response.body.endpoints).toBeDefined();
     });
   });
 

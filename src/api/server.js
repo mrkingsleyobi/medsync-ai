@@ -6,9 +6,13 @@ const cors = require('cors');
 const helmet = require('helmet');
 const dotenv = require('dotenv');
 const winston = require('winston');
+const path = require('path');
 
 // Load environment variables
 dotenv.config();
+
+// Import routes
+const decisionSupportRoutes = require('./routes/decision-support');
 
 // Create Express app
 const app = express();
@@ -19,6 +23,9 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Decision support routes
+app.use('/api/decision-support', decisionSupportRoutes);
 
 // Logger setup
 const logger = winston.createLogger({
@@ -68,8 +75,14 @@ app.get('/api/patients', (req, res) => {
 app.get('/api/clinical', (req, res) => {
   logger.info('Clinical service endpoint accessed');
   res.status(200).json({
-    message: 'Clinical Decision Support Service - Coming Soon',
-    service: 'Clinical Decision Support Service'
+    message: 'Clinical Decision Support Service',
+    service: 'Clinical Decision Support Service',
+    endpoints: [
+      'POST /api/decision-support/generate - Generate clinical decision support',
+      'GET /api/decision-support/history/:patientId - Get decision history for a patient',
+      'GET /api/decision-support/alerts - Get active alerts',
+      'POST /api/decision-support/alerts/:alertId/acknowledge - Acknowledge an alert'
+    ]
   });
 });
 
@@ -116,11 +129,14 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   res.status(statusCode).json(response);
 });
 
-// Start server
-const server = app.listen(PORT, () => {
-  logger.info(`MediSync API server running on port ${PORT}`);
-  // eslint-disable-next-line no-console
-  console.log(`🚀 MediSync API server running on port ${PORT}`);
-});
+// Start server only when this file is run directly
+let server;
+if (require.main === module) {
+  server = app.listen(PORT, () => {
+    logger.info(`MediSync API server running on port ${PORT}`);
+    // eslint-disable-next-line no-console
+    console.log(`🚀 MediSync API server running on port ${PORT}`);
+  });
+}
 
 module.exports = { app, server };
