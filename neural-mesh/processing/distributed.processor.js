@@ -130,33 +130,35 @@ class DistributedProcessor {
       nodes: nodes
     });
 
-    // Simulate processing on multiple nodes
-    const results = [];
-    for (const nodeId of nodes) {
-      const node = this.neuralMesh.nodeManager.getNode(nodeId);
-      if (node && node.status === 'active') {
-        try {
-          // Simulate node processing
-          const nodeResult = await this._simulateNodeProcessing(node, taskData, taskConfig);
-          results.push({
-            nodeId,
-            result: nodeResult,
-            status: 'success'
-          });
-        } catch (error) {
-          this.logger.error('Node processing failed', {
-            nodeId,
-            error: error.message
-          });
+    // Get active nodes
+    const activeNodes = nodes
+      .map(nodeId => this.neuralMesh.nodeManager.getNode(nodeId))
+      .filter(node => node && node.status === 'active');
 
-          results.push({
-            nodeId,
-            error: error.message,
-            status: 'failed'
-          });
-        }
+    // Process tasks on nodes in parallel
+    const processingPromises = activeNodes.map(async (node) => {
+      try {
+        // Simulate node processing
+        const nodeResult = await this._simulateNodeProcessing(node, taskData, taskConfig);
+        return {
+          nodeId: node.id,
+          result: nodeResult,
+          status: 'success'
+        };
+      } catch (error) {
+        this.logger.error('Node processing failed', {
+          nodeId: node.id,
+          error: error.message
+        });
+        return {
+          nodeId: node.id,
+          error: error.message,
+          status: 'failed'
+        };
       }
-    }
+    });
+
+    const results = await Promise.all(processingPromises);
 
     // Combine results from all nodes
     const combinedResult = this._combineResults(results, taskConfig);

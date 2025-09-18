@@ -319,14 +319,17 @@ class PrivacyManager {
    * @private
    */
   _generateLaplaceNoise(sensitivity, epsilon) {
-    // Generate uniform random number in (0, 1)
-    const u = Math.random() - 0.5; // Uniform in (-0.5, 0.5)
+    // Generate uniform random number in [0, 1)
+    const u = Math.random();
 
     // Generate Laplace noise: scale = sensitivity / epsilon
     const scale = sensitivity / epsilon;
-    const noise = -scale * Math.sign(u) * Math.log(1 - 2 * Math.abs(u));
 
-    return noise;
+    // Use inverse transform sampling, avoiding log(0)
+    if (u < 0.5) {
+      return scale * Math.log(2 * u);
+    }
+    return -scale * Math.log(2 * (1 - u));
   }
 
   /**

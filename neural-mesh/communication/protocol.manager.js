@@ -355,29 +355,23 @@ class ProtocolManager {
         connectedNodeCount: connectedNodes.length
       });
 
-      // Send message to each connected node
-      const responses = [];
-      for (const nodeId of connectedNodes) {
+      // Send message to all connected nodes in parallel
+      const promises = connectedNodes.map(async (nodeId) => {
         try {
           const response = await this.sendMessage(nodeId, message);
-          responses.push({
-            nodeId,
-            response,
-            status: 'success'
-          });
+          return { nodeId, response, status: 'success' };
         } catch (error) {
           this.logger.error('Failed to send broadcast message to node', {
             nodeId,
             error: error.message
           });
-
-          responses.push({
-            nodeId,
-            error: error.message,
-            status: 'failed'
-          });
+          return { nodeId, error: error.message, status: 'failed' };
         }
-      }
+      });
+
+      const responses = await Promise.allSettled(promises).then(results =>
+        results.map(r => r.value)
+      );
 
       this.logger.info('Broadcast message completed', {
         messageType: message.type,
