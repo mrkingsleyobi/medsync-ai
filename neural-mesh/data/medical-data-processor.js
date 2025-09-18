@@ -217,12 +217,12 @@ class MedicalDataProcessor {
       return 'fhir';
     } else if (dataType.includes('image') || dataType.includes('imaging') || dataType.includes('x-ray') || dataType.includes('mri') || dataType.includes('ct')) {
       return 'imaging';
-    } else if (dataType.includes('note') || dataType.includes('documentation') || dataType.includes('report')) {
-      return 'clinical-notes';
-    } else if (dataType.includes('lab') || dataType.includes('test') || dataType.includes('result')) {
-      return 'lab-results';
     } else if (dataType.includes('vital') || dataType.includes('blood') || dataType.includes('pressure') || dataType.includes('heart') || dataType.includes('temperature')) {
       return 'vital-signs';
+    } else if (dataType.includes('lab') || dataType.includes('test') || dataType.includes('result')) {
+      return 'lab-results';
+    } else if (dataType.includes('note') || dataType.includes('documentation') || dataType.includes('report')) {
+      return 'clinical-notes';
     }
 
     return dataType;

@@ -22,10 +22,15 @@ function determineDecisionType(patientContext, config) {
   }
 
   // Determine decision type based on context
-  if (patientContext.vitalSigns) {
+  if (patientContext.vitalSigns && typeof patientContext.vitalSigns.bloodPressure === 'string') {
     const bp = patientContext.vitalSigns.bloodPressure;
-    if (bp && (parseInt(bp.split('/')[0], 10) > 140 || parseInt(bp.split('/')[1], 10) > 90)) {
-      return 'risk-assessment';
+    const parts = bp.split('/');
+    if (parts.length === 2) {
+      const systolic = parseInt(parts[0], 10);
+      const diastolic = parseInt(parts[1], 10);
+      if (!isNaN(systolic) && !isNaN(diastolic) && (systolic > 140 || diastolic > 90)) {
+        return 'risk-assessment';
+      }
     }
   }
 

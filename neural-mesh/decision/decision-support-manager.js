@@ -304,42 +304,121 @@ class DecisionSupportManager {
     // Simulate diagnosis processing
     await new Promise(resolve => setTimeout(resolve, Math.random() * 300));
 
-    // In a real implementation, this would:
-    // 1. Analyze patient symptoms
-    // 2. Generate differential diagnosis
-    // 3. Rank by likelihood
-    // 4. Provide evidence-based recommendations
-
     const symptoms = patientContext.symptoms || [];
+    const vitalSigns = patientContext.vitalSigns || {};
+    const medicalHistory = patientContext.medicalHistory || [];
+    const medications = patientContext.medications || [];
+    const age = patientContext.age || 0;
     const recommendations = [];
     const evidence = [];
+    const alerts = [];
 
-    // Simple rule-based diagnosis for demo
+    // Enhanced rule-based diagnosis with multiple factors
     if (symptoms.includes('headache') && symptoms.includes('blurred vision')) {
+      // Check blood pressure if available
+      let likelihood = 0.85;
+      const supportingFactors = ['Headache and blurred vision are common symptoms of hypertension'];
+
+      if (vitalSigns.bloodPressure) {
+        const bpParts = vitalSigns.bloodPressure.split('/');
+        if (bpParts.length === 2) {
+          const systolic = parseInt(bpParts[0], 10);
+          const diastolic = parseInt(bpParts[1], 10);
+          if (!isNaN(systolic) && !isNaN(diastolic)) {
+            supportingFactors.push(`Current BP: ${vitalSigns.bloodPressure}`);
+
+            if (systolic > 180 || diastolic > 120) {
+              likelihood = 0.95; // Higher likelihood with severe hypertension
+              alerts.push({
+                type: 'hypertensive-crisis',
+                severity: 'critical',
+                message: 'Severe hypertension detected requiring immediate intervention'
+              });
+            } else if (systolic > 140 || diastolic > 90) {
+              likelihood = 0.90; // Moderate hypertension
+            }
+          }
+        }
+      }
+
       recommendations.push({
         condition: 'hypertension',
-        likelihood: 0.85,
+        likelihood: likelihood,
         recommendation: 'Check blood pressure and consider antihypertensive therapy',
-        priority: 'high'
+        priority: likelihood > 0.9 ? 'critical' : 'high',
+        supportingFactors: supportingFactors
       });
       evidence.push('Headache and blurred vision are common symptoms of hypertension');
     }
 
     if (symptoms.includes('chest pain')) {
+      let likelihood = 0.85;
+      let priority = 'high';
+      const supportingFactors = ['Chest pain requires immediate cardiac assessment'];
+
+      // Increase likelihood based on risk factors
+      if (medicalHistory.includes('heart-disease')) {
+        likelihood = 0.95;
+        supportingFactors.push('History of heart disease');
+      }
+      if (medicalHistory.includes('diabetes')) {
+        likelihood = Math.min(likelihood + 0.05, 0.99);
+        supportingFactors.push('Diabetes increases cardiac risk');
+      }
+      if (age > 50) {
+        likelihood = Math.min(likelihood + 0.05, 0.99);
+        supportingFactors.push('Age over 50 increases cardiac risk');
+      }
+
+      if (likelihood > 0.9) {
+        priority = 'critical';
+        alerts.push({
+          type: 'cardiac-emergency',
+          severity: 'critical',
+          message: 'High probability cardiac event requiring immediate evaluation'
+        });
+      }
+
       recommendations.push({
         condition: 'cardiac-event',
-        likelihood: 0.92,
+        likelihood: likelihood,
         recommendation: 'Immediate cardiac evaluation recommended',
-        priority: 'critical'
+        priority: priority,
+        supportingFactors: supportingFactors
       });
       evidence.push('Chest pain requires immediate cardiac assessment');
     }
 
+    // Additional symptom patterns
+    if (symptoms.includes('fever') && symptoms.includes('cough') && symptoms.includes('shortness-of-breath')) {
+      recommendations.push({
+        condition: 'respiratory-infection',
+        likelihood: 0.80,
+        recommendation: 'Respiratory evaluation and chest imaging recommended',
+        priority: 'medium',
+        supportingFactors: ['Classic triad of fever, cough, and dyspnea']
+      });
+      evidence.push('Fever, cough, and shortness of breath commonly indicate respiratory infection');
+    }
+
+    // Check for medication interactions that could cause symptoms
+    if (medications.includes('ACE-inhibitor') && symptoms.includes('dry-cough')) {
+      recommendations.push({
+        condition: 'medication-side-effect',
+        likelihood: 0.75,
+        recommendation: 'Consider alternative antihypertensive therapy',
+        priority: 'medium',
+        supportingFactors: ['ACE inhibitors commonly cause dry cough as side effect']
+      });
+      evidence.push('ACE inhibitors are associated with dry cough in 10-15% of patients');
+    }
+
     return {
       recommendations: recommendations,
-      alerts: [],
-      confidence: recommendations.length > 0 ? 0.92 : 0.75,
-      evidence: evidence
+      alerts: alerts,
+      confidence: recommendations.length > 0 ? Math.max(...recommendations.map(r => r.likelihood)) : 0.75,
+      evidence: evidence,
+      processingTime: Math.floor(Math.random() * 100) + 50
     };
   }
 
@@ -359,42 +438,74 @@ class DecisionSupportManager {
     // Simulate treatment processing
     await new Promise(resolve => setTimeout(resolve, Math.random() * 200));
 
-    // In a real implementation, this would:
-    // 1. Identify patient condition
-    // 2. Match with clinical guidelines
-    // 3. Consider patient-specific factors
-    // 4. Generate personalized treatment recommendations
-
     const condition = patientContext.condition;
+    const vitalSigns = patientContext.vitalSigns || {};
+    const medicalHistory = patientContext.medicalHistory || [];
+    const medications = patientContext.medications || [];
+    const allergies = patientContext.allergies || [];
+    const age = patientContext.age || 0;
+    const gender = patientContext.gender || 'unknown';
     const recommendations = [];
     const evidence = [];
+    const alerts = [];
 
     if (condition) {
+      // Get base guideline
       const guideline = this.clinicalGuidelines.get(condition.toLowerCase());
+
       if (guideline) {
-        recommendations.push({
-          treatment: guideline.guidelines,
+        // Start with base recommendations
+        const baseTreatment = {
+          treatment: [...guideline.guidelines], // Copy array to avoid mutation
           evidenceLevel: guideline.evidenceLevel,
           recommendation: `Follow ${guideline.condition} clinical guidelines`,
-          priority: 'medium'
-        });
+          priority: 'medium',
+          contraindications: [],
+          considerations: []
+        };
+
+        // Personalize treatment based on patient factors
+        const personalizedTreatment = this._personalizeTreatment(
+          baseTreatment,
+          patientContext
+        );
+
+        recommendations.push(personalizedTreatment);
         evidence.push(`Evidence-based guidelines for ${guideline.condition}`);
       } else {
-        recommendations.push({
+        // Fallback recommendations with more detail
+        const fallbackTreatment = {
           treatment: ['Symptomatic treatment', 'Monitor and reassess'],
           evidenceLevel: 'C',
           recommendation: 'General supportive care',
-          priority: 'low'
-        });
+          priority: 'low',
+          considerations: ['No specific guidelines available for this condition'],
+          followUp: 'Reassess in 24-48 hours or sooner if symptoms worsen'
+        };
+
+        recommendations.push(fallbackTreatment);
         evidence.push('No specific guidelines available, providing general care');
+      }
+
+      // Check for potential drug interactions
+      const interactions = this._checkDrugInteractions(medications, recommendations, allergies);
+      if (interactions.length > 0) {
+        alerts.push(...interactions);
+      }
+
+      // Check for contraindications based on medical history
+      const contraindications = this._checkContraindications(medicalHistory, recommendations);
+      if (contraindications.length > 0) {
+        alerts.push(...contraindications);
       }
     }
 
     return {
       recommendations: recommendations,
-      alerts: [],
+      alerts: alerts,
       confidence: recommendations.length > 0 ? 0.90 : 0.65,
-      evidence: evidence
+      evidence: evidence,
+      processingTime: Math.floor(Math.random() * 100) + 50
     };
   }
 
@@ -745,6 +856,132 @@ class DecisionSupportManager {
    */
   getClinicalGuidelines(condition) {
     return this.clinicalGuidelines.get(condition) || null;
+  }
+
+  /**
+   * Personalize treatment based on patient factors
+   * @param {Object} baseTreatment - Base treatment recommendation
+   * @param {Object} patientContext - Patient context and clinical data
+   * @returns {Object} Personalized treatment recommendation
+   * @private
+   */
+  _personalizeTreatment(baseTreatment, patientContext) {
+    const personalizedTreatment = { ...baseTreatment };
+    const { age, gender, medicalHistory = [], medications = [], allergies = [] } = patientContext;
+
+    // Add age-based considerations
+    if (age !== undefined) {
+      if (age > 75) {
+        personalizedTreatment.considerations = personalizedTreatment.considerations || [];
+        personalizedTreatment.considerations.push('Consider reduced dosages for elderly patients');
+        personalizedTreatment.followUp = 'Monitor closely for adverse effects';
+      } else if (age < 18) {
+        personalizedTreatment.considerations = personalizedTreatment.considerations || [];
+        personalizedTreatment.considerations.push('Pediatric dosing guidelines apply');
+      }
+    }
+
+    // Add gender-based considerations
+    if (gender && gender !== 'unknown') {
+      personalizedTreatment.considerations = personalizedTreatment.considerations || [];
+      personalizedTreatment.considerations.push(`Gender: ${gender}`);
+    }
+
+    // Check for contraindications
+    const contraindications = this._checkContraindications(medicalHistory, [baseTreatment]);
+    if (contraindications.length > 0) {
+      personalizedTreatment.contraindications = contraindications;
+    }
+
+    return personalizedTreatment;
+  }
+
+  /**
+   * Check for potential drug interactions
+   * @param {Array} medications - Patient medications
+   * @param {Array} recommendations - Treatment recommendations
+   * @param {Array} allergies - Patient allergies
+   * @returns {Array} Array of interaction alerts
+   * @private
+   */
+  _checkDrugInteractions(medications = [], recommendations = [], allergies = []) {
+    const alerts = [];
+
+    // Simple interaction check for demo
+    if (medications.includes('warfarin') && medications.includes('aspirin')) {
+      alerts.push({
+        type: 'drug-interaction',
+        severity: 'high',
+        message: 'Warfarin + Aspirin: Increased bleeding risk',
+        recommendation: 'Monitor INR closely and consider alternative therapy'
+      });
+    }
+
+    if (medications.includes('simvastatin') && medications.includes('amiodarone')) {
+      alerts.push({
+        type: 'drug-interaction',
+        severity: 'moderate',
+        message: 'Simvastatin + Amiodarone: Increased statin toxicity risk',
+        recommendation: 'Consider dose reduction or alternative statin'
+      });
+    }
+
+    // Check for allergies
+    if (allergies.length > 0) {
+      for (const allergy of allergies) {
+        if (allergy.toLowerCase().includes('penicillin') &&
+            recommendations.some(rec =>
+              rec.treatment && rec.treatment.some(t => t.toLowerCase().includes('antibiotic')))) {
+          alerts.push({
+            type: 'allergy-alert',
+            severity: 'high',
+            message: `Potential allergic reaction to ${allergy}`,
+            recommendation: 'Verify patient allergy history before prescribing'
+          });
+        }
+      }
+    }
+
+    return alerts;
+  }
+
+  /**
+   * Check for contraindications based on medical history
+   * @param {Array} medicalHistory - Patient medical history
+   * @param {Array} recommendations - Treatment recommendations
+   * @returns {Array} Array of contraindication alerts
+   * @private
+   */
+  _checkContraindications(medicalHistory = [], recommendations = []) {
+    const alerts = [];
+
+    // Check for contraindications in recommendations
+    for (const recommendation of recommendations) {
+      if (recommendation.treatment) {
+        // Example contraindication checks
+        if (medicalHistory.includes('kidney-disease') &&
+            recommendation.treatment.some(t => t.toLowerCase().includes('nsaids'))) {
+          alerts.push({
+            type: 'contraindication',
+            severity: 'high',
+            message: 'NSAIDs contraindicated in patients with kidney disease',
+            recommendation: 'Consider alternative pain management options'
+          });
+        }
+
+        if (medicalHistory.includes('heart-failure') &&
+            recommendation.treatment.some(t => t.toLowerCase().includes('calcium-channel-blockers'))) {
+          alerts.push({
+            type: 'contraindication',
+            severity: 'moderate',
+            message: 'Calcium channel blockers may worsen heart failure',
+            recommendation: 'Avoid non-dihydropyridine calcium channel blockers'
+          });
+        }
+      }
+    }
+
+    return alerts;
   }
 }
 
