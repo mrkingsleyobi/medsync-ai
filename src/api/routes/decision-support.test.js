@@ -213,7 +213,7 @@ describe('Decision Support API', () => {
   describe('POST /api/decision-support/alerts/:alertId/acknowledge', () => {
     it('should acknowledge an alert successfully', async () => {
       // First, generate a decision that creates alerts
-      const generateResponse = await request(app)
+      await request(app)
         .post('/api/decision-support/generate')
         .send({
           patientContext: {
@@ -231,7 +231,7 @@ describe('Decision Support API', () => {
       const alertsResponse = await request(app)
         .get('/api/decision-support/alerts');
 
-      const alertId = alertsResponse.body.alerts[0].alertId;
+      const { alertId } = alertsResponse.body.alerts[0];
 
       const response = await request(app)
         .post(`/api/decision-support/alerts/${alertId}/acknowledge`)

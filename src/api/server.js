@@ -6,7 +6,6 @@ const cors = require('cors');
 const helmet = require('helmet');
 const dotenv = require('dotenv');
 const winston = require('winston');
-const path = require('path');
 
 // Load environment variables
 dotenv.config();

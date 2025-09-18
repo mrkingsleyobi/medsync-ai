@@ -39,7 +39,8 @@ module.exports = {
 
     // Healthcare-specific considerations
     'no-process-env': 'warn', // Warn about direct environment variable access
-    'no-sync': 'error' // Disallow synchronous methods for better performance
+    'no-sync': 'error', // Disallow synchronous methods for better performance
+    'no-use-before-define': ['error', { functions: false }] // Allow functions to be used before defined
   },
   overrides: [
     {
