@@ -1,0 +1,30 @@
+{
+  "name": "ruv-fann",
+  "version": "1.0.0",
+  "description": "ruv-FANN Neural Network Processing Engine for MediSync Healthcare AI Platform",
+  "main": "src/fann.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:comprehensive": "node test/comprehensive-neural-network-tests.js",
+    "test:framework-demo": "node test/neural-network-testing-framework-demo.js"
+  },
+  "keywords": [
+    "neural-network",
+    "fann",
+    "healthcare",
+    "ai",
+    "wasm"
+  ],
+  "author": "MediSync Team",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.6.2",
+    "jest-junit": "^16.0.0"
+  },
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7"
+  }
+}

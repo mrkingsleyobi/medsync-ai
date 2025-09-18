@@ -1,0 +1,28 @@
+{"entryCount":3,"level":"info","message":"Knowledge base initialized","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.643Z"}
+{"entryCount":3,"level":"info","message":"Knowledge base initialized","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.658Z"}
+{"entryCount":3,"level":"info","message":"Knowledge base initialized","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.661Z"}
+{"level":"info","message":"Cache warmed for query","query":"hypertension","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.647Z"}
+{"level":"info","message":"Cache warmed for query","query":"diabetes","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.648Z"}
+{"level":"info","message":"Cache warmed for query","query":"myocardial_infarction","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.648Z"}
+{"cacheSize":1000,"cacheStrategy":"lru","cacheTTL":3600000,"cacheWarming":true,"level":"info","message":"FACT MCP initialized","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.648Z"}
+{"level":"info","message":"Retrieving medical knowledge","options":{},"query":"hypertension","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.649Z"}
+{"level":"info","message":"Cache hit for knowledge retrieval","query":"hypertension","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.650Z"}
+{"level":"info","message":"Retrieving medical knowledge","options":{},"query":"diabetes","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.652Z"}
+{"level":"info","message":"Cache hit for knowledge retrieval","query":"diabetes","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.653Z"}
+{"id":"asthma","level":"info","message":"Knowledge entry added","name":"Asthma","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.654Z"}
+{"level":"info","message":"Retrieving medical knowledge","options":{},"query":"asthma","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.654Z"}
+{"action":"knowledge_retrieval","entryId":"95cc7e53-556b-4d1a-bdf8-66ad3119129e","level":"info","message":"Audit log entry created","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.655Z"}
+{"cacheSize":100,"cacheStrategy":"lfu","cacheTTL":3600000,"cacheWarming":false,"level":"info","message":"FACT MCP initialized","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.658Z"}
+{"level":"info","message":"Retrieving medical knowledge","options":{},"query":"hypertension","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.659Z"}
+{"action":"knowledge_retrieval","entryId":"7c787e61-87f6-47a1-a305-037613490fb1","level":"info","message":"Audit log entry created","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.659Z"}
+{"level":"info","message":"Retrieving medical knowledge","options":{},"query":"hypertension","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.659Z"}
+{"level":"info","message":"Cache hit for knowledge retrieval","query":"hypertension","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.659Z"}
+{"level":"info","message":"Retrieving medical knowledge","options":{},"query":"diabetes","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.659Z"}
+{"action":"knowledge_retrieval","entryId":"90368952-89d6-46da-944c-d233173bd5be","level":"info","message":"Audit log entry created","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.660Z"}
+{"cacheSize":100,"cacheStrategy":"adaptive","cacheTTL":3600000,"cacheWarming":false,"level":"info","message":"FACT MCP initialized","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.662Z"}
+{"level":"info","message":"Retrieving medical knowledge","options":{},"query":"hypertension","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.662Z"}
+{"action":"knowledge_retrieval","entryId":"4c703f6e-8491-4adb-bf49-d959a63274db","level":"info","message":"Audit log entry created","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.662Z"}
+{"level":"info","message":"Retrieving medical knowledge","options":{},"query":"nonexistent_condition","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.662Z"}
+{"action":"knowledge_retrieval","entryId":"db0ccb17-2860-4ab4-a1b2-b25879661279","level":"info","message":"Audit log entry created","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.662Z"}
+{"level":"info","message":"Retrieving medical knowledge","options":{},"query":"hypertension","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.662Z"}
+{"level":"info","message":"Cache hit for knowledge retrieval","query":"hypertension","service":"fact-mcp","timestamp":"2025-09-18T13:18:33.662Z"}
