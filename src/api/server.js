@@ -4,21 +4,26 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
-const dotenv = require('dotenv');
 const winston = require('winston');
 
-// Load environment variables
-dotenv.config();
+// Import environment configuration
+const { environmentConfig } = require('../config/environment');
+
+// Import routes
+const decisionSupportRoutes = require('./routes/decision-support');
 
 // Create Express app
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = environmentConfig.port;
 
 // Security middleware
 app.use(helmet());
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Decision support routes
+app.use('/api/decision-support', decisionSupportRoutes);
 
 // Logger setup
 const logger = winston.createLogger({
@@ -37,7 +42,7 @@ const logger = winston.createLogger({
 });
 
 // If we're not in production, log to the console
-if (process.env.NODE_ENV !== 'production') {
+if (environmentConfig.nodeEnv !== 'production') {
   logger.add(new winston.transports.Console({
     format: winston.format.combine(
       winston.format.colorize(),
@@ -68,8 +73,14 @@ app.get('/api/patients', (req, res) => {
 app.get('/api/clinical', (req, res) => {
   logger.info('Clinical service endpoint accessed');
   res.status(200).json({
-    message: 'Clinical Decision Support Service - Coming Soon',
-    service: 'Clinical Decision Support Service'
+    message: 'Clinical Decision Support Service',
+    service: 'Clinical Decision Support Service',
+    endpoints: [
+      'POST /api/decision-support/generate - Generate clinical decision support',
+      'GET /api/decision-support/history/:patientId - Get decision history for a patient',
+      'GET /api/decision-support/alerts - Get active alerts',
+      'POST /api/decision-support/alerts/:alertId/acknowledge - Acknowledge an alert'
+    ]
   });
 });
 
@@ -108,7 +119,7 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
     message: 'An unexpected error occurred'
   };
 
-  if (process.env.NODE_ENV !== 'production') { // eslint-disable-line no-process-env
+  if (environmentConfig.nodeEnv !== 'production') {
     response.message = err.message;
     response.stack = err.stack;
   }
@@ -116,11 +127,14 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   res.status(statusCode).json(response);
 });
 
-// Start server
-const server = app.listen(PORT, () => {
-  logger.info(`MediSync API server running on port ${PORT}`);
-  // eslint-disable-next-line no-console
-  console.log(`🚀 MediSync API server running on port ${PORT}`);
-});
+// Start server only when this file is run directly
+let server;
+if (require.main === module) {
+  server = app.listen(PORT, () => {
+    logger.info(`MediSync API server running on port ${PORT}`);
+    // eslint-disable-next-line no-console
+    console.log(`🚀 MediSync API server running on port ${PORT}`);
+  });
+}
 
 module.exports = { app, server };

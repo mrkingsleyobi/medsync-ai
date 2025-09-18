@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediSync Agent Monitoring Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <h1>🏥 MediSync Healthcare AI Platform</h1>
+            <h2>Agent Monitoring Dashboard</h2>
+            <div class="health-status" id="healthStatus">
+                <span class="status-indicator" id="statusIndicator">●</span>
+                <span id="statusText">Loading...</span>
+            </div>
+        </header>
+
+        <main>
+            <section class="metrics-section">
+                <h3>System Overview</h3>
+                <div class="metrics-grid" id="metricsGrid">
+                    <div class="metric-card">
+                        <h4>Total Agents</h4>
+                        <div class="metric-value" id="totalAgents">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <h4>Active Tasks</h4>
+                        <div class="metric-value" id="activeTasks">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <h4>System Health</h4>
+                        <div class="metric-value" id="systemHealth">Unknown</div>
+                    </div>
+                    <div class="metric-card">
+                        <h4>Active Alerts</h4>
+                        <div class="metric-value" id="activeAlerts">0</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="agents-section">
+                <h3>Agent Status</h3>
+                <div class="agents-grid" id="agentsGrid">
+                    <!-- Agent cards will be populated here -->
+                </div>
+            </section>
+
+            <section class="alerts-section">
+                <h3>Active Alerts</h3>
+                <div class="alerts-list" id="alertsList">
+                    <!-- Alerts will be populated here -->
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>MediSync Healthcare AI Platform - Real-time Agent Monitoring</p>
+            <p>Last updated: <span id="lastUpdated">Never</span></p>
+        </footer>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
