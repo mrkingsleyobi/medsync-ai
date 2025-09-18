@@ -1,0 +1,13 @@
+{
+  "timestamp": "2025-09-18T14:29:05.509Z",
+  "metrics": {
+    "totalTests": 19,
+    "passedTests": 0,
+    "failedTests": 0,
+    "totalSuites": 5,
+    "passedSuites": 5,
+    "failedSuites": 0
+  },
+  "summary": "0/19 tests passed, 5/5 suites passed",
+  "success": true
+}
