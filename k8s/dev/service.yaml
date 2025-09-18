@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: medisync-api-service
+  namespace: medisync-dev
+  labels:
+    app: medisync-api
+spec:
+  selector:
+    app: medisync-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer
