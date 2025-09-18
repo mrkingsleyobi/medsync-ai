@@ -117,10 +117,10 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
 });
 
 // Start server
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   logger.info(`MediSync API server running on port ${PORT}`);
   // eslint-disable-next-line no-console
   console.log(`🚀 MediSync API server running on port ${PORT}`);
 });
 
-module.exports = app;
+module.exports = { app, server };

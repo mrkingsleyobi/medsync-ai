@@ -2,9 +2,13 @@
 // This file contains basic tests for the server setup
 
 const request = require('supertest');
-const app = require('./server');
+const { app, server } = require('./server');
 
 describe('MediSync API Server', () => {
+  afterAll((done) => {
+    server.close(done);
+  });
+
   describe('GET /health', () => {
     it('should return 200 and health status', async () => {
       const response = await request(app).get('/health');
