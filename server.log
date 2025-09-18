@@ -1,0 +1,19 @@
+
+> medisync-ai@1.0.0 dev
+> nodemon src/api/server.js
+
+[33m[nodemon] 3.1.10[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,cjs,json[39m
+[32m[nodemon] starting `node src/api/server.js`[39m
+[32minfo[39m: MediSync API server running on port 3000 {"service":"medisync-api","timestamp":"2025-09-18T10:33:07.333Z"}
+🚀 MediSync API server running on port 3000
+[33mwarn[39m: 404 - Route not found: /api/health {"service":"medisync-api","timestamp":"2025-09-18T10:33:21.538Z"}
+[33mwarn[39m: 404 - Route not found: /api/health {"service":"medisync-api","timestamp":"2025-09-18T10:34:20.127Z"}
+[32minfo[39m: Clinical service endpoint accessed {"service":"medisync-api","timestamp":"2025-09-18T10:34:39.601Z"}
+[32minfo[39m: Generating clinical decision support {"contextSize":106,"decisionConfig":{"decisionType":"diagnosis-support"},"patientId":"TEST-001","service":"decision-support-api","timestamp":"2025-09-18T10:34:51.488Z"}
+[32minfo[39m: Clinical decision support generated successfully {"alertCount":0,"confidence":0.92,"decisionId":"276cb0f2-7291-44a7-aa48-c35f5617588f","patientId":"TEST-001","recommendationCount":1,"service":"decision-support-api","timestamp":"2025-09-18T10:34:51.627Z"}
+[32minfo[39m: Generating clinical decision support {"contextSize":51,"decisionConfig":{"decisionType":"treatment-recommendation"},"patientId":"TEST-002","service":"decision-support-api","timestamp":"2025-09-18T10:35:12.151Z"}
+[32minfo[39m: Clinical decision support generated successfully {"alertCount":0,"confidence":0.9,"decisionId":"c1ce697c-605e-4b75-b987-cd6f6f9df18d","patientId":"TEST-002","recommendationCount":1,"service":"decision-support-api","timestamp":"2025-09-18T10:35:12.388Z"}
+[32minfo[39m: Retrieving decision history {"patientId":"TEST-001","service":"decision-support-api","timestamp":"2025-09-18T10:35:21.252Z"}
