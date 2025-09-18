@@ -11,7 +11,7 @@
     "test:coverage": "jest --coverage",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
-    "build": "webpack --mode production",
+    "build": "echo \"No build step required for Node.js backend\"",
     "docker:build": "docker-compose build",
     "docker:up": "docker-compose up",
     "docker:down": "docker-compose down",
