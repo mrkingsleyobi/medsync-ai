@@ -1,5 +1,6 @@
 // MediSync Healthcare AI Platform - Decision Support Routes
 // This file implements the API endpoints for clinical decision support
+/* eslint-disable no-process-env */
 
 const express = require('express');
 const winston = require('winston');
@@ -28,7 +29,7 @@ function determineDecisionType(patientContext, config) {
     if (parts.length === 2) {
       const systolic = parseInt(parts[0], 10);
       const diastolic = parseInt(parts[1], 10);
-      if (!isNaN(systolic) && !isNaN(diastolic) && (systolic > 140 || diastolic > 90)) {
+      if (!Number.isNaN(systolic) && !Number.isNaN(diastolic) && (systolic > 140 || diastolic > 90)) {
         return 'risk-assessment';
       }
     }

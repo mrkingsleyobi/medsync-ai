@@ -5,6 +5,9 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const cors = require('cors');
 
+// Import environment configuration
+const { environmentConfig } = require('./environment');
+
 // Security middleware configuration
 const securityConfig = {
   // Helmet configuration for HTTP headers security
@@ -38,7 +41,7 @@ const securityConfig = {
 
   // CORS configuration
   cors: {
-    origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : '*',
+    origin: environmentConfig.allowedOrigins,
     credentials: true,
     optionsSuccessStatus: 200
   },
@@ -69,11 +72,11 @@ const securityConfig = {
 
   // Session configuration
   session: {
-    secret: process.env.SESSION_SECRET || 'medisync-secret-key-change-in-production',
+    secret: environmentConfig.sessionSecret,
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === 'production',
+      secure: environmentConfig.nodeEnv === 'production',
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
@@ -81,8 +84,8 @@ const securityConfig = {
 
   // JWT configuration
   jwt: {
-    secret: process.env.JWT_SECRET || 'medisync-jwt-secret-change-in-production',
-    expiresIn: process.env.JWT_EXPIRES_IN || '24h',
+    secret: environmentConfig.jwtSecret,
+    expiresIn: environmentConfig.jwtExpiresIn,
     issuer: 'MediSync Healthcare AI Platform',
     audience: 'medisync-users'
   },

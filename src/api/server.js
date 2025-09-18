@@ -4,18 +4,17 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
-const dotenv = require('dotenv');
 const winston = require('winston');
 
-// Load environment variables
-dotenv.config();
+// Import environment configuration
+const { environmentConfig } = require('../config/environment');
 
 // Import routes
 const decisionSupportRoutes = require('./routes/decision-support');
 
 // Create Express app
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = environmentConfig.port;
 
 // Security middleware
 app.use(helmet());
@@ -43,7 +42,7 @@ const logger = winston.createLogger({
 });
 
 // If we're not in production, log to the console
-if (process.env.NODE_ENV !== 'production') {
+if (environmentConfig.nodeEnv !== 'production') {
   logger.add(new winston.transports.Console({
     format: winston.format.combine(
       winston.format.colorize(),
@@ -120,7 +119,7 @@ app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
     message: 'An unexpected error occurred'
   };
 
-  if (process.env.NODE_ENV !== 'production') { // eslint-disable-line no-process-env
+  if (environmentConfig.nodeEnv !== 'production') {
     response.message = err.message;
     response.stack = err.stack;
   }
