@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediSync - Research Integration Dashboard</title>
+    <link rel="stylesheet" href="../styles/researcher-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1><i class="fas fa-flask"></i> Research Integration</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <span class="user-name">Dr. Sarah Johnson</span>
+                    <span class="user-role">Research Director</span>
+                </div>
+                <div class="notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">5</span>
+                </div>
+                <button class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="dashboard-main">
+            <!-- Sidebar -->
+            <aside class="dashboard-sidebar">
+                <nav class="sidebar-nav">
+                    <ul>
+                        <li class="nav-item active">
+                            <a href="#overview">
+                                <i class="fas fa-home"></i>
+                                <span>Overview</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#literature">
+                                <i class="fas fa-book"></i>
+                                <span>Literature Analysis</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#trials">
+                                <i class="fas fa-search"></i>
+                                <span>Clinical Trials</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#projects">
+                                <i class="fas fa-project-diagram"></i>
+                                <span>Research Projects</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#collaboration">
+                                <i class="fas fa-users"></i>
+                                <span>Collaboration</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#impact">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Impact Tracking</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#visualization">
+                                <i class="fas fa-chart-pie"></i>
+                                <span>Visualization</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#settings">
+                                <i class="fas fa-cog"></i>
+                                <span>Settings</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Content Area -->
+            <main class="dashboard-content">
+                <!-- Overview Section -->
+                <section id="overview" class="content-section active">
+                    <div class="section-header">
+                        <h2><i class="fas fa-tachometer-alt"></i> Research Dashboard Overview</h2>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon primary">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>142</h3>
+                                <p>Active Studies</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon warning">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>28</h3>
+                                <p>Active Trials</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon success">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>156</h3>
+                                <p>Collaborators</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon info">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>847</h3>
+                                <p>Citations</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activities -->
+                    <div class="recent-activities">
+                        <div class="section-header">
+                            <h3><i class="fas fa-history"></i> Recent Activities</h3>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-sync"></i> Refresh
+                            </button>
+                        </div>
+
+                        <div class="activities-list">
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-book text-primary"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h4>Literature Analysis Completed</h4>
+                                    <p>Analysis of 47 cardiovascular research papers completed with 89% accuracy</p>
+                                    <div class="activity-meta">
+                                        <span class="activity-time">2 hours ago</span>
+                                        <span class="activity-status completed">Completed</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-search text-warning"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h4>Clinical Trial Matching</h4>
+                                    <p>Found 12 matching trials for Patient PAT-78945 with 92% eligibility score</p>
+                                    <div class="activity-meta">
+                                        <span class="activity-time">4 hours ago</span>
+                                        <span class="activity-status completed">Completed</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-users text-success"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <h4>New Collaboration Request</h4>
+                                    <p>Dr. Michael Chen requested to join the Diabetes Research Project</p>
+                                    <div class="activity-meta">
+                                        <span class="activity-time">1 day ago</span>
+                                        <span class="activity-status pending">Pending</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Literature Analysis Section -->
+                <section id="literature" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-book"></i> Literature Analysis</h2>
+                        <div class="section-actions">
+                            <div class="search-box">
+                                <input type="text" placeholder="Search literature...">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <button class="btn btn-primary">
+                                <i class="fas fa-plus"></i> New Analysis
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="literature-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="document-source">Document Source</label>
+                                <select id="document-source">
+                                    <option value="">Select source</option>
+                                    <option value="pubmed">PubMed</option>
+                                    <option value="clinicaltrials">ClinicalTrials.gov</option>
+                                    <option value="local">Local Files</option>
+                                    <option value="manual">Manual Entry</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="analysis-type">Analysis Type</label>
+                                <select id="analysis-type">
+                                    <option value="">Select analysis type</option>
+                                    <option value="entity-extraction">Entity Extraction</option>
+                                    <option value="topic-modeling">Topic Modeling</option>
+                                    <option value="sentiment-analysis">Sentiment Analysis</option>
+                                    <option value="summarization">Summarization</option>
+                                    <option value="full-analysis">Full Analysis</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="search-terms">Search Terms</label>
+                                <input type="text" id="search-terms" placeholder="Enter search terms, e.g., 'diabetes treatment'">
+                            </div>
+                            <div class="form-group">
+                                <label for="date-range">Date Range</label>
+                                <input type="text" id="date-range" placeholder="Select date range">
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-flask"></i> Run Analysis
+                            </button>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-history"></i> View History
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="literature-results">
+                        <div class="result-header">
+                            <h3>Analysis Results</h3>
+                            <div class="result-meta">
+                                <span>Documents: 47</span>
+                                <span>Processing Time: 2.3s</span>
+                                <span>Accuracy: 89%</span>
+                            </div>
+                        </div>
+
+                        <div class="result-content">
+                            <div class="entities">
+                                <h4><i class="fas fa-tags"></i> Extracted Entities</h4>
+                                <div class="entity-tags">
+                                    <span class="entity-tag">Diabetes</span>
+                                    <span class="entity-tag">Insulin</span>
+                                    <span class="entity-tag">Glucose</span>
+                                    <span class="entity-tag">Metformin</span>
+                                    <span class="entity-tag">HbA1c</span>
+                                    <span class="entity-tag">Cardiovascular</span>
+                                </div>
+                            </div>
+
+                            <div class="topics">
+                                <h4><i class="fas fa-layer-group"></i> Identified Topics</h4>
+                                <div class="topic-list">
+                                    <div class="topic-item">
+                                        <div class="topic-name">Type 2 Diabetes Management</div>
+                                        <div class="topic-score">92%</div>
+                                    </div>
+                                    <div class="topic-item">
+                                        <div class="topic-name">Cardiovascular Complications</div>
+                                        <div class="topic-score">78%</div>
+                                    </div>
+                                    <div class="topic-item">
+                                        <div class="topic-name">Drug Interactions</div>
+                                        <div class="topic-score">65%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Clinical Trials Section -->
+                <section id="trials" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-search"></i> Clinical Trial Matching</h2>
+                        <div class="section-actions">
+                            <div class="search-box">
+                                <input type="text" placeholder="Search trials...">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <button class="btn btn-primary">
+                                <i class="fas fa-sync"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="trial-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="patient-id">Patient ID</label>
+                                <input type="text" id="patient-id" placeholder="Enter patient ID">
+                            </div>
+                            <div class="form-group">
+                                <label for="condition">Medical Condition</label>
+                                <input type="text" id="condition" placeholder="Enter condition">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="age-range">Age Range</label>
+                                <select id="age-range">
+                                    <option value="">Any age</option>
+                                    <option value="18-30">18-30</option>
+                                    <option value="31-50">31-50</option>
+                                    <option value="51-65">51-65</option>
+                                    <option value="65+">65+</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="location">Location</label>
+                                <input type="text" id="location" placeholder="Enter location">
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-search"></i> Find Trials
+                            </button>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-history"></i> Match History
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="trials-list">
+                        <div class="section-header">
+                            <h3>Matching Clinical Trials</h3>
+                            <span>Showing 12 of 47 matches</span>
+                        </div>
+
+                        <div class="trials-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Trial ID</th>
+                                        <th>Title</th>
+                                        <th>Condition</th>
+                                        <th>Phase</th>
+                                        <th>Location</th>
+                                        <th>Eligibility</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>NCT04567890</td>
+                                        <td>Novel Insulin Therapy for Type 2 Diabetes</td>
+                                        <td>Diabetes</td>
+                                        <td>Phase III</td>
+                                        <td>Boston, MA</td>
+                                        <td>
+                                            <div class="eligibility-bar high">
+                                                <div class="eligibility-fill" style="width: 92%"></div>
+                                                <span class="eligibility-text">92%</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="status-badge recruiting">Recruiting</span></td>
+                                        <td>
+                                            <button class="btn btn-small btn-primary">Details</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>NCT04567891</td>
+                                        <td>Cardiovascular Outcomes in Diabetic Patients</td>
+                                        <td>Diabetes</td>
+                                        <td>Phase II</td>
+                                        <td>New York, NY</td>
+                                        <td>
+                                            <div class="eligibility-bar medium">
+                                                <div class="eligibility-fill" style="width: 78%"></div>
+                                                <span class="eligibility-text">78%</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="status-badge recruiting">Recruiting</span></td>
+                                        <td>
+                                            <button class="btn btn-small btn-primary">Details</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>NCT04567892</td>
+                                        <td>Metformin and Long-term Health Outcomes</td>
+                                        <td>Diabetes</td>
+                                        <td>Phase IV</td>
+                                        <td>Chicago, IL</td>
+                                        <td>
+                                            <div class="eligibility-bar high">
+                                                <div class="eligibility-fill" style="width: 89%"></div>
+                                                <span class="eligibility-text">89%</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="status-badge active">Active</span></td>
+                                        <td>
+                                            <button class="btn btn-small btn-primary">Details</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Research Projects Section -->
+                <section id="projects" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-project-diagram"></i> Research Projects</h2>
+                        <div class="section-actions">
+                            <div class="search-box">
+                                <input type="text" placeholder="Search projects...">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <button class="btn btn-primary">
+                                <i class="fas fa-plus"></i> New Project
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="projects-grid">
+                        <div class="project-card">
+                            <div class="project-header">
+                                <h3>Diabetes Management Study</h3>
+                                <span class="project-status active">Active</span>
+                            </div>
+                            <div class="project-content">
+                                <p>Investigating novel approaches to Type 2 diabetes management with focus on personalized treatment plans.</p>
+                                <div class="project-meta">
+                                    <span><i class="fas fa-users"></i> 12 collaborators</span>
+                                    <span><i class="fas fa-calendar"></i> Started: Jan 2023</span>
+                                </div>
+                            </div>
+                            <div class="project-footer">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 65%"></div>
+                                </div>
+                                <span class="progress-text">65% Complete</span>
+                            </div>
+                        </div>
+
+                        <div class="project-card">
+                            <div class="project-header">
+                                <h3>Cardiovascular Risk Prediction</h3>
+                                <span class="project-status planning">Planning</span>
+                            </div>
+                            <div class="project-content">
+                                <p>Developing AI models to predict cardiovascular events in high-risk patient populations.</p>
+                                <div class="project-meta">
+                                    <span><i class="fas fa-users"></i> 8 collaborators</span>
+                                    <span><i class="fas fa-calendar"></i> Starts: Oct 2023</span>
+                                </div>
+                            </div>
+                            <div class="project-footer">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%"></div>
+                                </div>
+                                <span class="progress-text">0% Complete</span>
+                            </div>
+                        </div>
+
+                        <div class="project-card">
+                            <div class="project-header">
+                                <h3>Drug Interaction Analysis</h3>
+                                <span class="project-status completed">Completed</span>
+                            </div>
+                            <div class="project-content">
+                                <p>Comprehensive analysis of drug interactions in elderly patients with multiple comorbidities.</p>
+                                <div class="project-meta">
+                                    <span><i class="fas fa-users"></i> 15 collaborators</span>
+                                    <span><i class="fas fa-calendar"></i> Completed: Jun 2023</span>
+                                </div>
+                            </div>
+                            <div class="project-footer">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 100%"></div>
+                                </div>
+                                <span class="progress-text">100% Complete</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script src="../scripts/researcher-dashboard.js"></script>
+</body>
+</html>
