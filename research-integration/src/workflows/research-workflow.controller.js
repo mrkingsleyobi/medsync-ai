@@ -52,14 +52,10 @@ class ResearchWorkflowController {
         error: error.message
       });
 
-      // Handle specific error cases
-      if (error.message.includes('Workflow type')) {
-        return res.status(400).json({
-          error: error.message
-        });
-      }
-
-      if (error.message.includes('Input data')) {
+      // Handle validation errors
+      if (error.message.includes('Workflow type') ||
+          error.message.includes('Input data') ||
+          error.message.includes('required')) {
         return res.status(400).json({
           error: error.message
         });

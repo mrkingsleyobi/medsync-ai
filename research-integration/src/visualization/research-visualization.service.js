@@ -10,6 +10,9 @@ const winston = require('winston');
 class ResearchVisualizationService {
   /**
    * Create a new Research Visualization Service
+   * NOTE: This is a simulation implementation for demonstration purposes.
+   * In a production environment, this would generate actual visualizations
+   * using charting libraries and real data.
    */
   constructor() {
     this.config = config;
@@ -18,6 +21,9 @@ class ResearchVisualizationService {
     this.chartTypes = config.chartTypes;
     this.components = config.components;
     this.colorSchemes = config.colorSchemes;
+
+    // TODO: Replace in-memory Map with persistent storage (e.g., database) for production use
+    // This will prevent data loss when the service restarts
 
     this.logger.info('Research Visualization Service created', {
       service: 'research-visualization-service'
@@ -483,7 +489,7 @@ class ResearchVisualizationService {
       return {
         visualizationId,
         format,
-        url: `https://medisync.example.com/visualizations/${visualizationId}.${format}`,
+        url: `/api/visualizations/${visualizationId}.${format}`,  // Use relative path for API endpoint
         status: 'completed'
       };
     } catch (error) {

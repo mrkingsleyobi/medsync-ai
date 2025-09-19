@@ -207,13 +207,20 @@ function updateLiteratureResults(data) {
     if (topicList) {
         topicList.innerHTML = '';
         data.topics.forEach(topic => {
-            const div = document.createElement('div');
-            div.className = 'topic-item';
-            div.innerHTML = `
-                <div class="topic-name">${topic.name}</div>
-                <div class="topic-score">${topic.score}%</div>
-            `;
-            topicList.appendChild(div);
+            const topicItem = document.createElement('div');
+            topicItem.className = 'topic-item';
+
+            const topicName = document.createElement('div');
+            topicName.className = 'topic-name';
+            topicName.textContent = topic.name;  // Use textContent to prevent XSS
+
+            const topicScore = document.createElement('div');
+            topicScore.className = 'topic-score';
+            topicScore.textContent = `${topic.score}%`;  // Use textContent to prevent XSS
+
+            topicItem.appendChild(topicName);
+            topicItem.appendChild(topicScore);
+            topicList.appendChild(topicItem);
         });
     }
 
@@ -299,11 +306,21 @@ function showAlert(message, type) {
     // Create alert element
     const alert = document.createElement('div');
     alert.className = `alert alert-${type}`;
-    alert.innerHTML = `
-        <i class="fas fa-${getAlertIcon(type)}"></i>
-        <span>${message}</span>
-        <button class="alert-close">&times;</button>
-    `;
+
+    // Create elements safely to prevent XSS
+    const icon = document.createElement('i');
+    icon.className = `fas fa-${getAlertIcon(type)}`;
+
+    const messageSpan = document.createElement('span');
+    messageSpan.textContent = message;  // Use textContent instead of innerHTML
+
+    const closeButton = document.createElement('button');
+    closeButton.className = 'alert-close';
+    closeButton.innerHTML = '&times;';  // This is safe as it's a static string
+
+    alert.appendChild(icon);
+    alert.appendChild(messageSpan);
+    alert.appendChild(closeButton);
 
     // Style the alert
     alert.style.cssText = `

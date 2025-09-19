@@ -10,6 +10,9 @@ const winston = require('winston');
 class ResearcherPreferenceService {
   /**
    * Create a new Researcher Preference Service
+   * NOTE: This is a simulation implementation for demonstration purposes.
+   * In a production environment, this would store preferences in a database
+   * and implement proper inheritance logic.
    */
   constructor() {
     this.config = config;
@@ -20,6 +23,9 @@ class ResearcherPreferenceService {
 
     // Initialize with default preferences
     this._initializeDefaultPreferences();
+
+    // TODO: Replace in-memory Map with persistent storage (e.g., database) for production use
+    // This will prevent data loss when the service restarts
 
     this.logger.info('Researcher Preference Service created', {
       service: 'researcher-preference-service'
@@ -387,8 +393,9 @@ class ResearcherPreferenceService {
    * @private
    */
   _resolvePreferences(researcherPrefs) {
-    // For now, we'll just return the researcher preferences
-    // In a real implementation, this would handle inheritance from team/institution
+    // TODO: Implement proper preference inheritance logic
+    // This should merge researcher-specific preferences with system defaults
+    // and handle inheritance from team/institution scopes
     return {
       id: researcherPrefs.id,
       researcherId: researcherPrefs.researcherId,
