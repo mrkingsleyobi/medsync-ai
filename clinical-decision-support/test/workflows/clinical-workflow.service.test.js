@@ -17,7 +17,11 @@ describe('Clinical Workflow Service', () => {
       const workflowType = 'diagnosisSupport';
       const patientContext = {
         patientId: 'PAT-12345',
-        symptoms: ['headache', 'blurred vision']
+        symptoms: ['headache', 'blurred vision'],
+        vitalSigns: {
+          bloodPressure: '140/90'
+        },
+        medicalHistory: ['hypertension', 'diabetes']
       };
 
       const result = await clinicalWorkflowService.executeWorkflow(workflowType, patientContext);
@@ -49,7 +53,11 @@ describe('Clinical Workflow Service', () => {
       const workflowType = 'riskAssessment';
       const patientContext = {
         patientId: 'PAT-12345',
-        riskFactors: ['smoking', 'family-history']
+        riskFactors: ['smoking', 'family-history'],
+        labResults: {
+          cholesterol: 240,
+          glucose: 110
+        }
       };
 
       const result = await clinicalWorkflowService.executeWorkflow(workflowType, patientContext);
@@ -141,7 +149,11 @@ describe('Clinical Workflow Service', () => {
       const workflowType = 'diagnosisSupport';
       const patientContext = {
         patientId: 'PAT-12345',
-        symptoms: ['headache', 'blurred vision']
+        symptoms: ['headache', 'blurred vision'],
+        vitalSigns: {
+          bloodPressure: '140/90'
+        },
+        medicalHistory: ['hypertension', 'diabetes']
       };
 
       // Execute a workflow first
