@@ -1,0 +1,35 @@
+{
+  "name": "medisync-huggingface",
+  "version": "1.0.0",
+  "description": "HuggingFace Model Integration for MediSync Healthcare AI Platform",
+  "main": "src/huggingface.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:server": "jest test/server.test.js",
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "demo": "node demo.js"
+  },
+  "keywords": [
+    "huggingface",
+    "ai",
+    "healthcare",
+    "medical",
+    "nlp",
+    "computer-vision"
+  ],
+  "author": "MediSync Team",
+  "license": "MIT",
+  "dependencies": {
+    "@huggingface/inference": "^2.6.4",
+    "express": "^4.18.2",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "jest": "^29.6.2",
+    "nodemon": "^3.0.1",
+    "supertest": "^6.3.4"
+  }
+}
