@@ -234,11 +234,11 @@
                             </div>
                             <div class="form-group">
                                 <label for="device-model">Device Model</label>
-                                <input type="text" id="device-model" name="device-model" placeholder="Enter device model">
+                                <input type="text" id="device-model" name="device-model" placeholder="Enter device model" required>
                             </div>
                             <div class="form-group">
                                 <label for="device-id">Device ID</label>
-                                <input type="text" id="device-id" name="device-id" placeholder="Enter device ID">
+                                <input type="text" id="device-id" name="device-id" placeholder="Enter device ID" required>
                             </div>
                         </div>
                         <button type="submit" class="btn-primary">Add Device</button>
@@ -380,9 +380,9 @@
                             <div class="form-group">
                                 <label for="notification-methods">Notification Methods</label>
                                 <div class="checkbox-group">
-                                    <label><input type="checkbox" name="notifications" value="push" checked> Push Notifications</label>
-                                    <label><input type="checkbox" name="notifications" value="sms" checked> SMS</label>
-                                    <label><input type="checkbox" name="notifications" value="email"> Email</label>
+                                    <label for="notif-push"><input type="checkbox" id="notif-push" name="notifications" value="push" checked> Push Notifications</label>
+                                    <label for="notif-sms"><input type="checkbox" id="notif-sms" name="notifications" value="sms" checked> SMS</label>
+                                    <label for="notif-email"><input type="checkbox" id="notif-email" name="notifications" value="email"> Email</label>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -632,10 +632,10 @@
                         <div class="form-group">
                             <label for="prediction-models">Active Models</label>
                             <div class="checkbox-group">
-                                <label><input type="checkbox" name="models" value="readmission" checked> Readmission Risk</label>
-                                <label><input type="checkbox" name="models" value="complication" checked> Complication Risk</label>
-                                <label><input type="checkbox" name="models" value="wellness" checked> Wellness Score</label>
-                                <label><input type="checkbox" name="models" value="treatment"> Treatment Response</label>
+                                <label for="model-readmission"><input type="checkbox" id="model-readmission" name="models" value="readmission" checked> Readmission Risk</label>
+                                <label for="model-complication"><input type="checkbox" id="model-complication" name="models" value="complication" checked> Complication Risk</label>
+                                <label for="model-wellness"><input type="checkbox" id="model-wellness" name="models" value="wellness" checked> Wellness Score</label>
+                                <label for="model-treatment"><input type="checkbox" id="model-treatment" name="models" value="treatment"> Treatment Response</label>
                             </div>
                         </div>
                         <div class="form-group">

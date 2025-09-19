@@ -170,16 +170,36 @@ class IoTWearableService {
    * @returns {Promise<Object>} Wearable integration result
    */
   async integrateWithWearables(options = {}) {
+    const jobId = uuidv4();
+
+    // Create wearable job record
+    const job = {
+      id: jobId,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      startedAt: null,
+      completedAt: null,
+      options: options,
+      result: null,
+      error: null
+    };
+
+    this.wearableJobs = this.wearableJobs || new Map();
+    this.wearableJobs.set(jobId, job);
+
     try {
       if (!this.config.wearables.enabled) {
         throw new Error('Wearable device integration is not enabled');
       }
 
-      const jobId = uuidv4();
       this.logger.info('Starting wearable device integration', {
         jobId,
         options
       });
+
+      // Start job
+      job.status = 'running';
+      job.startedAt = new Date().toISOString();
 
       // Simulate wearable device integration process
       await new Promise(resolve => setTimeout(resolve, 1500));
@@ -191,6 +211,11 @@ class IoTWearableService {
         processingTime: 1500
       };
 
+      // Complete job
+      job.status = 'completed';
+      job.completedAt = new Date().toISOString();
+      job.result = result;
+
       this.logger.info('Wearable device integration completed', {
         jobId,
         devicesConnected: result.devicesConnected.length,
@@ -200,7 +225,11 @@ class IoTWearableService {
 
       return result;
     } catch (error) {
+      job.status = 'failed';
+      job.error = error.message;
+
       this.logger.error('Wearable device integration failed', {
+        jobId,
         error: error.message,
         stack: error.stack
       });
@@ -238,6 +267,23 @@ class IoTWearableService {
    * @returns {Promise<Object>} Sensor data processing result
    */
   async processSensorData(sensorData = []) {
+    const jobId = uuidv4();
+
+    // Create sensor job record
+    const job = {
+      id: jobId,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      startedAt: null,
+      completedAt: null,
+      sensorData: sensorData,
+      result: null,
+      error: null
+    };
+
+    this.sensorJobs = this.sensorJobs || new Map();
+    this.sensorJobs.set(jobId, job);
+
     try {
       if (!this.config.sensors.enabled) {
         throw new Error('IoT sensor integration is not enabled');
@@ -247,11 +293,14 @@ class IoTWearableService {
         throw new Error('Sensor data array is required and cannot be empty');
       }
 
-      const jobId = uuidv4();
       this.logger.info('Processing IoT sensor data', {
         jobId,
         dataPoints: sensorData.length
       });
+
+      // Start job
+      job.status = 'running';
+      job.startedAt = new Date().toISOString();
 
       // Simulate sensor data processing
       await new Promise(resolve => setTimeout(resolve, 2000));
@@ -263,6 +312,11 @@ class IoTWearableService {
         processingTime: 2000
       };
 
+      // Complete job
+      job.status = 'completed';
+      job.completedAt = new Date().toISOString();
+      job.result = result;
+
       this.logger.info('IoT sensor data processing completed', {
         jobId,
         processedDataPoints: result.processedDataPoints,
@@ -272,7 +326,11 @@ class IoTWearableService {
 
       return result;
     } catch (error) {
+      job.status = 'failed';
+      job.error = error.message;
+
       this.logger.error('IoT sensor data processing failed', {
+        jobId,
         error: error.message,
         stack: error.stack
       });
@@ -568,16 +626,36 @@ class IoTWearableService {
    * @returns {Promise<Object>} Population health analytics result
    */
   async generatePopulationAnalytics(options = {}) {
+    const jobId = uuidv4();
+
+    // Create analytics job record
+    const job = {
+      id: jobId,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      startedAt: null,
+      completedAt: null,
+      options: options,
+      result: null,
+      error: null
+    };
+
+    this.analyticsJobs = this.analyticsJobs || new Map();
+    this.analyticsJobs.set(jobId, job);
+
     try {
       if (!this.config.populationAnalytics.enabled) {
         throw new Error('Population health analytics is not enabled');
       }
 
-      const jobId = uuidv4();
       this.logger.info('Generating population health analytics', {
         jobId,
         options
       });
+
+      // Start job
+      job.status = 'running';
+      job.startedAt = new Date().toISOString();
 
       // Simulate population analytics generation
       await new Promise(resolve => setTimeout(resolve, 2500));
@@ -590,6 +668,11 @@ class IoTWearableService {
         processingTime: 2500
       };
 
+      // Complete job
+      job.status = 'completed';
+      job.completedAt = new Date().toISOString();
+      job.result = result;
+
       this.logger.info('Population health analytics generation completed', {
         jobId,
         metrics: Object.keys(result.populationMetrics).length,
@@ -599,7 +682,11 @@ class IoTWearableService {
 
       return result;
     } catch (error) {
+      job.status = 'failed';
+      job.error = error.message;
+
       this.logger.error('Population health analytics generation failed', {
+        jobId,
         error: error.message,
         stack: error.stack
       });
@@ -777,13 +864,21 @@ class IoTWearableService {
    * @returns {Object|null} Job status or null if not found
    */
   getWearableIntegrationStatus(jobId) {
-    // In a real implementation, this would return the actual job status
+    if (!this.wearableJobs) {
+      return null;
+    }
+
+    const job = this.wearableJobs.get(jobId);
+    if (!job) {
+      return null;
+    }
+
     return {
-      jobId: jobId,
-      status: 'completed',
-      createdAt: new Date().toISOString(),
-      completedAt: new Date().toISOString(),
-      devicesConnected: Math.floor(Math.random() * 10) + 1
+      jobId: job.id,
+      status: job.status,
+      createdAt: job.createdAt,
+      startedAt: job.startedAt,
+      completedAt: job.completedAt
     };
   }
 
@@ -793,14 +888,21 @@ class IoTWearableService {
    * @returns {Object|null} Job status or null if not found
    */
   getSensorDataProcessingStatus(jobId) {
-    // In a real implementation, this would return the actual job status
+    if (!this.sensorJobs) {
+      return null;
+    }
+
+    const job = this.sensorJobs.get(jobId);
+    if (!job) {
+      return null;
+    }
+
     return {
-      jobId: jobId,
-      status: 'completed',
-      createdAt: new Date().toISOString(),
-      completedAt: new Date().toISOString(),
-      processedDataPoints: Math.floor(Math.random() * 1000) + 100,
-      anomaliesDetected: Math.floor(Math.random() * 50) + 5
+      jobId: job.id,
+      status: job.status,
+      createdAt: job.createdAt,
+      startedAt: job.startedAt,
+      completedAt: job.completedAt
     };
   }
 
@@ -871,13 +973,21 @@ class IoTWearableService {
    * @returns {Object|null} Job status or null if not found
    */
   getAnalyticsStatus(jobId) {
-    // In a real implementation, this would return the actual job status
+    if (!this.analyticsJobs) {
+      return null;
+    }
+
+    const job = this.analyticsJobs.get(jobId);
+    if (!job) {
+      return null;
+    }
+
     return {
-      jobId: jobId,
-      status: 'completed',
-      createdAt: new Date().toISOString(),
-      completedAt: new Date().toISOString(),
-      populationSize: Math.floor(Math.random() * 10000) + 1000
+      jobId: job.id,
+      status: job.status,
+      createdAt: job.createdAt,
+      startedAt: job.startedAt,
+      completedAt: job.completedAt
     };
   }
 

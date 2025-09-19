@@ -11,6 +11,11 @@ class IoTWearableController {
    */
   constructor() {
     this.iotWearableService = new IoTWearableService();
+    // In a real implementation, we would use the service's logger
+    // For now, we'll create a simple logger
+    this.logger = {
+      error: (message, data) => console.error(message, data)
+    };
   }
 
   /**
@@ -35,8 +40,9 @@ class IoTWearableController {
         processingTime: result.processingTime
       });
     } catch (error) {
-      console.error('Wearable device integration controller error', {
-        error: error.message
+      this.logger.error('Wearable device integration controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       // Handle specific errors
@@ -82,8 +88,9 @@ class IoTWearableController {
         processingTime: result.processingTime
       });
     } catch (error) {
-      console.error('IoT sensor data processing controller error', {
-        error: error.message
+      this.logger.error('IoT sensor data processing controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       // Handle validation errors
@@ -129,8 +136,9 @@ class IoTWearableController {
         processingTime: result.processingTime
       });
     } catch (error) {
-      console.error('Real-time health monitoring controller error', {
-        error: error.message
+      this.logger.error('Real-time health monitoring controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       // Handle specific errors
@@ -177,8 +185,9 @@ class IoTWearableController {
         processingTime: result.processingTime
       });
     } catch (error) {
-      console.error('Early warning generation controller error', {
-        error: error.message
+      this.logger.error('Early warning generation controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       // Handle validation errors
@@ -225,8 +234,9 @@ class IoTWearableController {
         processingTime: result.processingTime
       });
     } catch (error) {
-      console.error('Population health analytics generation controller error', {
-        error: error.message
+      this.logger.error('Population health analytics generation controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       // Handle specific errors
@@ -273,8 +283,9 @@ class IoTWearableController {
         processingTime: result.processingTime
       });
     } catch (error) {
-      console.error('Personalized health predictions generation controller error', {
-        error: error.message
+      this.logger.error('Personalized health predictions generation controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       // Handle validation errors
@@ -314,8 +325,9 @@ class IoTWearableController {
         status: status
       });
     } catch (error) {
-      console.error('Get service status controller error', {
-        error: error.message
+      this.logger.error('Get service status controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -356,8 +368,9 @@ class IoTWearableController {
         });
       }
     } catch (error) {
-      console.error('Get wearable integration job status controller error', {
-        error: error.message
+      this.logger.error('Get wearable integration job status controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -398,8 +411,9 @@ class IoTWearableController {
         });
       }
     } catch (error) {
-      console.error('Get sensor data processing job status controller error', {
-        error: error.message
+      this.logger.error('Get sensor data processing job status controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -440,8 +454,9 @@ class IoTWearableController {
         });
       }
     } catch (error) {
-      console.error('Get monitoring job status controller error', {
-        error: error.message
+      this.logger.error('Get monitoring job status controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -482,8 +497,9 @@ class IoTWearableController {
         });
       }
     } catch (error) {
-      console.error('Get alert status controller error', {
-        error: error.message
+      this.logger.error('Get alert status controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -524,8 +540,9 @@ class IoTWearableController {
         });
       }
     } catch (error) {
-      console.error('Get prediction job status controller error', {
-        error: error.message
+      this.logger.error('Get prediction job status controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -566,8 +583,9 @@ class IoTWearableController {
         });
       }
     } catch (error) {
-      console.error('Get analytics job status controller error', {
-        error: error.message
+      this.logger.error('Get analytics job status controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -609,8 +627,9 @@ class IoTWearableController {
         });
       }
     } catch (error) {
-      console.error('Acknowledge alert controller error', {
-        error: error.message
+      this.logger.error('Acknowledge alert controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -652,8 +671,9 @@ class IoTWearableController {
         });
       }
     } catch (error) {
-      console.error('Resolve alert controller error', {
-        error: error.message
+      this.logger.error('Resolve alert controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({

@@ -345,11 +345,11 @@ function showNotification(message, type = 'info') {
     // Remove after delay
     setTimeout(() => {
         notification.style.transform = 'translateX(100%)';
-        setTimeout(() => {
+        notification.addEventListener('transitionend', () => {
             if (notification.parentNode) {
                 notification.parentNode.removeChild(notification);
             }
-        }, 300);
+        }, { once: true });
     }, 3000);
 }
 

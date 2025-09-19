@@ -86,8 +86,8 @@ const config = {
     gateway: {
       enabled: true,
       protocol: 'MQTT',
-      brokerUrl: 'mqtt://iot.example.com',
-      port: 1883,
+      brokerUrl: process.env.MQTT_BROKER_URL || 'mqtts://secure-iot-broker.medisync.com',
+      port: process.env.MQTT_BROKER_PORT || 8883,
       qos: 1
     }
   },
