@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediSync - Clinical Decision Support Dashboard</title>
+    <link rel="stylesheet" href="../styles/provider-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1><i class="fas fa-brain"></i> Clinical Decision Support</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <span class="user-name">Dr. Jane Smith</span>
+                    <span class="user-role">Cardiologist</span>
+                </div>
+                <div class="notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </div>
+                <button class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="dashboard-main">
+            <!-- Sidebar -->
+            <aside class="dashboard-sidebar">
+                <nav class="sidebar-nav">
+                    <ul>
+                        <li class="nav-item active">
+                            <a href="#overview">
+                                <i class="fas fa-home"></i>
+                                <span>Overview</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#patients">
+                                <i class="fas fa-user-injured"></i>
+                                <span>Patients</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#decisions">
+                                <i class="fas fa-stethoscope"></i>
+                                <span>Decision Support</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#alerts">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>Clinical Alerts</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#guidelines">
+                                <i class="fas fa-book-medical"></i>
+                                <span>Clinical Guidelines</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#analytics">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Analytics</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#settings">
+                                <i class="fas fa-cog"></i>
+                                <span>Settings</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Content Area -->
+            <main class="dashboard-content">
+                <!-- Overview Section -->
+                <section id="overview" class="content-section active">
+                    <div class="section-header">
+                        <h2><i class="fas fa-tachometer-alt"></i> Dashboard Overview</h2>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon primary">
+                                <i class="fas fa-user-injured"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>128</h3>
+                                <p>Active Patients</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon warning">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>7</h3>
+                                <p>Active Alerts</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon success">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>94%</h3>
+                                <p>Decision Accuracy</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon info">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>42ms</h3>
+                                <p>Avg. Response Time</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Decisions -->
+                    <div class="recent-decisions">
+                        <div class="section-header">
+                            <h3><i class="fas fa-history"></i> Recent Decisions</h3>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-sync"></i> Refresh
+                            </button>
+                        </div>
+
+                        <div class="decisions-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Decision Type</th>
+                                        <th>Recommendation</th>
+                                        <th>Confidence</th>
+                                        <th>Time</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>John Doe (PAT-12345)</td>
+                                        <td>Diagnosis Support</td>
+                                        <td>Hypertension</td>
+                                        <td>
+                                            <div class="confidence-bar high">
+                                                <div class="confidence-fill" style="width: 92%"></div>
+                                                <span class="confidence-text">92%</span>
+                                            </div>
+                                        </td>
+                                        <td>2 min ago</td>
+                                        <td><span class="status-badge completed">Completed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Jane Smith (PAT-67890)</td>
+                                        <td>Risk Assessment</td>
+                                        <td>Cardiovascular</td>
+                                        <td>
+                                            <div class="confidence-bar medium">
+                                                <div class="confidence-fill" style="width: 78%"></div>
+                                                <span class="confidence-text">78%</span>
+                                            </div>
+                                        </td>
+                                        <td>5 min ago</td>
+                                        <td><span class="status-badge completed">Completed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Robert Johnson (PAT-11111)</td>
+                                        <td>Drug Interaction</td>
+                                        <td>Warfarin + Aspirin</td>
+                                        <td>
+                                            <div class="confidence-bar high">
+                                                <div class="confidence-fill" style="width: 95%"></div>
+                                                <span class="confidence-text">95%</span>
+                                            </div>
+                                        </td>
+                                        <td>8 min ago</td>
+                                        <td><span class="status-badge alert">Alert</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Patients Section -->
+                <section id="patients" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-user-injured"></i> Patient Management</h2>
+                        <div class="section-actions">
+                            <div class="search-box">
+                                <input type="text" placeholder="Search patients...">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <button class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Add Patient
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="patients-grid">
+                        <div class="patient-card">
+                            <div class="patient-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="patient-info">
+                                <h4>John Doe</h4>
+                                <p>PAT-12345</p>
+                                <p class="patient-condition">Hypertension</p>
+                            </div>
+                            <div class="patient-actions">
+                                <button class="btn btn-small btn-primary">View</button>
+                                <button class="btn btn-small btn-secondary">Support</button>
+                            </div>
+                        </div>
+
+                        <div class="patient-card">
+                            <div class="patient-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="patient-info">
+                                <h4>Jane Smith</h4>
+                                <p>PAT-67890</p>
+                                <p class="patient-condition">Diabetes</p>
+                            </div>
+                            <div class="patient-actions">
+                                <button class="btn btn-small btn-primary">View</button>
+                                <button class="btn btn-small btn-secondary">Support</button>
+                            </div>
+                        </div>
+
+                        <div class="patient-card">
+                            <div class="patient-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="patient-info">
+                                <h4>Robert Johnson</h4>
+                                <p>PAT-11111</p>
+                                <p class="patient-condition">Heart Disease</p>
+                            </div>
+                            <div class="patient-actions">
+                                <button class="btn btn-small btn-primary">View</button>
+                                <button class="btn btn-small btn-secondary">Support</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Decision Support Section -->
+                <section id="decisions" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-stethoscope"></i> Clinical Decision Support</h2>
+                        <div class="section-actions">
+                            <select class="filter-select">
+                                <option>All Decision Types</option>
+                                <option>Diagnosis Support</option>
+                                <option>Treatment Recommendation</option>
+                                <option>Risk Assessment</option>
+                                <option>Drug Interaction</option>
+                                <option>Clinical Alert</option>
+                            </select>
+                            <button class="btn btn-primary">
+                                <i class="fas fa-sync"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="decision-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="patient-id">Patient ID</label>
+                                <input type="text" id="patient-id" placeholder="Enter patient ID">
+                            </div>
+                            <div class="form-group">
+                                <label for="decision-type">Decision Type</label>
+                                <select id="decision-type">
+                                    <option value="">Select decision type</option>
+                                    <option value="diagnosis-support">Diagnosis Support</option>
+                                    <option value="treatment-recommendation">Treatment Recommendation</option>
+                                    <option value="risk-assessment">Risk Assessment</option>
+                                    <option value="drug-interaction">Drug Interaction</option>
+                                    <option value="clinical-alert">Clinical Alert</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="patient-symptoms">Symptoms (comma separated)</label>
+                                <input type="text" id="patient-symptoms" placeholder="e.g., headache, blurred vision">
+                            </div>
+                            <div class="form-group">
+                                <label for="patient-condition">Condition</label>
+                                <input type="text" id="patient-condition" placeholder="e.g., hypertension">
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-brain"></i> Generate Decision Support
+                            </button>
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-history"></i> View History
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="decision-result">
+                        <div class="result-header">
+                            <h3>Decision Results</h3>
+                            <div class="result-meta">
+                                <span>Patient: PAT-12345</span>
+                                <span>Confidence: 92%</span>
+                                <span>Time: 42ms</span>
+                            </div>
+                        </div>
+
+                        <div class="result-content">
+                            <div class="recommendations">
+                                <h4><i class="fas fa-lightbulb"></i> Recommendations</h4>
+                                <ul>
+                                    <li>Check blood pressure and consider antihypertensive therapy</li>
+                                    <li>Monitor for signs of target organ damage</li>
+                                    <li>Recommend lifestyle modifications</li>
+                                </ul>
+                            </div>
+
+                            <div class="evidence">
+                                <h4><i class="fas fa-book"></i> Supporting Evidence</h4>
+                                <ul>
+                                    <li>Headache and blurred vision are common symptoms of hypertension</li>
+                                    <li>Blood pressure reading of 160/100 confirms hypertension</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Alerts Section -->
+                <section id="alerts" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-exclamation-triangle"></i> Clinical Alerts</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-sync"></i> Refresh
+                            </button>
+                            <button class="btn btn-primary">
+                                <i class="fas fa-check"></i> Acknowledge All
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="alerts-list">
+                        <div class="alert-item critical">
+                            <div class="alert-icon">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <div class="alert-content">
+                                <h4>Drug Interaction Alert</h4>
+                                <p>Warfarin + Aspirin: Increased bleeding risk for Patient PAT-11111</p>
+                                <div class="alert-meta">
+                                    <span class="alert-time">10 min ago</span>
+                                    <span class="alert-severity">Critical</span>
+                                </div>
+                            </div>
+                            <div class="alert-actions">
+                                <button class="btn btn-small btn-primary">Acknowledge</button>
+                                <button class="btn btn-small btn-secondary">View Details</button>
+                            </div>
+                        </div>
+
+                        <div class="alert-item high">
+                            <div class="alert-icon">
+                                <i class="fas fa-heartbeat"></i>
+                            </div>
+                            <div class="alert-content">
+                                <h4>Hypertensive Crisis</h4>
+                                <p>Severe hypertension detected for Patient PAT-22222 requiring immediate intervention</p>
+                                <div class="alert-meta">
+                                    <span class="alert-time">25 min ago</span>
+                                    <span class="alert-severity">High</span>
+                                </div>
+                            </div>
+                            <div class="alert-actions">
+                                <button class="btn btn-small btn-primary">Acknowledge</button>
+                                <button class="btn btn-small btn-secondary">View Details</button>
+                            </div>
+                        </div>
+
+                        <div class="alert-item medium">
+                            <div class="alert-icon">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div class="alert-content">
+                                <h4>Cardiac Risk</h4>
+                                <p>Patient PAT-33333 at moderate cardiovascular risk</p>
+                                <div class="alert-meta">
+                                    <span class="alert-time">1 hour ago</span>
+                                    <span class="alert-severity">Medium</span>
+                                </div>
+                            </div>
+                            <div class="alert-actions">
+                                <button class="btn btn-small btn-primary">Acknowledge</button>
+                                <button class="btn btn-small btn-secondary">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Guidelines Section -->
+                <section id="guidelines" class="content-section">
+                    <div class="section-header">
+                        <h2><i class="fas fa-book-medical"></i> Clinical Guidelines</h2>
+                        <div class="section-actions">
+                            <div class="search-box">
+                                <input type="text" placeholder="Search guidelines...">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <button class="btn btn-primary">
+                                <i class="fas fa-sync"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="guidelines-grid">
+                        <div class="guideline-card">
+                            <div class="guideline-header">
+                                <h3>Hypertension Management</h3>
+                                <span class="evidence-level">A</span>
+                            </div>
+                            <div class="guideline-content">
+                                <ul>
+                                    <li>First-line treatment: ACE inhibitors or ARBs</li>
+                                    <li>Target BP: &lt;130/80 mmHg for high-risk patients</li>
+                                    <li>Lifestyle modifications: Diet, exercise, weight loss</li>
+                                </ul>
+                            </div>
+                            <div class="guideline-footer">
+                                <span class="last-updated">Updated: 2023-06-15</span>
+                                <button class="btn btn-small btn-secondary">View Details</button>
+                            </div>
+                        </div>
+
+                        <div class="guideline-card">
+                            <div class="guideline-header">
+                                <h3>Diabetes Care</h3>
+                                <span class="evidence-level">A</span>
+                            </div>
+                            <div class="guideline-content">
+                                <ul>
+                                    <li>HbA1c target: &lt;7% for most patients</li>
+                                    <li>First-line treatment: Metformin</li>
+                                    <li>Regular monitoring of kidney function</li>
+                                </ul>
+                            </div>
+                            <div class="guideline-footer">
+                                <span class="last-updated">Updated: 2023-05-20</span>
+                                <button class="btn btn-small btn-secondary">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script src="../scripts/provider-dashboard.js"></script>
+</body>
+</html>
