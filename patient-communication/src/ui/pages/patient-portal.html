@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediSync Patient Portal</title>
+    <link rel="stylesheet" href="../styles/patient-portal.css">
+</head>
+<body>
+    <div class="portal-container">
+        <!-- Header -->
+        <header class="portal-header">
+            <div class="header-content">
+                <h1 class="logo">MediSync</h1>
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="#dashboard" class="nav-link active">Dashboard</a></li>
+                        <li><a href="#documents" class="nav-link">Documents</a></li>
+                        <li><a href="#education" class="nav-link">Education</a></li>
+                        <li><a href="#journal" class="nav-link">Journal</a></li>
+                        <li><a href="#messages" class="nav-link">Messages</a></li>
+                        <li><a href="#settings" class="nav-link">Settings</a></li>
+                    </ul>
+                </nav>
+                <div class="user-actions">
+                    <button class="btn btn-secondary" id="notifications-btn">
+                        <span class="notification-badge">3</span>
+                        Notifications
+                    </button>
+                    <div class="user-profile">
+                        <img src="../assets/user-avatar.png" alt="User Avatar" class="avatar">
+                        <span class="username">John Doe</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="portal-main">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="page-section active">
+                <div class="section-header">
+                    <h2>Dashboard</h2>
+                    <div class="date-display">Today, September 19, 2025</div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Health Summary Card -->
+                    <div class="card health-summary">
+                        <h3>Health Summary</h3>
+                        <div class="health-metrics">
+                            <div class="metric">
+                                <span class="metric-label">Blood Pressure</span>
+                                <span class="metric-value">120/80</span>
+                                <span class="metric-status good">Normal</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Heart Rate</span>
+                                <span class="metric-value">72 bpm</span>
+                                <span class="metric-status good">Normal</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Weight</span>
+                                <span class="metric-value">165 lbs</span>
+                                <span class="metric-status neutral">Stable</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary">View Full Report</button>
+                    </div>
+
+                    <!-- Upcoming Appointments Card -->
+                    <div class="card appointments">
+                        <h3>Upcoming Appointments</h3>
+                        <div class="appointment-list">
+                            <div class="appointment-item">
+                                <div class="appointment-date">Sep 22, 2025</div>
+                                <div class="appointment-time">10:30 AM</div>
+                                <div class="appointment-doctor">Dr. Smith</div>
+                                <div class="appointment-type">Annual Checkup</div>
+                            </div>
+                            <div class="appointment-item">
+                                <div class="appointment-date">Sep 28, 2025</div>
+                                <div class="appointment-time">2:15 PM</div>
+                                <div class="appointment-doctor">Dr. Johnson</div>
+                                <div class="appointment-type">Follow-up</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary">Schedule New</button>
+                    </div>
+
+                    <!-- Recent Documents Card -->
+                    <div class="card documents">
+                        <h3>Recent Documents</h3>
+                        <div class="document-list">
+                            <div class="document-item">
+                                <div class="document-title">Lab Results - Complete Blood Count</div>
+                                <div class="document-date">Sep 15, 2025</div>
+                                <button class="btn btn-small">View</button>
+                            </div>
+                            <div class="document-item">
+                                <div class="document-title">Discharge Summary - Hospital Visit</div>
+                                <div class="document-date">Sep 10, 2025</div>
+                                <button class="btn btn-small">View</button>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary">View All Documents</button>
+                    </div>
+
+                    <!-- Health Education Card -->
+                    <div class="card education">
+                        <h3>Recommended Education</h3>
+                        <div class="education-list">
+                            <div class="education-item">
+                                <div class="education-title">Managing Your Diabetes</div>
+                                <div class="education-category">Chronic Conditions</div>
+                                <button class="btn btn-small">Read Now</button>
+                            </div>
+                            <div class="education-item">
+                                <div class="education-title">Healthy Eating Habits</div>
+                                <div class="education-category">Nutrition</div>
+                                <button class="btn btn-small">Read Now</button>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary">View All Education</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Documents Section -->
+            <section id="documents" class="page-section">
+                <div class="section-header">
+                    <h2>Medical Documents</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-primary">Upload Document</button>
+                    </div>
+                </div>
+
+                <div class="documents-grid">
+                    <div class="card document-viewer">
+                        <h3>Document Viewer</h3>
+                        <div class="document-content">
+                            <p>Select a document from the list to view its contents.</p>
+                            <p>Documents will be automatically simplified for easier understanding.</p>
+                        </div>
+                        <div class="document-actions">
+                            <button class="btn btn-secondary">Simplify Document</button>
+                            <button class="btn btn-secondary">Translate</button>
+                            <button class="btn btn-secondary">Print</button>
+                        </div>
+                    </div>
+
+                    <div class="card document-list">
+                        <h3>All Documents</h3>
+                        <div class="filter-controls">
+                            <input type="text" placeholder="Search documents..." class="search-input">
+                            <select class="filter-select">
+                                <option>All Types</option>
+                                <option>Lab Results</option>
+                                <option>Prescriptions</option>
+                                <option>Discharge Summaries</option>
+                                <option>Referrals</option>
+                            </select>
+                        </div>
+                        <div class="document-items">
+                            <div class="document-item">
+                                <div class="document-title">Lab Results - Complete Blood Count</div>
+                                <div class="document-meta">
+                                    <span class="document-date">Sep 15, 2025</span>
+                                    <span class="document-type">Lab Results</span>
+                                </div>
+                                <div class="document-actions">
+                                    <button class="btn btn-small">View</button>
+                                    <button class="btn btn-small">Simplify</button>
+                                </div>
+                            </div>
+                            <div class="document-item">
+                                <div class="document-title">Prescription - Metformin 500mg</div>
+                                <div class="document-meta">
+                                    <span class="document-date">Sep 12, 2025</span>
+                                    <span class="document-type">Prescription</span>
+                                </div>
+                                <div class="document-actions">
+                                    <button class="btn btn-small">View</button>
+                                    <button class="btn btn-small">Simplify</button>
+                                </div>
+                            </div>
+                            <div class="document-item">
+                                <div class="document-title">Discharge Summary - Hospital Visit</div>
+                                <div class="document-meta">
+                                    <span class="document-date">Sep 10, 2025</span>
+                                    <span class="document-type">Discharge Summary</span>
+                                </div>
+                                <div class="document-actions">
+                                    <button class="btn btn-small">View</button>
+                                    <button class="btn btn-small">Simplify</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Education Section -->
+            <section id="education" class="page-section">
+                <div class="section-header">
+                    <h2>Health Education</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-primary">Recommendations</button>
+                    </div>
+                </div>
+
+                <div class="education-grid">
+                    <div class="card education-content">
+                        <h3>Personalized Education</h3>
+                        <div class="education-content-area">
+                            <p>Select an education topic from the list to view its contents.</p>
+                            <p>Content is personalized based on your health conditions and preferences.</p>
+                        </div>
+                    </div>
+
+                    <div class="card education-list">
+                        <h3>Education Topics</h3>
+                        <div class="filter-controls">
+                            <input type="text" placeholder="Search topics..." class="search-input">
+                            <select class="filter-select">
+                                <option>All Categories</option>
+                                <option>Preventive Care</option>
+                                <option>Chronic Conditions</option>
+                                <option>Medication Management</option>
+                                <option>Nutrition and Exercise</option>
+                                <option>Mental Health</option>
+                            </select>
+                        </div>
+                        <div class="education-items">
+                            <div class="education-item">
+                                <div class="education-title">Managing Your Diabetes</div>
+                                <div class="education-meta">
+                                    <span class="education-category">Chronic Conditions</span>
+                                    <span class="education-progress">75% Complete</span>
+                                </div>
+                                <div class="education-actions">
+                                    <button class="btn btn-small">Continue</button>
+                                </div>
+                            </div>
+                            <div class="education-item">
+                                <div class="education-title">Healthy Eating Habits</div>
+                                <div class="education-meta">
+                                    <span class="education-category">Nutrition</span>
+                                    <span class="education-progress">Not Started</span>
+                                </div>
+                                <div class="education-actions">
+                                    <button class="btn btn-small">Start</button>
+                                </div>
+                            </div>
+                            <div class="education-item">
+                                <div class="education-title">Exercise for Heart Health</div>
+                                <div class="education-meta">
+                                    <span class="education-category">Preventive Care</span>
+                                    <span class="education-progress">Completed</span>
+                                </div>
+                                <div class="education-actions">
+                                    <button class="btn btn-small">Review</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Journal Section -->
+            <section id="journal" class="page-section">
+                <div class="section-header">
+                    <h2>Health Journal</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-primary">New Entry</button>
+                    </div>
+                </div>
+
+                <div class="journal-grid">
+                    <div class="card journal-entry">
+                        <h3>New Journal Entry</h3>
+                        <div class="entry-methods">
+                            <button class="btn btn-secondary" id="text-entry-btn">
+                                <i class="icon-text"></i>
+                                Text Entry
+                            </button>
+                            <button class="btn btn-secondary" id="voice-entry-btn">
+                                <i class="icon-mic"></i>
+                                Voice Entry
+                            </button>
+                        </div>
+                        <div class="text-entry-form">
+                            <textarea placeholder="How are you feeling today? What symptoms are you experiencing? What medications did you take?" class="journal-textarea"></textarea>
+                            <div class="entry-actions">
+                                <button class="btn btn-primary">Save Entry</button>
+                                <button class="btn btn-secondary">Cancel</button>
+                            </div>
+                        </div>
+                        <div class="voice-entry-form" style="display: none;">
+                            <div class="voice-recording-ui">
+                                <div class="recording-indicator">
+                                    <div class="recording-dot"></div>
+                                    <span>Recording...</span>
+                                </div>
+                                <div class="recording-controls">
+                                    <button class="btn btn-danger" id="stop-recording-btn">Stop Recording</button>
+                                </div>
+                            </div>
+                            <div class="transcription-display">
+                                <textarea placeholder="Your voice entry will appear here after transcription..." class="transcription-textarea" readonly></textarea>
+                            </div>
+                            <div class="entry-actions">
+                                <button class="btn btn-primary">Save Entry</button>
+                                <button class="btn btn-secondary">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card journal-history">
+                        <h3>Journal History</h3>
+                        <div class="filter-controls">
+                            <input type="text" placeholder="Search entries..." class="search-input">
+                            <select class="filter-select">
+                                <option>All Entries</option>
+                                <option>Last 7 Days</option>
+                                <option>Last 30 Days</option>
+                                <option>Last 90 Days</option>
+                            </select>
+                        </div>
+                        <div class="journal-entries">
+                            <div class="journal-item">
+                                <div class="entry-date">Sep 18, 2025</div>
+                                <div class="entry-preview">Feeling good today. No significant symptoms...</div>
+                                <div class="entry-actions">
+                                    <button class="btn btn-small">View</button>
+                                </div>
+                            </div>
+                            <div class="journal-item">
+                                <div class="entry-date">Sep 17, 2025</div>
+                                <div class="entry-preview">Experienced mild headache in the afternoon...</div>
+                                <div class="entry-actions">
+                                    <button class="btn btn-small">View</button>
+                                </div>
+                            </div>
+                            <div class="journal-item">
+                                <div class="entry-date">Sep 16, 2025</div>
+                                <div class="entry-preview">Regular exercise and healthy meals...</div>
+                                <div class="entry-actions">
+                                    <button class="btn btn-small">View</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="portal-footer">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="#">Help</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Contact Us</a>
+                </div>
+                <div class="footer-info">
+                    <p>&copy; 2025 MediSync Healthcare AI Platform. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="../scripts/patient-portal.js"></script>
+</body>
+</html>
