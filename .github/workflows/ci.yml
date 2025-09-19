@@ -53,8 +53,12 @@ jobs:
     - name: Run linting
       run: npm run lint
 
+    - name: Run a simple test to check if jest works
+      run: npx jest --version
+      working-directory: huggingface
+
     - name: Run tests
-      run: npx jest
+      run: npx jest --verbose
       working-directory: huggingface
 
     - name: Upload coverage to Codecov
