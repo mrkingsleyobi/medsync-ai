@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediSync Healthcare Integration Dashboard</title>
+    <link rel="stylesheet" href="../styles/healthcare-dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <h1>MediSync Healthcare Integration Dashboard</h1>
+            <nav class="header-nav">
+                <button class="nav-button active" data-tab="overview">Overview</button>
+                <button class="nav-button" data-tab="fhir">FHIR Integration</button>
+                <button class="nav-button" data-tab="hl7">HL7 Processing</button>
+                <button class="nav-button" data-tab="dicom">DICOM Integration</button>
+                <button class="nav-button" data-tab="sync">Data Synchronization</button>
+                <button class="nav-button" data-tab="matching">Patient Matching</button>
+                <button class="nav-button" data-tab="imaging">Image Processing</button>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-content">
+            <!-- Overview Tab -->
+            <section id="overview" class="tab-content active">
+                <h2>System Overview</h2>
+                <div class="overview-grid">
+                    <div class="card">
+                        <h3>Integration Status</h3>
+                        <div class="status-indicator status-ok">All Systems Operational</div>
+                        <p>Last updated: <span id="last-updated">Just now</span></p>
+                    </div>
+
+                    <div class="card">
+                        <h3>FHIR Integration</h3>
+                        <div class="metric-value" id="fhir-status">Active</div>
+                        <p><span id="fhir-records">1,247</span> records synchronized</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>HL7 Processing</h3>
+                        <div class="metric-value" id="hl7-status">Active</div>
+                        <p><span id="hl7-messages">892</span> messages processed today</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>DICOM Integration</h3>
+                        <div class="metric-value" id="dicom-status">Active</div>
+                        <p><span id="dicom-images">156</span> images processed today</p>
+                    </div>
+                </div>
+
+                <div class="overview-grid">
+                    <div class="card">
+                        <h3>Data Synchronization</h3>
+                        <div class="metric-value" id="sync-status">Active</div>
+                        <p>Last sync: <span id="last-sync">2 minutes ago</span></p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Patient Matching</h3>
+                        <div class="metric-value" id="matching-status">Active</div>
+                        <p><span id="matching-records">42</span> records matched today</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Image Processing</h3>
+                        <div class="metric-value" id="imaging-status">Active</div>
+                        <p><span id="processed-images">78</span> images processed today</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>System Performance</h3>
+                        <div class="performance-metrics">
+                            <div class="metric">
+                                <span class="metric-label">Response Time:</span>
+                                <span class="metric-value" id="response-time">142ms</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Success Rate:</span>
+                                <span class="metric-value" id="success-rate">99.8%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <h3>Quick Actions</h3>
+                    <div class="actions-grid">
+                        <button class="action-button" id="sync-ehr">
+                            <span class="action-icon">🔄</span>
+                            <span>Sync EHR Data</span>
+                        </button>
+                        <button class="action-button" id="process-hl7">
+                            <span class="action-icon">📄</span>
+                            <span>Process HL7 Messages</span>
+                        </button>
+                        <button class="action-button" id="integrate-dicom">
+                            <span class="action-icon">🖼️</span>
+                            <span>Integrate DICOM</span>
+                        </button>
+                        <button class="action-button" id="match-patients">
+                            <span class="action-icon">👥</span>
+                            <span>Match Patients</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FHIR Integration Tab -->
+            <section id="fhir" class="tab-content">
+                <h2>FHIR API Integration</h2>
+                <div class="integration-grid">
+                    <div class="card">
+                        <h3>FHIR Configuration</h3>
+                        <form id="fhir-config-form" class="config-form">
+                            <div class="form-group">
+                                <label for="fhir-base-url">Base URL</label>
+                                <input type="text" id="fhir-base-url" name="fhir-base-url" value="https://fhir.example.com/fhir" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="fhir-version">Version</label>
+                                <select id="fhir-version" name="fhir-version">
+                                    <option value="R4" selected>R4</option>
+                                    <option value="R5">R5</option>
+                                    <option value="STU3">STU3</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="fhir-batch-size">Batch Size</label>
+                                <input type="number" id="fhir-batch-size" name="fhir-batch-size" value="100" min="1" max="1000">
+                            </div>
+                            <button type="submit" class="btn-primary">Update Configuration</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3>Resource Types</h3>
+                        <div class="resource-list">
+                            <div class="resource-item">
+                                <span class="resource-name">Patient</span>
+                                <span class="resource-status status-active">Active</span>
+                            </div>
+                            <div class="resource-item">
+                                <span class="resource-name">Observation</span>
+                                <span class="resource-status status-active">Active</span>
+                            </div>
+                            <div class="resource-item">
+                                <span class="resource-name">Condition</span>
+                                <span class="resource-status status-active">Active</span>
+                            </div>
+                            <div class="resource-item">
+                                <span class="resource-name">Medication</span>
+                                <span class="resource-status status-active">Active</span>
+                            </div>
+                            <div class="resource-item">
+                                <span class="resource-name">Allergy</span>
+                                <span class="resource-status status-active">Active</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Recent FHIR Operations</h3>
+                    <table class="operations-table">
+                        <thead>
+                            <tr>
+                                <th>Operation</th>
+                                <th>Resource</th>
+                                <th>Status</th>
+                                <th>Timestamp</th>
+                                <th>Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>READ</td>
+                                <td>Patient/12345</td>
+                                <td><span class="status-completed">Success</span></td>
+                                <td>2025-09-19 14:32:15</td>
+                                <td>42ms</td>
+                            </tr>
+                            <tr>
+                                <td>SEARCH</td>
+                                <td>Observation?patient=12345</td>
+                                <td><span class="status-completed">Success</span></td>
+                                <td>2025-09-19 14:32:10</td>
+                                <td>156ms</td>
+                            </tr>
+                            <tr>
+                                <td>CREATE</td>
+                                <td>Observation</td>
+                                <td><span class="status-completed">Success</span></td>
+                                <td>2025-09-19 14:31:45</td>
+                                <td>89ms</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- HL7 Processing Tab -->
+            <section id="hl7" class="tab-content">
+                <h2>HL7 Message Processing</h2>
+                <div class="processing-grid">
+                    <div class="card">
+                        <h3>HL7 Configuration</h3>
+                        <form id="hl7-config-form" class="config-form">
+                            <div class="form-group">
+                                <label for="hl7-version">Version</label>
+                                <select id="hl7-version" name="hl7-version">
+                                    <option value="2.3">2.3</option>
+                                    <option value="2.4">2.4</option>
+                                    <option value="2.5" selected>2.5</option>
+                                    <option value="2.5.1">2.5.1</option>
+                                    <option value="2.6">2.6</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="hl7-validation">Validation</label>
+                                <select id="hl7-validation" name="hl7-validation">
+                                    <option value="strict">Strict</option>
+                                    <option value="relaxed" selected>Relaxed</option>
+                                    <option value="none">None</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="hl7-concurrent">Concurrent Processing</label>
+                                <input type="number" id="hl7-concurrent" name="hl7-concurrent" value="10" min="1" max="100">
+                            </div>
+                            <button type="submit" class="btn-primary">Update Configuration</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3>Message Statistics</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-label">Total Messages</span>
+                                <span class="stat-value">12,458</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Successful</span>
+                                <span class="stat-value">12,412</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Failed</span>
+                                <span class="stat-value">46</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Success Rate</span>
+                                <span class="stat-value">99.6%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Recent HL7 Messages</h3>
+                    <table class="messages-table">
+                        <thead>
+                            <tr>
+                                <th>Message Type</th>
+                                <th>Patient ID</th>
+                                <th>Status</th>
+                                <th>Timestamp</th>
+                                <th>Processing Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ADT^A01</td>
+                                <td>PAT-12345</td>
+                                <td><span class="status-completed">Processed</span></td>
+                                <td>2025-09-19 14:30:22</td>
+                                <td>45ms</td>
+                            </tr>
+                            <tr>
+                                <td>ORU^R01</td>
+                                <td>PAT-67890</td>
+                                <td><span class="status-completed">Processed</span></td>
+                                <td>2025-09-19 14:29:58</td>
+                                <td>123ms</td>
+                            </tr>
+                            <tr>
+                                <td>ADT^A03</td>
+                                <td>PAT-11111</td>
+                                <td><span class="status-completed">Processed</span></td>
+                                <td>2025-09-19 14:28:45</td>
+                                <td>38ms</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- DICOM Integration Tab -->
+            <section id="dicom" class="tab-content">
+                <h2>DICOM Integration</h2>
+                <div class="dicom-grid">
+                    <div class="card">
+                        <h3>DICOM Configuration</h3>
+                        <form id="dicom-config-form" class="config-form">
+                            <div class="form-group">
+                                <label for="dicom-host">Server Host</label>
+                                <input type="text" id="dicom-host" name="dicom-host" value="dicom.example.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="dicom-port">Port</label>
+                                <input type="number" id="dicom-port" name="dicom-port" value="104" min="1" max="65535">
+                            </div>
+                            <div class="form-group">
+                                <label for="dicom-aet">AE Title</label>
+                                <input type="text" id="dicom-aet" name="dicom-aet" value="MEDISYNC" required>
+                            </div>
+                            <button type="submit" class="btn-primary">Update Configuration</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3>Storage Statistics</h3>
+                        <div class="storage-stats">
+                            <div class="storage-item">
+                                <span class="storage-label">Total Images</span>
+                                <span class="storage-value">24,567</span>
+                            </div>
+                            <div class="storage-item">
+                                <span class="storage-label">Storage Used</span>
+                                <span class="storage-value">842 GB</span>
+                            </div>
+                            <div class="storage-item">
+                                <span class="storage-label">Compression Rate</span>
+                                <span class="storage-value">85%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Recent DICOM Operations</h3>
+                    <table class="dicom-table">
+                        <thead>
+                            <tr>
+                                <th>Study ID</th>
+                                <th>Patient ID</th>
+                                <th>Modality</th>
+                                <th>Status</th>
+                                <th>Timestamp</th>
+                                <th>Size</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>STUDY-20250919-001</td>
+                                <td>PAT-12345</td>
+                                <td>CT</td>
+                                <td><span class="status-completed">Stored</span></td>
+                                <td>2025-09-19 14:25:33</td>
+                                <td>125 MB</td>
+                            </tr>
+                            <tr>
+                                <td>STUDY-20250919-002</td>
+                                <td>PAT-67890</td>
+                                <td>MRI</td>
+                                <td><span class="status-completed">Stored</span></td>
+                                <td>2025-09-19 14:22:18</td>
+                                <td>245 MB</td>
+                            </tr>
+                            <tr>
+                                <td>STUDY-20250919-003</td>
+                                <td>PAT-11111</td>
+                                <td>XRAY</td>
+                                <td><span class="status-completed">Stored</span></td>
+                                <td>2025-09-19 14:20:45</td>
+                                <td>12 MB</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Data Synchronization Tab -->
+            <section id="sync" class="tab-content">
+                <h2>EHR Data Synchronization</h2>
+                <div class="sync-grid">
+                    <div class="card">
+                        <h3>Synchronization Settings</h3>
+                        <form id="sync-config-form" class="config-form">
+                            <div class="form-group">
+                                <label for="sync-frequency">Frequency (minutes)</label>
+                                <input type="number" id="sync-frequency" name="sync-frequency" value="5" min="1" max="1440">
+                            </div>
+                            <div class="form-group">
+                                <label for="sync-batch-size">Batch Size</label>
+                                <input type="number" id="sync-batch-size" name="sync-batch-size" value="1000" min="1" max="10000">
+                            </div>
+                            <div class="form-group">
+                                <label for="sync-conflict">Conflict Resolution</label>
+                                <select id="sync-conflict" name="sync-conflict">
+                                    <option value="last-write-wins" selected>Last Write Wins</option>
+                                    <option value="timestamp">Timestamp Based</option>
+                                    <option value="manual">Manual Review</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn-primary">Update Configuration</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3>Synchronization Status</h3>
+                        <div class="sync-status">
+                            <div class="status-item">
+                                <span class="status-label">Last Sync</span>
+                                <span class="status-value">2 minutes ago</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Records Synced</span>
+                                <span class="status-value">1,247</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Conflicts Resolved</span>
+                                <span class="status-value">3</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Next Sync</span>
+                                <span class="status-value">3 minutes</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Sync History</h3>
+                    <table class="sync-table">
+                        <thead>
+                            <tr>
+                                <th>Sync ID</th>
+                                <th>Start Time</th>
+                                <th>Duration</th>
+                                <th>Records</th>
+                                <th>Status</th>
+                                <th>Conflicts</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>SYNC-20250919-1430</td>
+                                <td>2025-09-19 14:30:00</td>
+                                <td>2m 15s</td>
+                                <td>1,247</td>
+                                <td><span class="status-completed">Completed</span></td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>SYNC-20250919-1425</td>
+                                <td>2025-09-19 14:25:00</td>
+                                <td>2m 08s</td>
+                                <td>1,234</td>
+                                <td><span class="status-completed">Completed</span></td>
+                                <td>1</td>
+                            </tr>
+                            <tr>
+                                <td>SYNC-20250919-1420</td>
+                                <td>2025-09-19 14:20:00</td>
+                                <td>2m 12s</td>
+                                <td>1,256</td>
+                                <td><span class="status-completed">Completed</span></td>
+                                <td>2</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Patient Matching Tab -->
+            <section id="matching" class="tab-content">
+                <h2>Patient Record Matching</h2>
+                <div class="matching-grid">
+                    <div class="card">
+                        <h3>Matching Configuration</h3>
+                        <form id="matching-config-form" class="config-form">
+                            <div class="form-group">
+                                <label for="matching-threshold">Confidence Threshold</label>
+                                <input type="number" id="matching-threshold" name="matching-threshold" value="85" min="0" max="100" step="1">
+                                <span class="range-value">85%</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="matching-algorithm">Algorithm</label>
+                                <select id="matching-algorithm" name="matching-algorithm">
+                                    <option value="probabilistic" selected>Probabilistic</option>
+                                    <option value="deterministic">Deterministic</option>
+                                    <option value="machine-learning">Machine Learning</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="matching-max-candidates">Max Candidates</label>
+                                <input type="number" id="matching-max-candidates" name="matching-max-candidates" value="10" min="1" max="100">
+                            </div>
+                            <button type="submit" class="btn-primary">Update Configuration</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3>Matching Statistics</h3>
+                        <div class="matching-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Total Matches</span>
+                                <span class="stat-value">5,234</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">High Confidence</span>
+                                <span class="stat-value">4,892</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Manual Review</span>
+                                <span class="stat-value">342</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Accuracy</span>
+                                <span class="stat-value">98.7%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Recent Patient Matches</h3>
+                    <table class="matching-table">
+                        <thead>
+                            <tr>
+                                <th>Patient Name</th>
+                                <th>Matched Record</th>
+                                <th>Confidence</th>
+                                <th>Fields Matched</th>
+                                <th>Status</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>John Smith</td>
+                                <td>PAT-12345</td>
+                                <td>96%</td>
+                                <td>Name, DOB, Address</td>
+                                <td><span class="status-completed">Auto-Matched</span></td>
+                                <td>2025-09-19 14:15:22</td>
+                            </tr>
+                            <tr>
+                                <td>Mary Johnson</td>
+                                <td>PAT-67890</td>
+                                <td>92%</td>
+                                <td>Name, DOB, Phone</td>
+                                <td><span class="status-completed">Auto-Matched</span></td>
+                                <td>2025-09-19 14:12:45</td>
+                            </tr>
+                            <tr>
+                                <td>Robert Williams</td>
+                                <td>PAT-11111</td>
+                                <td>88%</td>
+                                <td>Name, DOB</td>
+                                <td><span class="status-pending">Review Needed</span></td>
+                                <td>2025-09-19 14:10:33</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Image Processing Tab -->
+            <section id="imaging" class="tab-content">
+                <h2>Medical Image Processing</h2>
+                <div class="imaging-grid">
+                    <div class="card">
+                        <h3>Processing Configuration</h3>
+                        <form id="imaging-config-form" class="config-form">
+                            <div class="form-group">
+                                <label for="imaging-formats">Supported Formats</label>
+                                <select id="imaging-formats" name="imaging-formats" multiple>
+                                    <option value="DICOM" selected>DICOM</option>
+                                    <option value="JPEG" selected>JPEG</option>
+                                    <option value="PNG" selected>PNG</option>
+                                    <option value="TIFF">TIFF</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="imaging-ai">AI Analysis</label>
+                                <select id="imaging-ai" name="imaging-ai">
+                                    <option value="radiology" selected>Radiology</option>
+                                    <option value="pathology">Pathology</option>
+                                    <option value="dermatology">Dermatology</option>
+                                    <option value="all">All Models</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="imaging-confidence">Confidence Threshold</label>
+                                <input type="number" id="imaging-confidence" name="imaging-confidence" value="90" min="0" max="100" step="1">
+                                <span class="range-value">90%</span>
+                            </div>
+                            <button type="submit" class="btn-primary">Update Configuration</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3>Processing Statistics</h3>
+                        <div class="imaging-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Images Processed</span>
+                                <span class="stat-value">12,456</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">AI Analysis</span>
+                                <span class="stat-value">11,234</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Annotations</span>
+                                <span class="stat-value">9,876</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Thumbnails</span>
+                                <span class="stat-value">12,456</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Recent Image Processing</h3>
+                    <table class="imaging-table">
+                        <thead>
+                            <tr>
+                                <th>Image ID</th>
+                                <th>Patient ID</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>AI Findings</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>IMG-20250919-001</td>
+                                <td>PAT-12345</td>
+                                <td>CT Scan</td>
+                                <td><span class="status-completed">Processed</span></td>
+                                <td>Normal</td>
+                                <td>2025-09-19 14:05:33</td>
+                            </tr>
+                            <tr>
+                                <td>IMG-20250919-002</td>
+                                <td>PAT-67890</td>
+                                <td>MRI</td>
+                                <td><span class="status-completed">Processed</span></td>
+                                <td>Mild anomaly detected</td>
+                                <td>2025-09-19 14:02:18</td>
+                            </tr>
+                            <tr>
+                                <td>IMG-20250919-003</td>
+                                <td>PAT-11111</td>
+                                <td>X-Ray</td>
+                                <td><span class="status-completed">Processed</span></td>
+                                <td>Fracture identified</td>
+                                <td>2025-09-19 13:58:45</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <p>MediSync Healthcare Integration Dashboard &copy; 2025 | HIPAA Compliant | GDPR Ready | FHIR R4 Compatible</p>
+        </footer>
+    </div>
+
+    <script src="../scripts/healthcare-dashboard.js"></script>
+</body>
+</html>
