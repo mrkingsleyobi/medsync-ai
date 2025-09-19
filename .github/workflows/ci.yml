@@ -54,7 +54,7 @@ jobs:
       run: npm run lint
 
     - name: Run tests
-      run: npm test
+      run: npx jest
       working-directory: huggingface
 
     - name: Upload coverage to Codecov
