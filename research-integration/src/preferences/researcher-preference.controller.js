@@ -110,7 +110,10 @@ class ResearcherPreferenceController {
       });
 
       // Handle validation errors
-      if (error.message.includes('required') || error.message.includes('Unknown preference')) {
+      if (error.message.includes('required') ||
+          error.message.includes('Unknown preference') ||
+          error.message.includes('must be') ||
+          error.message.includes('Invalid preferences structure')) {
         return res.status(400).json({
           error: error.message
         });
@@ -165,6 +168,16 @@ class ResearcherPreferenceController {
       console.error('Update researcher preferences controller error', {
         error: error.message
       });
+
+      // Handle validation errors
+      if (error.message.includes('required') ||
+          error.message.includes('Unknown preference') ||
+          error.message.includes('must be') ||
+          error.message.includes('Invalid preferences structure')) {
+        return res.status(400).json({
+          error: error.message
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to update researcher preferences',

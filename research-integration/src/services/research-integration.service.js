@@ -10,6 +10,9 @@ const winston = require('winston');
 class ResearchIntegrationService {
   /**
    * Create a new Research Integration Service
+   * NOTE: This is a simulation implementation for demonstration purposes.
+   * In a production environment, this would connect to real medical databases
+   * and use actual NLP/ML models for analysis.
    */
   constructor() {
     this.config = config;
@@ -18,6 +21,9 @@ class ResearchIntegrationService {
     this.literatureDatabase = new Map();
     this.trialDatabase = new Map();
     this.researchProjects = new Map();
+
+    // TODO: Replace in-memory Maps with persistent storage (e.g., database) for production use
+    // This will prevent data loss when the service restarts
 
     this.logger.info('Research Integration Service created', {
       service: 'research-integration-service'
