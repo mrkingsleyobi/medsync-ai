@@ -77,6 +77,9 @@ describe('Medical Image Classification', () => {
     // Mock the HuggingFace client to avoid API calls
     imageClassifier.hf = { imageClassification: jest.fn() };
 
+    // Mock file system access
+    jest.spyOn(fs.promises, 'access').mockResolvedValue();
+
     await expect(imageClassifier.classifyImageFromFile('test.jpg', 'non-existent-model'))
       .rejects
       .toThrow('Model non-existent-model not found');
@@ -101,8 +104,8 @@ describe('Medical Image Classification', () => {
     };
 
     // Mock file system
-    jest.spyOn(fs, 'existsSync').mockReturnValue(true);
-    jest.spyOn(fs, 'readFileSync').mockReturnValue(Buffer.from('test-image-data'));
+    jest.spyOn(fs.promises, 'access').mockResolvedValue();
+    jest.spyOn(fs.promises, 'readFile').mockResolvedValue(Buffer.from('test-image-data'));
 
     const result = await imageClassifier.classifyRadiologyImage('chest-xray.jpg');
     expect(result).toBeDefined();
@@ -133,8 +136,8 @@ describe('Medical Image Classification', () => {
     };
 
     // Mock file system
-    jest.spyOn(fs, 'existsSync').mockReturnValue(true);
-    jest.spyOn(fs, 'readFileSync').mockReturnValue(Buffer.from('test-image-data'));
+    jest.spyOn(fs.promises, 'access').mockResolvedValue();
+    jest.spyOn(fs.promises, 'readFile').mockResolvedValue(Buffer.from('test-image-data'));
 
     const result = await imageClassifier.classifyPathologyImage('tissue-slide.jpg');
     expect(result).toBeDefined();
@@ -150,8 +153,8 @@ describe('Medical Image Classification', () => {
     };
 
     // Mock file system
-    jest.spyOn(fs, 'existsSync').mockReturnValue(true);
-    jest.spyOn(fs, 'readFileSync').mockReturnValue(Buffer.from('test-image-data'));
+    jest.spyOn(fs.promises, 'access').mockResolvedValue();
+    jest.spyOn(fs.promises, 'readFile').mockResolvedValue(Buffer.from('test-image-data'));
 
     const images = [
       'chest-xray.jpg',

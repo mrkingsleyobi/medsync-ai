@@ -98,6 +98,10 @@ describe('HuggingFace Integration', () => {
     hf.registerModel('test-model-1', model1Config);
     hf.registerModel('test-model-2', model2Config);
 
+    // Load models to create metadata
+    hf.loadModel('test-model-1');
+    hf.loadModel('test-model-2');
+
     const allMetadata = hf.getAllModelMetadata();
     expect(Object.keys(allMetadata)).toHaveLength(2);
     expect(allMetadata['test-model-1']).toBeDefined();
