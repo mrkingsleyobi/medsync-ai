@@ -53,8 +53,13 @@ jobs:
     - name: Run linting
       run: npm run lint
 
+    - name: Install huggingface dependencies
+      run: npm install
+      working-directory: huggingface
+
     - name: Run tests
       run: npm run test:coverage -- --passWithNoTests
+      working-directory: .
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
