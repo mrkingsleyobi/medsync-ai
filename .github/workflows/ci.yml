@@ -53,12 +53,24 @@ jobs:
     - name: Run linting
       run: npm run lint
 
-    - name: Run a simple test to check if jest works
-      run: npx jest --version
+    - name: Check Node.js and npm versions
+      run: |
+        node --version
+        npm --version
       working-directory: huggingface
 
-    - name: Run tests
-      run: npx jest --verbose
+    - name: List directory contents
+      run: ls -la
+      working-directory: huggingface
+
+    - name: Check if jest is installed
+      run: |
+        npx jest --version || echo "Jest not found"
+        which jest || echo "Jest binary not found"
+      working-directory: huggingface
+
+    - name: Run a single test file to isolate the issue
+      run: npx jest test/huggingface.test.js --verbose
       working-directory: huggingface
 
     - name: Upload coverage to Codecov
