@@ -31,8 +31,8 @@ function cleanupOldEntries(map, options = {}) {
     // If we have too many entries, remove the oldest ones first
     if (map.size > maxEntries) {
       const entries = Array.from(map.entries())
-        .sort((a, b) => new Date(b[1][timestampField]) - new Date(a[1][timestampField]))
-        .slice(maxEntries);
+        .sort((a, b) => new Date(a[1][timestampField]) - new Date(b[1][timestampField]))
+        .slice(0, map.size - maxEntries);
 
       entries.forEach(([key]) => {
         map.delete(key);
