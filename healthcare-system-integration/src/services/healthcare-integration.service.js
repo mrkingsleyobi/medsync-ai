@@ -6,6 +6,8 @@
 const config = require('../config/healthcare-integration.config.js');
 const { v4: uuidv4 } = require('uuid');
 const winston = require('winston');
+const fs = require('fs');
+const path = require('path');
 
 class HealthcareIntegrationService {
   /**
@@ -15,6 +17,11 @@ class HealthcareIntegrationService {
    * EHR platforms, imaging systems, and data synchronization services.
    */
   constructor() {
+    // Check for required environment variables
+    if (this.config.fhir.enabled && (!process.env.FHIR_CLIENT_ID || !process.env.FHIR_CLIENT_SECRET)) {
+      throw new Error('FATAL: Missing required environment variables FHIR_CLIENT_ID and/or FHIR_CLIENT_SECRET');
+    }
+
     this.config = config;
     this.logger = this._createLogger();
     this.fhirClients = new Map();
@@ -38,8 +45,6 @@ class HealthcareIntegrationService {
    */
   _createLogger() {
     // Create logs directory if it doesn't exist
-    const fs = require('fs');
-    const path = require('path');
     const logsDir = path.join(process.cwd(), 'logs');
     if (!fs.existsSync(logsDir)) {
       fs.mkdirSync(logsDir, { recursive: true });

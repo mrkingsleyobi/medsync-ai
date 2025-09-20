@@ -6,6 +6,8 @@
 const config = require('../config/decision-support.config.js');
 const { v4: uuidv4 } = require('uuid');
 const winston = require('winston');
+const fs = require('fs');
+const path = require('path');
 
 class ClinicalDecisionSupportService {
   /**
@@ -33,8 +35,6 @@ class ClinicalDecisionSupportService {
    */
   _createLogger() {
     // Create logs directory if it doesn't exist
-    const fs = require('fs');
-    const path = require('path');
     const logsDir = path.join(process.cwd(), 'logs');
     if (!fs.existsSync(logsDir)) {
       fs.mkdirSync(logsDir, { recursive: true });

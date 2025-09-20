@@ -11,8 +11,8 @@ const config = {
     version: 'R4',
     authentication: {
       type: 'oauth2',
-      clientId: process.env.FHIR_CLIENT_ID || 'medisync-client',
-      clientSecret: process.env.FHIR_CLIENT_SECRET || 'secret-key',
+      clientId: process.env.FHIR_CLIENT_ID,
+      clientSecret: process.env.FHIR_CLIENT_SECRET,
       tokenUrl: process.env.FHIR_TOKEN_URL || 'https://fhir.example.com/oauth2/token'
     },
     resources: {

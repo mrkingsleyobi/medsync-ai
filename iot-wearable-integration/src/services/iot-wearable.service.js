@@ -6,6 +6,9 @@
 const config = require('../config/iot-wearable.config.js');
 const { v4: uuidv4 } = require('uuid');
 const winston = require('winston');
+const fs = require('fs');
+const path = require('path');
+const { cleanupOldEntries } = require('../../../src/utils/cleanup.util.js');
 
 class IoTWearableService {
   /**
@@ -38,8 +41,6 @@ class IoTWearableService {
    */
   _createLogger() {
     // Create logs directory if it doesn't exist
-    const fs = require('fs');
-    const path = require('path');
     const logsDir = path.join(process.cwd(), 'logs');
     if (!fs.existsSync(logsDir)) {
       fs.mkdirSync(logsDir, { recursive: true });
@@ -1146,26 +1147,17 @@ class IoTWearableService {
    */
   _cleanupOldJobs(jobMap) {
     try {
-      const maxAge = 24 * 60 * 60 * 1000; // 24 hours
-      const maxJobs = 1000; // Maximum number of jobs to keep
-      const now = Date.now();
+      const stats = cleanupOldEntries(jobMap, {
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        maxEntries: 1000
+      });
 
-      // If we have too many jobs, remove the oldest ones first
-      if (jobMap.size > maxJobs) {
-        const jobs = Array.from(jobMap.entries())
-          .sort((a, b) => new Date(b[1].createdAt) - new Date(a[1].createdAt))
-          .slice(maxJobs);
-
-        for (const [key, job] of jobs) {
-          jobMap.delete(key);
-        }
-      }
-
-      // Remove jobs older than maxAge
-      for (const [key, job] of jobMap.entries()) {
-        if (job.createdAt && (now - new Date(job.createdAt).getTime()) > maxAge) {
-          jobMap.delete(key);
-        }
+      if (stats.totalRemoved > 0) {
+        this.logger.debug('Job cleanup completed', {
+          removedByAge: stats.removedByAge,
+          removedByCount: stats.removedByCount,
+          totalRemoved: stats.totalRemoved
+        });
       }
     } catch (error) {
       this.logger.error('Job cleanup failed', {
