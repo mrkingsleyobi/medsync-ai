@@ -9,7 +9,16 @@ describe('HealthcareIntegrationService', () => {
   let healthcareIntegrationService;
 
   beforeEach(() => {
+    // Set required environment variables for testing
+    process.env.FHIR_CLIENT_ID = 'test-client-id';
+    process.env.FHIR_CLIENT_SECRET = 'test-client-secret';
     healthcareIntegrationService = new HealthcareIntegrationService();
+  });
+
+  afterEach(() => {
+    // Clear environment variables after each test
+    delete process.env.FHIR_CLIENT_ID;
+    delete process.env.FHIR_CLIENT_SECRET;
   });
 
   describe('integrateWithFhir', () => {

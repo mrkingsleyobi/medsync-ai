@@ -131,12 +131,23 @@ class AdminMonitoringService {
       } catch (error) {
         this.logger.error('Cleanup process failed', { error: error.message, stack: error.stack });
       } finally {
-        setTimeout(runCleanup, 60 * 60 * 1000); // Run every hour
+        this.cleanupTimeoutId = setTimeout(runCleanup, 60 * 60 * 1000); // Run every hour
       }
     };
     runCleanup();
 
     this.logger.info('Administrative services initialized');
+  }
+
+  /**
+   * Clear all pending timeouts
+   * @public
+   */
+  clearPendingTimeouts() {
+    if (this.cleanupTimeoutId) {
+      clearTimeout(this.cleanupTimeoutId);
+      this.cleanupTimeoutId = null;
+    }
   }
 
   /**

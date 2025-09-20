@@ -115,7 +115,7 @@ class HealthcareIntegrationService {
       } catch (error) {
         this.logger.error('Cleanup process failed', { error: error.message, stack: error.stack });
       } finally {
-        setTimeout(runCleanup, 60 * 60 * 1000); // Run every hour
+        this.cleanupTimeoutId = setTimeout(runCleanup, 60 * 60 * 1000); // Run every hour
       }
     };
     runCleanup();
@@ -124,10 +124,35 @@ class HealthcareIntegrationService {
   }
 
   /**
+   * Clear all pending timeouts
+   * @public
+   */
+  clearPendingTimeouts() {
+    if (this.cleanupTimeoutId) {
+      clearTimeout(this.cleanupTimeoutId);
+      this.cleanupTimeoutId = null;
+    }
+  }
+
+  /**
+   * Check for required environment variables
+   * @private
+   */
+  _checkRequiredEnvironmentVariables() {
+    // Check for required environment variables
+    if (this.config.fhir.enabled && (!process.env.FHIR_CLIENT_ID || !process.env.FHIR_CLIENT_SECRET)) {
+      throw new Error('FATAL: Missing required environment variables FHIR_CLIENT_ID and/or FHIR_CLIENT_SECRET');
+    }
+  }
+
+  /**
    * Initialize FHIR clients
    * @private
    */
   _initializeFhirClients() {
+    // Check for required environment variables
+    this._checkRequiredEnvironmentVariables();
+
     // In a real implementation, this would initialize FHIR client connections
     this.logger.info('FHIR clients initialized');
   }
@@ -180,6 +205,9 @@ class HealthcareIntegrationService {
       if (!this.config.fhir.enabled) {
         throw new Error('FHIR integration is not enabled');
       }
+
+      // Check for required environment variables
+      this._checkRequiredEnvironmentVariables();
 
       const jobId = uuidv4();
       this.logger.info('Starting FHIR integration', {
