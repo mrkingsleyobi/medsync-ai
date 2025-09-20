@@ -37,8 +37,16 @@ class HealthcareIntegrationService {
    * @returns {Object} Winston logger instance
    */
   _createLogger() {
+    // Create logs directory if it doesn't exist
+    const fs = require('fs');
+    const path = require('path');
+    const logsDir = path.join(process.cwd(), 'logs');
+    if (!fs.existsSync(logsDir)) {
+      fs.mkdirSync(logsDir, { recursive: true });
+    }
+
     return winston.createLogger({
-      level: 'info',
+      level: process.env.LOG_LEVEL || 'info',
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.errors({ stack: true }),
@@ -47,8 +55,26 @@ class HealthcareIntegrationService {
       ),
       defaultMeta: { service: 'healthcare-integration-service' },
       transports: [
-        new winston.transports.File({ filename: 'logs/healthcare-integration-service-error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'logs/healthcare-integration-service-combined.log' })
+        new winston.transports.File({
+          filename: path.join(logsDir, 'healthcare-integration-service-error.log'),
+          level: 'error',
+          maxsize: 10000000, // 10MB
+          maxFiles: 5
+        }),
+        new winston.transports.File({
+          filename: path.join(logsDir, 'healthcare-integration-service-combined.log'),
+          maxsize: 10000000, // 10MB
+          maxFiles: 5
+        }),
+        new winston.transports.Console({
+          format: winston.format.combine(
+            winston.format.colorize(),
+            winston.format.timestamp(),
+            winston.format.printf(({ timestamp, level, message, service, ...meta }) => {
+              return `${timestamp} [${level}] ${service || 'healthcare-integration-service'}: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`;
+            })
+          )
+        })
       ]
     });
   }

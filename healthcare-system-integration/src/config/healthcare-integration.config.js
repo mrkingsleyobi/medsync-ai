@@ -7,13 +7,13 @@ const config = {
   // FHIR API integration settings
   fhir: {
     enabled: true,
-    baseUrl: 'https://fhir.example.com/fhir',
+    baseUrl: process.env.FHIR_BASE_URL || 'https://fhir.example.com/fhir',
     version: 'R4',
     authentication: {
       type: 'oauth2',
-      clientId: 'medisync-client',
-      clientSecret: 'secret-key',
-      tokenUrl: 'https://fhir.example.com/oauth2/token'
+      clientId: process.env.FHIR_CLIENT_ID || 'medisync-client',
+      clientSecret: process.env.FHIR_CLIENT_SECRET || 'secret-key',
+      tokenUrl: process.env.FHIR_TOKEN_URL || 'https://fhir.example.com/oauth2/token'
     },
     resources: {
       patient: true,

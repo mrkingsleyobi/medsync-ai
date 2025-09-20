@@ -39,8 +39,16 @@ class AdminMonitoringService {
    * @returns {Object} Winston logger instance
    */
   _createLogger() {
+    // Create logs directory if it doesn't exist
+    const fs = require('fs');
+    const path = require('path');
+    const logsDir = path.join(process.cwd(), 'logs');
+    if (!fs.existsSync(logsDir)) {
+      fs.mkdirSync(logsDir, { recursive: true });
+    }
+
     return winston.createLogger({
-      level: 'info',
+      level: process.env.LOG_LEVEL || 'info',
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.errors({ stack: true }),
@@ -49,8 +57,26 @@ class AdminMonitoringService {
       ),
       defaultMeta: { service: 'admin-monitoring-service' },
       transports: [
-        new winston.transports.File({ filename: 'logs/admin-monitoring-service-error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'logs/admin-monitoring-service-combined.log' })
+        new winston.transports.File({
+          filename: path.join(logsDir, 'admin-monitoring-service-error.log'),
+          level: 'error',
+          maxsize: 10000000, // 10MB
+          maxFiles: 5
+        }),
+        new winston.transports.File({
+          filename: path.join(logsDir, 'admin-monitoring-service-combined.log'),
+          maxsize: 10000000, // 10MB
+          maxFiles: 5
+        }),
+        new winston.transports.Console({
+          format: winston.format.combine(
+            winston.format.colorize(),
+            winston.format.timestamp(),
+            winston.format.printf(({ timestamp, level, message, service, ...meta }) => {
+              return `${timestamp} [${level}] ${service || 'admin-monitoring-service'}: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`;
+            })
+          )
+        })
       ]
     });
   }
@@ -60,21 +86,46 @@ class AdminMonitoringService {
    * @private
    */
   _initializeServices() {
-    // Start periodic tasks
+    // Start periodic tasks with proper async handling
+    const scheduleAsyncTask = (asyncTask, interval) => {
+      const run = async () => {
+        try {
+          await asyncTask();
+        } catch (error) {
+          this.logger.error('Scheduled task failed', { error: error.message, stack: error.stack });
+        } finally {
+          setTimeout(run, interval);
+        }
+      };
+      run();
+    };
+
+    // Schedule alert cleanup periodically
+    const runAlertCleanup = async () => {
+      try {
+        this._cleanupOldAlerts();
+      } catch (error) {
+        this.logger.error('Alert cleanup failed', { error: error.message, stack: error.stack });
+      } finally {
+        setTimeout(runAlertCleanup, 60 * 60 * 1000); // Run every hour
+      }
+    };
+    runAlertCleanup();
+
     if (this.config.documentation.enabled) {
-      setInterval(() => this._generateDocumentation(), this.config.documentation.updateInterval);
+      scheduleAsyncTask(() => this._generateDocumentation(), this.config.documentation.updateInterval);
     }
 
     if (this.config.resourceAllocation.enabled) {
-      setInterval(() => this._optimizeResourceAllocation(), this.config.resourceAllocation.optimizationInterval);
+      scheduleAsyncTask(() => this._optimizeResourceAllocation(), this.config.resourceAllocation.optimizationInterval);
     }
 
     if (this.config.monitoring.enabled) {
-      setInterval(() => this._collectMonitoringData(), this.config.monitoring.refreshInterval);
+      scheduleAsyncTask(() => this._collectMonitoringData(), this.config.monitoring.refreshInterval);
     }
 
     if (this.config.analytics.enabled) {
-      setInterval(() => this._collectAnalyticsData(), this.config.analytics.collectionInterval);
+      scheduleAsyncTask(() => this._collectAnalyticsData(), this.config.analytics.collectionInterval);
     }
 
     if (this.config.usageReporting.enabled) {
@@ -114,6 +165,8 @@ class AdminMonitoringService {
       };
 
       this.documentationJobs.set(jobId, job);
+      // Clean up old jobs if we have too many
+      this._cleanupOldJobs(this.documentationJobs);
 
       // Start job
       job.status = 'running';
@@ -910,6 +963,77 @@ class AdminMonitoringService {
       resolved: alert.resolved,
       resolvedAt: alert.resolvedAt
     };
+  }
+
+  /**
+   * Clean up old jobs to prevent memory leaks
+   * @param {Map} jobMap - The job Map to clean up
+   * @private
+   */
+  _cleanupOldJobs(jobMap) {
+    try {
+      const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+      const maxJobs = 1000; // Maximum number of jobs to keep
+      const now = Date.now();
+
+      // If we have too many jobs, remove the oldest ones first
+      if (jobMap.size > maxJobs) {
+        const jobs = Array.from(jobMap.entries())
+          .sort((a, b) => new Date(b[1].createdAt) - new Date(a[1].createdAt))
+          .slice(maxJobs);
+
+        for (const [key, job] of jobs) {
+          jobMap.delete(key);
+        }
+      }
+
+      // Remove jobs older than maxAge
+      for (const [key, job] of jobMap.entries()) {
+        if (job.createdAt && (now - new Date(job.createdAt).getTime()) > maxAge) {
+          jobMap.delete(key);
+        }
+      }
+    } catch (error) {
+      this.logger.error('Job cleanup failed', {
+        error: error.message,
+        stack: error.stack
+      });
+    }
+  }
+
+  /**
+   * Clean up old alerts to prevent memory leaks
+   * @private
+   */
+  _cleanupOldAlerts() {
+    try {
+      const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
+      const maxAlerts = 10000; // Maximum number of alerts to keep
+      const now = Date.now();
+
+      // If we have too many alerts, remove the oldest ones first
+      if (this.alerts.size > maxAlerts) {
+        const alerts = Array.from(this.alerts.entries())
+          .sort((a, b) => new Date(b[1].createdAt) - new Date(a[1].createdAt))
+          .slice(maxAlerts);
+
+        for (const [key, alert] of alerts) {
+          this.alerts.delete(key);
+        }
+      }
+
+      // Remove alerts older than maxAge
+      for (const [key, alert] of this.alerts.entries()) {
+        if (alert.createdAt && (now - new Date(alert.createdAt).getTime()) > maxAge) {
+          this.alerts.delete(key);
+        }
+      }
+    } catch (error) {
+      this.logger.error('Alert cleanup failed', {
+        error: error.message,
+        stack: error.stack
+      });
+    }
   }
 }
 

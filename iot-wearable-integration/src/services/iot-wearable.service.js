@@ -37,8 +37,16 @@ class IoTWearableService {
    * @returns {Object} Winston logger instance
    */
   _createLogger() {
+    // Create logs directory if it doesn't exist
+    const fs = require('fs');
+    const path = require('path');
+    const logsDir = path.join(process.cwd(), 'logs');
+    if (!fs.existsSync(logsDir)) {
+      fs.mkdirSync(logsDir, { recursive: true });
+    }
+
     return winston.createLogger({
-      level: 'info',
+      level: process.env.LOG_LEVEL || 'info',
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.errors({ stack: true }),
@@ -47,8 +55,26 @@ class IoTWearableService {
       ),
       defaultMeta: { service: 'iot-wearable-service' },
       transports: [
-        new winston.transports.File({ filename: 'logs/iot-wearable-service-error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'logs/iot-wearable-service-combined.log' })
+        new winston.transports.File({
+          filename: path.join(logsDir, 'iot-wearable-service-error.log'),
+          level: 'error',
+          maxsize: 10000000, // 10MB
+          maxFiles: 5
+        }),
+        new winston.transports.File({
+          filename: path.join(logsDir, 'iot-wearable-service-combined.log'),
+          maxsize: 10000000, // 10MB
+          maxFiles: 5
+        }),
+        new winston.transports.Console({
+          format: winston.format.combine(
+            winston.format.colorize(),
+            winston.format.timestamp(),
+            winston.format.printf(({ timestamp, level, message, service, ...meta }) => {
+              return `${timestamp} [${level}] ${service || 'iot-wearable-service'}: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`;
+            })
+          )
+        })
       ]
     });
   }
@@ -70,17 +96,61 @@ class IoTWearableService {
 
     // Start monitoring if enabled
     if (this.config.monitoring.enabled) {
-      setInterval(() => this._collectMonitoringData(), this.config.monitoring.frequency);
+      const runMonitoring = async () => {
+        try {
+          await this._collectMonitoringData();
+          // Clean up old jobs periodically
+          this._cleanupOldMonitoringJobs();
+          // Clean up old alerts periodically
+          this._cleanupOldAlerts();
+        } catch (error) {
+          this.logger.error('Monitoring data collection failed', {
+            error: error.message,
+            stack: error.stack
+          });
+        } finally {
+          setTimeout(runMonitoring, this.config.monitoring.frequency);
+        }
+      };
+      runMonitoring();
     }
 
     // Start analytics if enabled
     if (this.config.populationAnalytics.enabled) {
-      setInterval(() => this._collectAnalyticsData(), this.config.populationAnalytics.aggregation.frequency);
+      const runAnalytics = async () => {
+        try {
+          await this._collectAnalyticsData();
+          // Clean up old analytics data periodically
+          this._cleanupOldAnalyticsData();
+        } catch (error) {
+          this.logger.error('Analytics data collection failed', {
+            error: error.message,
+            stack: error.stack
+          });
+        } finally {
+          setTimeout(runAnalytics, this.config.populationAnalytics.aggregation.frequency);
+        }
+      };
+      runAnalytics();
     }
 
     // Start health prediction if enabled
     if (this.config.healthPrediction.enabled) {
-      setInterval(() => this._generateHealthPredictions(), this.config.healthPrediction.updateFrequency);
+      const runPredictions = async () => {
+        try {
+          await this._generateHealthPredictions();
+          // Clean up old predictions periodically
+          this._cleanupOldPredictions();
+        } catch (error) {
+          this.logger.error('Health prediction generation failed', {
+            error: error.message,
+            stack: error.stack
+          });
+        } finally {
+          setTimeout(runPredictions, this.config.healthPrediction.updateFrequency);
+        }
+      };
+      runPredictions();
     }
 
     this.logger.info('IoT & wearable services initialized');
@@ -118,6 +188,28 @@ class IoTWearableService {
       this.logger.debug('Monitoring data collection completed');
     } catch (error) {
       this.logger.error('Monitoring data collection failed', {
+        error: error.message,
+        stack: error.stack
+      });
+    }
+  }
+
+  /**
+   * Clean up old monitoring jobs to prevent memory leaks
+   * @private
+   */
+  _cleanupOldMonitoringJobs() {
+    try {
+      const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+      const now = Date.now();
+
+      for (const [key, job] of this.monitoringData.entries()) {
+        if (job.createdAt && (now - new Date(job.createdAt).getTime()) > maxAge) {
+          this.monitoringData.delete(key);
+        }
+      }
+    } catch (error) {
+      this.logger.error('Monitoring job cleanup failed', {
         error: error.message,
         stack: error.stack
       });
@@ -186,6 +278,8 @@ class IoTWearableService {
 
     this.wearableJobs = this.wearableJobs || new Map();
     this.wearableJobs.set(jobId, job);
+    // Clean up old jobs if we have too many
+    this._cleanupOldJobs(this.wearableJobs);
 
     try {
       if (!this.config.wearables.enabled) {
@@ -283,6 +377,8 @@ class IoTWearableService {
 
     this.sensorJobs = this.sensorJobs || new Map();
     this.sensorJobs.set(jobId, job);
+    // Clean up old jobs if we have too many
+    this._cleanupOldJobs(this.sensorJobs);
 
     try {
       if (!this.config.sensors.enabled) {
@@ -642,6 +738,8 @@ class IoTWearableService {
 
     this.analyticsJobs = this.analyticsJobs || new Map();
     this.analyticsJobs.set(jobId, job);
+    // Clean up old jobs if we have too many
+    this._cleanupOldJobs(this.analyticsJobs);
 
     try {
       if (!this.config.populationAnalytics.enabled) {
@@ -1039,6 +1137,77 @@ class IoTWearableService {
       resolved: alert.resolved,
       resolvedAt: alert.resolvedAt
     };
+  }
+
+  /**
+   * Clean up old jobs to prevent memory leaks
+   * @param {Map} jobMap - The job Map to clean up
+   * @private
+   */
+  _cleanupOldJobs(jobMap) {
+    try {
+      const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+      const maxJobs = 1000; // Maximum number of jobs to keep
+      const now = Date.now();
+
+      // If we have too many jobs, remove the oldest ones first
+      if (jobMap.size > maxJobs) {
+        const jobs = Array.from(jobMap.entries())
+          .sort((a, b) => new Date(b[1].createdAt) - new Date(a[1].createdAt))
+          .slice(maxJobs);
+
+        for (const [key, job] of jobs) {
+          jobMap.delete(key);
+        }
+      }
+
+      // Remove jobs older than maxAge
+      for (const [key, job] of jobMap.entries()) {
+        if (job.createdAt && (now - new Date(job.createdAt).getTime()) > maxAge) {
+          jobMap.delete(key);
+        }
+      }
+    } catch (error) {
+      this.logger.error('Job cleanup failed', {
+        error: error.message,
+        stack: error.stack
+      });
+    }
+  }
+
+  /**
+   * Clean up old alerts to prevent memory leaks
+   * @private
+   */
+  _cleanupOldAlerts() {
+    try {
+      const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
+      const maxAlerts = 10000; // Maximum number of alerts to keep
+      const now = Date.now();
+
+      // If we have too many alerts, remove the oldest ones first
+      if (this.alerts.size > maxAlerts) {
+        const alerts = Array.from(this.alerts.entries())
+          .sort((a, b) => new Date(b[1].createdAt) - new Date(a[1].createdAt))
+          .slice(maxAlerts);
+
+        for (const [key, alert] of alerts) {
+          this.alerts.delete(key);
+        }
+      }
+
+      // Remove alerts older than maxAge
+      for (const [key, alert] of this.alerts.entries()) {
+        if (alert.createdAt && (now - new Date(alert.createdAt).getTime()) > maxAge) {
+          this.alerts.delete(key);
+        }
+      }
+    } catch (error) {
+      this.logger.error('Alert cleanup failed', {
+        error: error.message,
+        stack: error.stack
+      });
+    }
   }
 }
 

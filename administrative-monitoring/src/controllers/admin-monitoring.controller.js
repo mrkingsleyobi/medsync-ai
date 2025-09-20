@@ -45,20 +45,22 @@ class AdminMonitoringController {
         processingTime: result.processingTime
       });
     } catch (error) {
-      console.error('Generate documentation controller error', {
-        error: error.message
+      // Log the full error details server-side
+      this.adminMonitoringService.logger.error('Generate documentation controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
-      // Handle validation errors
+      // Handle validation errors with user-friendly messages
       if (error.message.includes('Formats') || error.message.includes('required')) {
         return res.status(400).json({
-          error: error.message
+          error: 'Invalid formats provided'
         });
       }
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to generate documentation',
-        message: error.message
+        error: 'Failed to generate documentation'
       });
     }
   }
@@ -102,20 +104,22 @@ class AdminMonitoringController {
         }
       });
     } catch (error) {
-      console.error('Schedule task controller error', {
-        error: error.message
+      // Log the full error details server-side
+      this.adminMonitoringService.logger.error('Schedule task controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
-      // Handle validation errors
+      // Handle validation errors with user-friendly messages
       if (error.message.includes('Task') || error.message.includes('required')) {
         return res.status(400).json({
-          error: error.message
+          error: 'Invalid task data provided'
         });
       }
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to schedule task',
-        message: error.message
+        error: 'Failed to schedule task'
       });
     }
   }
@@ -140,13 +144,15 @@ class AdminMonitoringController {
         processingTime: result.processingTime
       });
     } catch (error) {
-      console.error('Optimize resource allocation controller error', {
-        error: error.message
+      // Log the full error details server-side
+      this.adminMonitoringService.logger.error('Optimize resource allocation controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to optimize resource allocation',
-        message: error.message
+        error: 'Failed to optimize resource allocation'
       });
     }
   }
@@ -179,20 +185,22 @@ class AdminMonitoringController {
         result: result.result
       });
     } catch (error) {
-      console.error('Process billing controller error', {
-        error: error.message
+      // Log the full error details server-side
+      this.adminMonitoringService.logger.error('Process billing controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
-      // Handle validation errors
+      // Handle validation errors with user-friendly messages
       if (error.message.includes('Customer ID') || error.message.includes('required')) {
         return res.status(400).json({
-          error: error.message
+          error: 'Invalid billing data provided'
         });
       }
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to process billing',
-        message: error.message
+        error: 'Failed to process billing'
       });
     }
   }
@@ -213,13 +221,15 @@ class AdminMonitoringController {
         status: status
       });
     } catch (error) {
-      console.error('Get service status controller error', {
-        error: error.message
+      // Log the full error details server-side
+      this.adminMonitoringService.logger.error('Get service status controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve service status',
-        message: error.message
+        error: 'Failed to retrieve service status'
       });
     }
   }
@@ -255,13 +265,15 @@ class AdminMonitoringController {
         });
       }
     } catch (error) {
-      console.error('Get documentation job status controller error', {
-        error: error.message
+      // Log the full error details server-side
+      this.adminMonitoringService.logger.error('Get documentation job status controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve documentation job status',
-        message: error.message
+        error: 'Failed to retrieve documentation job status'
       });
     }
   }
@@ -282,13 +294,15 @@ class AdminMonitoringController {
         tasks: tasks
       });
     } catch (error) {
-      console.error('Get scheduled tasks controller error', {
-        error: error.message
+      // Log the full error details server-side
+      this.adminMonitoringService.logger.error('Get scheduled tasks controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve scheduled tasks',
-        message: error.message
+        error: 'Failed to retrieve scheduled tasks'
       });
     }
   }
@@ -309,13 +323,15 @@ class AdminMonitoringController {
         records: records
       });
     } catch (error) {
-      console.error('Get billing records controller error', {
-        error: error.message
+      // Log the full error details server-side
+      this.adminMonitoringService.logger.error('Get billing records controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve billing records',
-        message: error.message
+        error: 'Failed to retrieve billing records'
       });
     }
   }
@@ -346,13 +362,15 @@ class AdminMonitoringController {
         processingTime: result.processingTime
       });
     } catch (error) {
-      console.error('Generate usage report controller error', {
-        error: error.message
+      // Log the full error details server-side
+      this.adminMonitoringService.logger.error('Generate usage report controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to generate usage report',
-        message: error.message
+        error: 'Failed to generate usage report'
       });
     }
   }
@@ -373,13 +391,15 @@ class AdminMonitoringController {
         alerts: alerts
       });
     } catch (error) {
-      console.error('Get active alerts controller error', {
-        error: error.message
+      // Log the full error details server-side
+      this.adminMonitoringService.logger.error('Get active alerts controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve active alerts',
-        message: error.message
+        error: 'Failed to retrieve active alerts'
       });
     }
   }
@@ -416,13 +436,15 @@ class AdminMonitoringController {
         });
       }
     } catch (error) {
-      console.error('Acknowledge alert controller error', {
-        error: error.message
+      // Log the full error details server-side
+      this.adminMonitoringService.logger.error('Acknowledge alert controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to acknowledge alert',
-        message: error.message
+        error: 'Failed to acknowledge alert'
       });
     }
   }
@@ -459,13 +481,15 @@ class AdminMonitoringController {
         });
       }
     } catch (error) {
-      console.error('Resolve alert controller error', {
-        error: error.message
+      // Log the full error details server-side
+      this.adminMonitoringService.logger.error('Resolve alert controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to resolve alert',
-        message: error.message
+        error: 'Failed to resolve alert'
       });
     }
   }
