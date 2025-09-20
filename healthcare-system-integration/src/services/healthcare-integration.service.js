@@ -6,6 +6,8 @@
 const config = require('../config/healthcare-integration.config.js');
 const { v4: uuidv4 } = require('uuid');
 const winston = require('winston');
+const fs = require('fs');
+const path = require('path');
 
 class HealthcareIntegrationService {
   /**
@@ -23,6 +25,18 @@ class HealthcareIntegrationService {
     this.syncJobs = new Map();
     this.matchingResults = new Map();
     this.imageProcessingJobs = new Map();
+  }
+
+  /**
+   * Check for required environment variables
+   * @private
+   */
+  _checkRequiredEnvironmentVariables() {
+    // Check for required environment variables
+    if (this.config.fhir.enabled && (!process.env.FHIR_CLIENT_ID || !process.env.FHIR_CLIENT_SECRET)) {
+      throw new Error('FATAL: Missing required environment variables FHIR_CLIENT_ID and/or FHIR_CLIENT_SECRET');
+    }
+  }
 
     // Initialize services
     this._initializeServices();
@@ -37,8 +51,14 @@ class HealthcareIntegrationService {
    * @returns {Object} Winston logger instance
    */
   _createLogger() {
+    // Create logs directory if it doesn't exist
+    const logsDir = path.join(process.cwd(), 'logs');
+    if (!fs.existsSync(logsDir)) {
+      fs.mkdirSync(logsDir, { recursive: true });
+    }
+
     return winston.createLogger({
-      level: 'info',
+      level: process.env.LOG_LEVEL || 'info',
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.errors({ stack: true }),
@@ -47,8 +67,26 @@ class HealthcareIntegrationService {
       ),
       defaultMeta: { service: 'healthcare-integration-service' },
       transports: [
-        new winston.transports.File({ filename: 'logs/healthcare-integration-service-error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'logs/healthcare-integration-service-combined.log' })
+        new winston.transports.File({
+          filename: path.join(logsDir, 'healthcare-integration-service-error.log'),
+          level: 'error',
+          maxsize: 10000000, // 10MB
+          maxFiles: 5
+        }),
+        new winston.transports.File({
+          filename: path.join(logsDir, 'healthcare-integration-service-combined.log'),
+          maxsize: 10000000, // 10MB
+          maxFiles: 5
+        }),
+        new winston.transports.Console({
+          format: winston.format.combine(
+            winston.format.colorize(),
+            winston.format.timestamp(),
+            winston.format.printf(({ timestamp, level, message, service, ...meta }) => {
+              return `${timestamp} [${level}] ${service || 'healthcare-integration-service'}: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`;
+            })
+          )
+        })
       ]
     });
   }
@@ -86,6 +124,9 @@ class HealthcareIntegrationService {
    * @private
    */
   _initializeFhirClients() {
+    // Check for required environment variables
+    this._checkRequiredEnvironmentVariables();
+
     // In a real implementation, this would initialize FHIR client connections
     this.logger.info('FHIR clients initialized');
   }
@@ -138,6 +179,9 @@ class HealthcareIntegrationService {
       if (!this.config.fhir.enabled) {
         throw new Error('FHIR integration is not enabled');
       }
+
+      // Check for required environment variables
+      this._checkRequiredEnvironmentVariables();
 
       const jobId = uuidv4();
       this.logger.info('Starting FHIR integration', {
