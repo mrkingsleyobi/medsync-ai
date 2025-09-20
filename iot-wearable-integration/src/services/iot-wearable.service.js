@@ -6,6 +6,7 @@
 const config = require('../config/iot-wearable.config.js');
 const { v4: uuidv4 } = require('uuid');
 const winston = require('winston');
+const { cleanupOldEntries } = require('../../../src/utils/cleanup.util.js');
 
 class IoTWearableService {
   /**
@@ -70,18 +71,81 @@ class IoTWearableService {
 
     // Start monitoring if enabled
     if (this.config.monitoring.enabled) {
-      setInterval(() => this._collectMonitoringData(), this.config.monitoring.frequency);
+      const runMonitoring = async () => {
+        try {
+          await this._collectMonitoringData();
+        } catch (error) {
+          this.logger.error('Monitoring data collection failed', { error: error.message, stack: error.stack });
+        } finally {
+          setTimeout(runMonitoring, this.config.monitoring.frequency);
+        }
+      };
+      runMonitoring();
     }
 
     // Start analytics if enabled
     if (this.config.populationAnalytics.enabled) {
-      setInterval(() => this._collectAnalyticsData(), this.config.populationAnalytics.aggregation.frequency);
+      const runAnalytics = async () => {
+        try {
+          await this._collectAnalyticsData();
+        } catch (error) {
+          this.logger.error('Analytics data collection failed', { error: error.message, stack: error.stack });
+        } finally {
+          setTimeout(runAnalytics, this.config.populationAnalytics.aggregation.frequency);
+        }
+      };
+      runAnalytics();
     }
 
     // Start health prediction if enabled
     if (this.config.healthPrediction.enabled) {
-      setInterval(() => this._generateHealthPredictions(), this.config.healthPrediction.updateFrequency);
+      const runPredictions = async () => {
+        try {
+          await this._generateHealthPredictions();
+        } catch (error) {
+          this.logger.error('Health predictions generation failed', { error: error.message, stack: error.stack });
+        } finally {
+          setTimeout(runPredictions, this.config.healthPrediction.updateFrequency);
+        }
+      };
+      runPredictions();
     }
+
+    // Schedule periodic cleanup of old entries
+    const runCleanup = () => {
+      try {
+        const mapsToClean = [
+          { map: this.monitoringData, name: 'monitoringData' },
+          { map: this.alerts, name: 'alerts' },
+          { map: this.predictions, name: 'predictions' },
+          { map: this.analytics, name: 'analytics' },
+          { map: this.wearableJobs, name: 'wearableJobs' },
+          { map: this.sensorJobs, name: 'sensorJobs' },
+          { map: this.analyticsJobs, name: 'analyticsJobs' }
+        ];
+
+        mapsToClean.forEach(({ map, name }) => {
+          // Skip if map is not initialized
+          if (!map) {
+            return;
+          }
+
+          const stats = cleanupOldEntries(map, {
+            maxAge: 24 * 60 * 60 * 1000, // 24 hours
+            maxEntries: 1000
+          });
+
+          if (stats.totalRemoved > 0) {
+            this.logger.debug(`Cleaned up ${stats.totalRemoved} old entries from ${name}`, stats);
+          }
+        });
+      } catch (error) {
+        this.logger.error('Cleanup process failed', { error: error.message, stack: error.stack });
+      } finally {
+        setTimeout(runCleanup, 60 * 60 * 1000); // Run every hour
+      }
+    };
+    runCleanup();
 
     this.logger.info('IoT & wearable services initialized');
   }

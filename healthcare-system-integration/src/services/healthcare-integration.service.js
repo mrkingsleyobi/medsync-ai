@@ -6,6 +6,7 @@
 const config = require('../config/healthcare-integration.config.js');
 const { v4: uuidv4 } = require('uuid');
 const winston = require('winston');
+const { cleanupOldEntries } = require('../../../src/utils/cleanup.util.js');
 
 class HealthcareIntegrationService {
   /**
@@ -75,8 +76,49 @@ class HealthcareIntegrationService {
 
     // Start synchronization if enabled
     if (this.config.sync.enabled) {
-      setInterval(() => this._performSync(), this.config.sync.frequency);
+      const runSync = async () => {
+        try {
+          await this._performSync();
+        } catch (error) {
+          this.logger.error('Synchronization failed', { error: error.message, stack: error.stack });
+        } finally {
+          setTimeout(runSync, this.config.sync.frequency);
+        }
+      };
+      runSync();
     }
+
+    // Schedule periodic cleanup of old entries
+    const runCleanup = () => {
+      try {
+        const mapsToClean = [
+          { map: this.syncJobs, name: 'syncJobs' },
+          { map: this.matchingResults, name: 'matchingResults' },
+          { map: this.imageProcessingJobs, name: 'imageProcessingJobs' }
+        ];
+
+        mapsToClean.forEach(({ map, name }) => {
+          // Skip if map is not initialized
+          if (!map) {
+            return;
+          }
+
+          const stats = cleanupOldEntries(map, {
+            maxAge: 24 * 60 * 60 * 1000, // 24 hours
+            maxEntries: 1000
+          });
+
+          if (stats.totalRemoved > 0) {
+            this.logger.debug(`Cleaned up ${stats.totalRemoved} old entries from ${name}`, stats);
+          }
+        });
+      } catch (error) {
+        this.logger.error('Cleanup process failed', { error: error.message, stack: error.stack });
+      } finally {
+        setTimeout(runCleanup, 60 * 60 * 1000); // Run every hour
+      }
+    };
+    runCleanup();
 
     this.logger.info('Healthcare integration services initialized');
   }

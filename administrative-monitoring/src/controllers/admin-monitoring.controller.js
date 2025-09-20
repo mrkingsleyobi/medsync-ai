@@ -4,6 +4,7 @@
  */
 
 const AdminMonitoringService = require('./admin-monitoring.service.js');
+const winston = require('winston');
 
 class AdminMonitoringController {
   /**
@@ -11,6 +12,20 @@ class AdminMonitoringController {
    */
   constructor() {
     this.adminMonitoringService = new AdminMonitoringService();
+    this.logger = winston.createLogger({
+      level: 'info',
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.errors({ stack: true }),
+        winston.format.splat(),
+        winston.format.json()
+      ),
+      defaultMeta: { service: 'admin-monitoring-controller' },
+      transports: [
+        new winston.transports.File({ filename: 'logs/admin-monitoring-controller-error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'logs/admin-monitoring-controller-combined.log' })
+      ]
+    });
   }
 
   /**
@@ -45,8 +60,9 @@ class AdminMonitoringController {
         processingTime: result.processingTime
       });
     } catch (error) {
-      console.error('Generate documentation controller error', {
-        error: error.message
+      this.logger.error('Generate documentation controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       // Handle validation errors
@@ -102,8 +118,9 @@ class AdminMonitoringController {
         }
       });
     } catch (error) {
-      console.error('Schedule task controller error', {
-        error: error.message
+      this.logger.error('Schedule task controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       // Handle validation errors
@@ -140,8 +157,9 @@ class AdminMonitoringController {
         processingTime: result.processingTime
       });
     } catch (error) {
-      console.error('Optimize resource allocation controller error', {
-        error: error.message
+      this.logger.error('Optimize resource allocation controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -179,8 +197,9 @@ class AdminMonitoringController {
         result: result.result
       });
     } catch (error) {
-      console.error('Process billing controller error', {
-        error: error.message
+      this.logger.error('Process billing controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       // Handle validation errors
@@ -213,8 +232,9 @@ class AdminMonitoringController {
         status: status
       });
     } catch (error) {
-      console.error('Get service status controller error', {
-        error: error.message
+      this.logger.error('Get service status controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -255,8 +275,9 @@ class AdminMonitoringController {
         });
       }
     } catch (error) {
-      console.error('Get documentation job status controller error', {
-        error: error.message
+      this.logger.error('Get documentation job status controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -282,8 +303,9 @@ class AdminMonitoringController {
         tasks: tasks
       });
     } catch (error) {
-      console.error('Get scheduled tasks controller error', {
-        error: error.message
+      this.logger.error('Get scheduled tasks controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -309,8 +331,9 @@ class AdminMonitoringController {
         records: records
       });
     } catch (error) {
-      console.error('Get billing records controller error', {
-        error: error.message
+      this.logger.error('Get billing records controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -346,8 +369,9 @@ class AdminMonitoringController {
         processingTime: result.processingTime
       });
     } catch (error) {
-      console.error('Generate usage report controller error', {
-        error: error.message
+      this.logger.error('Generate usage report controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -373,8 +397,9 @@ class AdminMonitoringController {
         alerts: alerts
       });
     } catch (error) {
-      console.error('Get active alerts controller error', {
-        error: error.message
+      this.logger.error('Get active alerts controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -416,8 +441,9 @@ class AdminMonitoringController {
         });
       }
     } catch (error) {
-      console.error('Acknowledge alert controller error', {
-        error: error.message
+      this.logger.error('Acknowledge alert controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -459,8 +485,9 @@ class AdminMonitoringController {
         });
       }
     } catch (error) {
-      console.error('Resolve alert controller error', {
-        error: error.message
+      this.logger.error('Resolve alert controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({

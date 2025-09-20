@@ -6,6 +6,7 @@
 const config = require('../config/admin-monitoring.config.js');
 const { v4: uuidv4 } = require('uuid');
 const winston = require('winston');
+const { cleanupOldEntries } = require('../../../src/utils/cleanup.util.js');
 
 class AdminMonitoringService {
   /**
@@ -60,21 +61,34 @@ class AdminMonitoringService {
    * @private
    */
   _initializeServices() {
-    // Start periodic tasks
+    // Start periodic tasks with proper async handling
+    const scheduleAsyncTask = (asyncTask, interval) => {
+      const run = async () => {
+        try {
+          await asyncTask();
+        } catch (error) {
+          this.logger.error('Scheduled task failed', { error: error.message, stack: error.stack });
+        } finally {
+          setTimeout(run, interval);
+        }
+      };
+      run();
+    };
+
     if (this.config.documentation.enabled) {
-      setInterval(() => this._generateDocumentation(), this.config.documentation.updateInterval);
+      scheduleAsyncTask(() => this._generateDocumentation(), this.config.documentation.updateInterval);
     }
 
     if (this.config.resourceAllocation.enabled) {
-      setInterval(() => this._optimizeResourceAllocation(), this.config.resourceAllocation.optimizationInterval);
+      scheduleAsyncTask(() => this._optimizeResourceAllocation(), this.config.resourceAllocation.optimizationInterval);
     }
 
     if (this.config.monitoring.enabled) {
-      setInterval(() => this._collectMonitoringData(), this.config.monitoring.refreshInterval);
+      scheduleAsyncTask(() => this._collectMonitoringData(), this.config.monitoring.refreshInterval);
     }
 
     if (this.config.analytics.enabled) {
-      setInterval(() => this._collectAnalyticsData(), this.config.analytics.collectionInterval);
+      scheduleAsyncTask(() => this._collectAnalyticsData(), this.config.analytics.collectionInterval);
     }
 
     if (this.config.usageReporting.enabled) {
@@ -84,6 +98,43 @@ class AdminMonitoringService {
         schedule: this.config.usageReporting.schedule
       });
     }
+
+    // Schedule periodic cleanup of old entries
+    const runCleanup = () => {
+      try {
+        const mapsToClean = [
+          { map: this.documentationJobs, name: 'documentationJobs' },
+          { map: this.scheduledTasks, name: 'scheduledTasks' },
+          { map: this.resourceAllocations, name: 'resourceAllocations' },
+          { map: this.billingRecords, name: 'billingRecords' },
+          { map: this.monitoringData, name: 'monitoringData' },
+          { map: this.analyticsData, name: 'analyticsData' },
+          { map: this.usageReports, name: 'usageReports' },
+          { map: this.alerts, name: 'alerts' }
+        ];
+
+        mapsToClean.forEach(({ map, name }) => {
+          // Skip if map is not initialized
+          if (!map) {
+            return;
+          }
+
+          const stats = cleanupOldEntries(map, {
+            maxAge: 24 * 60 * 60 * 1000, // 24 hours
+            maxEntries: 1000
+          });
+
+          if (stats.totalRemoved > 0) {
+            this.logger.debug(`Cleaned up ${stats.totalRemoved} old entries from ${name}`, stats);
+          }
+        });
+      } catch (error) {
+        this.logger.error('Cleanup process failed', { error: error.message, stack: error.stack });
+      } finally {
+        setTimeout(runCleanup, 60 * 60 * 1000); // Run every hour
+      }
+    };
+    runCleanup();
 
     this.logger.info('Administrative services initialized');
   }
@@ -95,6 +146,11 @@ class AdminMonitoringService {
    */
   async generateDocumentation(options = {}) {
     try {
+      // Validate required fields
+      if (!options.formats || !Array.isArray(options.formats)) {
+        throw new Error('formats must be an array');
+      }
+
       const jobId = uuidv4();
       this.logger.info('Starting documentation generation', {
         jobId,

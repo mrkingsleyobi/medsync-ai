@@ -4,6 +4,7 @@
  */
 
 const IoTWearableService = require('../services/iot-wearable.service.js');
+const winston = require('winston');
 
 class IoTWearableController {
   /**
@@ -11,11 +12,20 @@ class IoTWearableController {
    */
   constructor() {
     this.iotWearableService = new IoTWearableService();
-    // In a real implementation, we would use the service's logger
-    // For now, we'll create a simple logger
-    this.logger = {
-      error: (message, data) => console.error(message, data)
-    };
+    this.logger = winston.createLogger({
+      level: 'info',
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.errors({ stack: true }),
+        winston.format.splat(),
+        winston.format.json()
+      ),
+      defaultMeta: { service: 'iot-wearable-controller' },
+      transports: [
+        new winston.transports.File({ filename: 'logs/iot-wearable-controller-error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'logs/iot-wearable-controller-combined.log' })
+      ]
+    });
   }
 
   /**

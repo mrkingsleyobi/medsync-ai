@@ -4,6 +4,7 @@
  */
 
 const HealthcareIntegrationService = require('../services/healthcare-integration.service.js');
+const winston = require('winston');
 
 class HealthcareIntegrationController {
   /**
@@ -11,6 +12,20 @@ class HealthcareIntegrationController {
    */
   constructor() {
     this.healthcareIntegrationService = new HealthcareIntegrationService();
+    this.logger = winston.createLogger({
+      level: 'info',
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.errors({ stack: true }),
+        winston.format.splat(),
+        winston.format.json()
+      ),
+      defaultMeta: { service: 'healthcare-integration-controller' },
+      transports: [
+        new winston.transports.File({ filename: 'logs/healthcare-integration-controller-error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'logs/healthcare-integration-controller-combined.log' })
+      ]
+    });
   }
 
   /**
@@ -35,8 +50,9 @@ class HealthcareIntegrationController {
         processingTime: result.processingTime
       });
     } catch (error) {
-      console.error('FHIR integration controller error', {
-        error: error.message
+      this.logger.error('FHIR integration controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       // Handle specific errors
@@ -83,8 +99,9 @@ class HealthcareIntegrationController {
         processingTime: result.processingTime
       });
     } catch (error) {
-      console.error('HL7 message processing controller error', {
-        error: error.message
+      this.logger.error('HL7 message processing controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       // Handle validation errors
@@ -123,8 +140,9 @@ class HealthcareIntegrationController {
         processingTime: result.processingTime
       });
     } catch (error) {
-      console.error('DICOM integration controller error', {
-        error: error.message
+      this.logger.error('DICOM integration controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       // Handle specific errors
@@ -164,8 +182,9 @@ class HealthcareIntegrationController {
         processingTime: result.processingTime
       });
     } catch (error) {
-      console.error('EHR data synchronization controller error', {
-        error: error.message
+      this.logger.error('EHR data synchronization controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       // Handle specific errors
@@ -217,8 +236,9 @@ class HealthcareIntegrationController {
         processingTime: result.processingTime
       });
     } catch (error) {
-      console.error('Patient record matching controller error', {
-        error: error.message
+      this.logger.error('Patient record matching controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       // Handle validation errors
@@ -273,8 +293,9 @@ class HealthcareIntegrationController {
         processingTime: result.processingTime
       });
     } catch (error) {
-      console.error('Medical image processing controller error', {
-        error: error.message
+      this.logger.error('Medical image processing controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       // Handle validation errors
@@ -314,8 +335,9 @@ class HealthcareIntegrationController {
         status: status
       });
     } catch (error) {
-      console.error('Get service status controller error', {
-        error: error.message
+      this.logger.error('Get service status controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -356,8 +378,9 @@ class HealthcareIntegrationController {
         });
       }
     } catch (error) {
-      console.error('Get FHIR integration job status controller error', {
-        error: error.message
+      this.logger.error('Get FHIR integration job status controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -398,8 +421,9 @@ class HealthcareIntegrationController {
         });
       }
     } catch (error) {
-      console.error('Get HL7 processing job status controller error', {
-        error: error.message
+      this.logger.error('Get HL7 processing job status controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -440,8 +464,9 @@ class HealthcareIntegrationController {
         });
       }
     } catch (error) {
-      console.error('Get DICOM integration job status controller error', {
-        error: error.message
+      this.logger.error('Get DICOM integration job status controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -482,8 +507,9 @@ class HealthcareIntegrationController {
         });
       }
     } catch (error) {
-      console.error('Get synchronization job status controller error', {
-        error: error.message
+      this.logger.error('Get synchronization job status controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -524,8 +550,9 @@ class HealthcareIntegrationController {
         });
       }
     } catch (error) {
-      console.error('Get patient matching job status controller error', {
-        error: error.message
+      this.logger.error('Get patient matching job status controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
@@ -566,8 +593,9 @@ class HealthcareIntegrationController {
         });
       }
     } catch (error) {
-      console.error('Get image processing job status controller error', {
-        error: error.message
+      this.logger.error('Get image processing job status controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
       res.status(500).json({
