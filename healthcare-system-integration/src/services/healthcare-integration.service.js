@@ -17,12 +17,13 @@ class HealthcareIntegrationService {
    * EHR platforms, imaging systems, and data synchronization services.
    */
   constructor() {
+    this.config = config;
+
     // Check for required environment variables
     if (this.config.fhir.enabled && (!process.env.FHIR_CLIENT_ID || !process.env.FHIR_CLIENT_SECRET)) {
       throw new Error('FATAL: Missing required environment variables FHIR_CLIENT_ID and/or FHIR_CLIENT_SECRET');
     }
 
-    this.config = config;
     this.logger = this._createLogger();
     this.fhirClients = new Map();
     this.hl7Processors = new Map();

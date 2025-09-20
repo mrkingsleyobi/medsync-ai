@@ -34,23 +34,24 @@ function cleanupOldEntries(map, options = {}) {
         .sort((a, b) => new Date(b[1][timestampField]) - new Date(a[1][timestampField]))
         .slice(maxEntries);
 
-      for (const [key, entry] of entries) {
+      entries.forEach(([key]) => {
         map.delete(key);
-        stats.removedByCount++;
-      }
+        stats.removedByCount += 1;
+      });
     }
 
     // Remove entries older than maxAge
-    for (const [key, entry] of map.entries()) {
+    Array.from(map.entries()).forEach(([key, entry]) => {
       if (entry[timestampField] && (now - new Date(entry[timestampField]).getTime()) > maxAge) {
         map.delete(key);
-        stats.removedByAge++;
+        stats.removedByAge += 1;
       }
-    }
+    });
 
     stats.totalRemoved = stats.removedByAge + stats.removedByCount;
   } catch (error) {
     // Log error but don't throw to prevent breaking the calling function
+    // eslint-disable-next-line no-console
     console.error('Cleanup failed:', error.message);
   }
 
