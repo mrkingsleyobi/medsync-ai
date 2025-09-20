@@ -102,16 +102,7 @@ class AdminMonitoringService {
     };
 
     // Schedule alert cleanup periodically
-    const runAlertCleanup = async () => {
-      try {
-        this._cleanupOldAlerts();
-      } catch (error) {
-        this.logger.error('Alert cleanup failed', { error: error.message, stack: error.stack });
-      } finally {
-        setTimeout(runAlertCleanup, 60 * 60 * 1000); // Run every hour
-      }
-    };
-    runAlertCleanup();
+    scheduleAsyncTask(async () => this._cleanupOldAlerts(), 60 * 60 * 1000); // Run every hour
 
     if (this.config.documentation.enabled) {
       scheduleAsyncTask(() => this._generateDocumentation(), this.config.documentation.updateInterval);
