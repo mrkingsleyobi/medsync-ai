@@ -6,6 +6,8 @@
 const config = require('../config/decision-support.config.js');
 const { v4: uuidv4 } = require('uuid');
 const winston = require('winston');
+const fs = require('fs');
+const path = require('path');
 
 class ClinicalDecisionSupportService {
   /**
@@ -32,8 +34,14 @@ class ClinicalDecisionSupportService {
    * @returns {Object} Winston logger instance
    */
   _createLogger() {
+    // Create logs directory if it doesn't exist
+    const logsDir = path.join(process.cwd(), 'logs');
+    if (!fs.existsSync(logsDir)) {
+      fs.mkdirSync(logsDir, { recursive: true });
+    }
+
     return winston.createLogger({
-      level: 'info',
+      level: process.env.LOG_LEVEL || 'info',
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.errors({ stack: true }),
@@ -42,8 +50,26 @@ class ClinicalDecisionSupportService {
       ),
       defaultMeta: { service: 'clinical-decision-support-service' },
       transports: [
-        new winston.transports.File({ filename: 'logs/clinical-decision-support-service-error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'logs/clinical-decision-support-service-combined.log' })
+        new winston.transports.File({
+          filename: path.join(logsDir, 'clinical-decision-support-service-error.log'),
+          level: 'error',
+          maxsize: 10000000, // 10MB
+          maxFiles: 5
+        }),
+        new winston.transports.File({
+          filename: path.join(logsDir, 'clinical-decision-support-service-combined.log'),
+          maxsize: 10000000, // 10MB
+          maxFiles: 5
+        }),
+        new winston.transports.Console({
+          format: winston.format.combine(
+            winston.format.colorize(),
+            winston.format.timestamp(),
+            winston.format.printf(({ timestamp, level, message, service, ...meta }) => {
+              return `${timestamp} [${level}] ${service || 'clinical-decision-support-service'}: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`;
+            })
+          )
+        })
       ]
     });
   }
