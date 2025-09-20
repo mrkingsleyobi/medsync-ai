@@ -18,12 +18,6 @@ class HealthcareIntegrationService {
    */
   constructor() {
     this.config = config;
-
-    // Check for required environment variables
-    if (this.config.fhir.enabled && (!process.env.FHIR_CLIENT_ID || !process.env.FHIR_CLIENT_SECRET)) {
-      throw new Error('FATAL: Missing required environment variables FHIR_CLIENT_ID and/or FHIR_CLIENT_SECRET');
-    }
-
     this.logger = this._createLogger();
     this.fhirClients = new Map();
     this.hl7Processors = new Map();
@@ -31,6 +25,18 @@ class HealthcareIntegrationService {
     this.syncJobs = new Map();
     this.matchingResults = new Map();
     this.imageProcessingJobs = new Map();
+  }
+
+  /**
+   * Check for required environment variables
+   * @private
+   */
+  _checkRequiredEnvironmentVariables() {
+    // Check for required environment variables
+    if (this.config.fhir.enabled && (!process.env.FHIR_CLIENT_ID || !process.env.FHIR_CLIENT_SECRET)) {
+      throw new Error('FATAL: Missing required environment variables FHIR_CLIENT_ID and/or FHIR_CLIENT_SECRET');
+    }
+  }
 
     // Initialize services
     this._initializeServices();
@@ -118,6 +124,9 @@ class HealthcareIntegrationService {
    * @private
    */
   _initializeFhirClients() {
+    // Check for required environment variables
+    this._checkRequiredEnvironmentVariables();
+
     // In a real implementation, this would initialize FHIR client connections
     this.logger.info('FHIR clients initialized');
   }
@@ -170,6 +179,9 @@ class HealthcareIntegrationService {
       if (!this.config.fhir.enabled) {
         throw new Error('FHIR integration is not enabled');
       }
+
+      // Check for required environment variables
+      this._checkRequiredEnvironmentVariables();
 
       const jobId = uuidv4();
       this.logger.info('Starting FHIR integration', {
