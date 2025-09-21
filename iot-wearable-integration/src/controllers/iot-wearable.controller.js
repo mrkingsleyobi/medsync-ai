@@ -4,7 +4,6 @@
  */
 
 const IoTWearableService = require('../services/iot-wearable.service.js');
-const winston = require('winston');
 
 class IoTWearableController {
   /**
@@ -12,20 +11,8 @@ class IoTWearableController {
    */
   constructor() {
     this.iotWearableService = new IoTWearableService();
-    this.logger = winston.createLogger({
-      level: 'info',
-      format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.errors({ stack: true }),
-        winston.format.splat(),
-        winston.format.json()
-      ),
-      defaultMeta: { service: 'iot-wearable-controller' },
-      transports: [
-        new winston.transports.File({ filename: 'logs/iot-wearable-controller-error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'logs/iot-wearable-controller-combined.log' })
-      ]
-    });
+    // Use the service's logger
+    this.logger = this.iotWearableService.logger;
   }
 
   /**
@@ -50,21 +37,23 @@ class IoTWearableController {
         processingTime: result.processingTime
       });
     } catch (error) {
+      // Log the full error details server-side
       this.logger.error('Wearable device integration controller error', {
         error: error.message,
         stack: error.stack
       });
 
-      // Handle specific errors
+      // Handle specific errors with user-friendly messages
       if (error.message.includes('Wearable device integration is not enabled')) {
         return res.status(400).json({
-          error: error.message
+          error: 'Wearable device integration is not enabled'
         });
       }
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to integrate with wearable devices',
-        message: error.message
+        error: 'Failed to integrate with wearable devices'
+      });
       });
     }
   }
@@ -98,28 +87,30 @@ class IoTWearableController {
         processingTime: result.processingTime
       });
     } catch (error) {
+      // Log the full error details server-side
       this.logger.error('IoT sensor data processing controller error', {
         error: error.message,
         stack: error.stack
       });
 
-      // Handle validation errors
+      // Handle validation errors with user-friendly messages
       if (error.message.includes('Sensor data array is required') || error.message.includes('cannot be empty')) {
         return res.status(400).json({
-          error: error.message
+          error: 'Invalid sensor data format'
         });
       }
 
-      // Handle specific errors
+      // Handle specific errors with user-friendly messages
       if (error.message.includes('IoT sensor integration is not enabled')) {
         return res.status(400).json({
-          error: error.message
+          error: 'IoT sensor integration is not enabled'
         });
       }
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to process IoT sensor data',
-        message: error.message
+        error: 'Failed to process IoT sensor data'
+      });
       });
     }
   }
@@ -146,21 +137,23 @@ class IoTWearableController {
         processingTime: result.processingTime
       });
     } catch (error) {
+      // Log the full error details server-side
       this.logger.error('Real-time health monitoring controller error', {
         error: error.message,
         stack: error.stack
       });
 
-      // Handle specific errors
+      // Handle specific errors with user-friendly messages
       if (error.message.includes('Real-time health monitoring is not enabled')) {
         return res.status(400).json({
-          error: error.message
+          error: 'Real-time health monitoring is not enabled'
         });
       }
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to monitor real-time health data',
-        message: error.message
+        error: 'Failed to monitor real-time health data'
+      });
       });
     }
   }
@@ -195,28 +188,30 @@ class IoTWearableController {
         processingTime: result.processingTime
       });
     } catch (error) {
+      // Log the full error details server-side
       this.logger.error('Early warning generation controller error', {
         error: error.message,
         stack: error.stack
       });
 
-      // Handle validation errors
+      // Handle validation errors with user-friendly messages
       if (error.message.includes('Patient data is required')) {
         return res.status(400).json({
-          error: error.message
+          error: 'Invalid patient data provided'
         });
       }
 
-      // Handle specific errors
+      // Handle specific errors with user-friendly messages
       if (error.message.includes('Early warning system is not enabled')) {
         return res.status(400).json({
-          error: error.message
+          error: 'Early warning system is not enabled'
         });
       }
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to generate early warning',
-        message: error.message
+        error: 'Failed to generate early warning'
+      });
       });
     }
   }
@@ -244,21 +239,23 @@ class IoTWearableController {
         processingTime: result.processingTime
       });
     } catch (error) {
+      // Log the full error details server-side
       this.logger.error('Population health analytics generation controller error', {
         error: error.message,
         stack: error.stack
       });
 
-      // Handle specific errors
+      // Handle specific errors with user-friendly messages
       if (error.message.includes('Population health analytics is not enabled')) {
         return res.status(400).json({
-          error: error.message
+          error: 'Population health analytics is not enabled'
         });
       }
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to generate population health analytics',
-        message: error.message
+        error: 'Failed to generate population health analytics'
+      });
       });
     }
   }
@@ -293,28 +290,30 @@ class IoTWearableController {
         processingTime: result.processingTime
       });
     } catch (error) {
+      // Log the full error details server-side
       this.logger.error('Personalized health predictions generation controller error', {
         error: error.message,
         stack: error.stack
       });
 
-      // Handle validation errors
+      // Handle validation errors with user-friendly messages
       if (error.message.includes('Patient data is required')) {
         return res.status(400).json({
-          error: error.message
+          error: 'Invalid patient data provided'
         });
       }
 
-      // Handle specific errors
+      // Handle specific errors with user-friendly messages
       if (error.message.includes('Personalized health prediction is not enabled')) {
         return res.status(400).json({
-          error: error.message
+          error: 'Personalized health prediction is not enabled'
         });
       }
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to generate personalized health predictions',
-        message: error.message
+        error: 'Failed to generate personalized health predictions'
+      });
       });
     }
   }
@@ -335,14 +334,16 @@ class IoTWearableController {
         status: status
       });
     } catch (error) {
+      // Log the full error details server-side
       this.logger.error('Get service status controller error', {
         error: error.message,
         stack: error.stack
       });
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve service status',
-        message: error.message
+        error: 'Failed to retrieve service status'
+      });
       });
     }
   }
@@ -378,14 +379,16 @@ class IoTWearableController {
         });
       }
     } catch (error) {
+      // Log the full error details server-side
       this.logger.error('Get wearable integration job status controller error', {
         error: error.message,
         stack: error.stack
       });
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve wearable integration job status',
-        message: error.message
+        error: 'Failed to retrieve wearable integration job status'
+      });
       });
     }
   }
@@ -421,14 +424,16 @@ class IoTWearableController {
         });
       }
     } catch (error) {
+      // Log the full error details server-side
       this.logger.error('Get sensor data processing job status controller error', {
         error: error.message,
         stack: error.stack
       });
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve sensor data processing job status',
-        message: error.message
+        error: 'Failed to retrieve sensor data processing job status'
+      });
       });
     }
   }
@@ -464,14 +469,16 @@ class IoTWearableController {
         });
       }
     } catch (error) {
+      // Log the full error details server-side
       this.logger.error('Get monitoring job status controller error', {
         error: error.message,
         stack: error.stack
       });
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve monitoring job status',
-        message: error.message
+        error: 'Failed to retrieve monitoring job status'
+      });
       });
     }
   }
@@ -507,14 +514,16 @@ class IoTWearableController {
         });
       }
     } catch (error) {
+      // Log the full error details server-side
       this.logger.error('Get alert status controller error', {
         error: error.message,
         stack: error.stack
       });
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve alert status',
-        message: error.message
+        error: 'Failed to retrieve alert status'
+      });
       });
     }
   }
@@ -550,14 +559,16 @@ class IoTWearableController {
         });
       }
     } catch (error) {
+      // Log the full error details server-side
       this.logger.error('Get prediction job status controller error', {
         error: error.message,
         stack: error.stack
       });
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve prediction job status',
-        message: error.message
+        error: 'Failed to retrieve prediction job status'
+      });
       });
     }
   }
@@ -593,14 +604,16 @@ class IoTWearableController {
         });
       }
     } catch (error) {
+      // Log the full error details server-side
       this.logger.error('Get analytics job status controller error', {
         error: error.message,
         stack: error.stack
       });
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve analytics job status',
-        message: error.message
+        error: 'Failed to retrieve analytics job status'
+      });
       });
     }
   }
@@ -637,14 +650,16 @@ class IoTWearableController {
         });
       }
     } catch (error) {
+      // Log the full error details server-side
       this.logger.error('Acknowledge alert controller error', {
         error: error.message,
         stack: error.stack
       });
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to acknowledge alert',
-        message: error.message
+        error: 'Failed to acknowledge alert'
+      });
       });
     }
   }
@@ -681,14 +696,16 @@ class IoTWearableController {
         });
       }
     } catch (error) {
+      // Log the full error details server-side
       this.logger.error('Resolve alert controller error', {
         error: error.message,
         stack: error.stack
       });
 
+      // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to resolve alert',
-        message: error.message
+        error: 'Failed to resolve alert'
+      });
       });
     }
   }

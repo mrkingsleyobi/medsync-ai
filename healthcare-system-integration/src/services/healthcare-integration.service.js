@@ -3,6 +3,8 @@
  * Service for integrating with healthcare systems (EHR, imaging, etc.)
  */
 
+const fs = require('fs');
+const path = require('path');
 const config = require('../config/healthcare-integration.config.js');
 const { v4: uuidv4 } = require('uuid');
 const winston = require('winston');
@@ -25,6 +27,11 @@ class HealthcareIntegrationService {
     this.matchingResults = new Map();
     this.imageProcessingJobs = new Map();
 
+    // Check for required environment variables
+    if (this.config.fhir.enabled && (!process.env.FHIR_CLIENT_ID || !process.env.FHIR_CLIENT_SECRET)) {
+      throw new Error('FATAL: Missing required environment variables FHIR_CLIENT_ID and/or FHIR_CLIENT_SECRET');
+    }
+
     // Initialize services
     this._initializeServices();
 
@@ -38,8 +45,14 @@ class HealthcareIntegrationService {
    * @returns {Object} Winston logger instance
    */
   _createLogger() {
+    // Create logs directory if it doesn't exist
+    const logsDir = path.join(process.cwd(), 'logs');
+    if (!fs.existsSync(logsDir)) {
+      fs.mkdirSync(logsDir, { recursive: true });
+    }
+
     return winston.createLogger({
-      level: 'info',
+      level: process.env.LOG_LEVEL || 'info',
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.errors({ stack: true }),
@@ -48,8 +61,26 @@ class HealthcareIntegrationService {
       ),
       defaultMeta: { service: 'healthcare-integration-service' },
       transports: [
-        new winston.transports.File({ filename: 'logs/healthcare-integration-service-error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'logs/healthcare-integration-service-combined.log' })
+        new winston.transports.File({
+          filename: path.join(logsDir, 'healthcare-integration-service-error.log'),
+          level: 'error',
+          maxsize: 10000000, // 10MB
+          maxFiles: 5
+        }),
+        new winston.transports.File({
+          filename: path.join(logsDir, 'healthcare-integration-service-combined.log'),
+          maxsize: 10000000, // 10MB
+          maxFiles: 5
+        }),
+        new winston.transports.Console({
+          format: winston.format.combine(
+            winston.format.colorize(),
+            winston.format.timestamp(),
+            winston.format.printf(({ timestamp, level, message, service, ...meta }) => {
+              return `${timestamp} [${level}] ${service || 'healthcare-integration-service'}: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`;
+            })
+          )
+        })
       ]
     });
   }
@@ -80,7 +111,10 @@ class HealthcareIntegrationService {
         try {
           await this._performSync();
         } catch (error) {
-          this.logger.error('Synchronization failed', { error: error.message, stack: error.stack });
+          this.logger.error('Synchronization failed', {
+            error: error.message,
+            stack: error.stack
+          });
         } finally {
           setTimeout(runSync, this.config.sync.frequency);
         }
@@ -88,61 +122,7 @@ class HealthcareIntegrationService {
       runSync();
     }
 
-    // Schedule periodic cleanup of old entries
-    const runCleanup = () => {
-      try {
-        const mapsToClean = [
-          { map: this.syncJobs, name: 'syncJobs' },
-          { map: this.matchingResults, name: 'matchingResults' },
-          { map: this.imageProcessingJobs, name: 'imageProcessingJobs' }
-        ];
-
-        mapsToClean.forEach(({ map, name }) => {
-          // Skip if map is not initialized
-          if (!map) {
-            return;
-          }
-
-          const stats = cleanupOldEntries(map, {
-            maxAge: 24 * 60 * 60 * 1000, // 24 hours
-            maxEntries: 1000
-          });
-
-          if (stats.totalRemoved > 0) {
-            this.logger.debug(`Cleaned up ${stats.totalRemoved} old entries from ${name}`, stats);
-          }
-        });
-      } catch (error) {
-        this.logger.error('Cleanup process failed', { error: error.message, stack: error.stack });
-      } finally {
-        this.cleanupTimeoutId = setTimeout(runCleanup, 60 * 60 * 1000); // Run every hour
-      }
-    };
-    runCleanup();
-
     this.logger.info('Healthcare integration services initialized');
-  }
-
-  /**
-   * Clear all pending timeouts
-   * @public
-   */
-  clearPendingTimeouts() {
-    if (this.cleanupTimeoutId) {
-      clearTimeout(this.cleanupTimeoutId);
-      this.cleanupTimeoutId = null;
-    }
-  }
-
-  /**
-   * Check for required environment variables
-   * @private
-   */
-  _checkRequiredEnvironmentVariables() {
-    // Check for required environment variables
-    if (this.config.fhir.enabled && (!process.env.FHIR_CLIENT_ID || !process.env.FHIR_CLIENT_SECRET)) {
-      throw new Error('FATAL: Missing required environment variables FHIR_CLIENT_ID and/or FHIR_CLIENT_SECRET');
-    }
   }
 
   /**
@@ -391,6 +371,8 @@ class HealthcareIntegrationService {
       };
 
       this.syncJobs.set(jobId, job);
+      // Clean up old jobs if we have too many
+      this._cleanupOldJobs(this.syncJobs);
 
       // Start job
       job.status = 'running';
@@ -463,6 +445,8 @@ class HealthcareIntegrationService {
       };
 
       this.matchingResults.set(jobId, job);
+      // Clean up old jobs if we have too many
+      this._cleanupOldJobs(this.matchingResults);
 
       // Start job
       job.status = 'running';
@@ -546,6 +530,8 @@ class HealthcareIntegrationService {
       };
 
       this.imageProcessingJobs.set(jobId, job);
+      // Clean up old jobs if we have too many
+      this._cleanupOldJobs(this.imageProcessingJobs);
 
       // Start job
       job.status = 'running';
@@ -728,6 +714,33 @@ class HealthcareIntegrationService {
       startedAt: job.startedAt,
       completedAt: job.completedAt
     };
+  }
+
+  /**
+   * Clean up old jobs to prevent memory leaks
+   * @param {Map} jobMap - The job Map to clean up
+   * @private
+   */
+  _cleanupOldJobs(jobMap) {
+    try {
+      const stats = cleanupOldEntries(jobMap, {
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        maxEntries: 1000
+      });
+
+      if (stats.totalRemoved > 0) {
+        this.logger.debug('Job cleanup completed', {
+          removedByAge: stats.removedByAge,
+          removedByCount: stats.removedByCount,
+          totalRemoved: stats.totalRemoved
+        });
+      }
+    } catch (error) {
+      this.logger.error('Job cleanup failed', {
+        error: error.message,
+        stack: error.stack
+      });
+    }
   }
 }
 
