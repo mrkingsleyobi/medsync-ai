@@ -453,6 +453,7 @@ describe('Authentication Controller', () => {
     });
 
     test('should return 400 if secret is missing', async () => {
+      const userId = 'user_123';
       mockReq.user = { userId };
       mockReq.body = { token: '123456' };
 
@@ -465,6 +466,7 @@ describe('Authentication Controller', () => {
     });
 
     test('should return 400 if token is missing', async () => {
+      const userId = 'user_123';
       mockReq.user = { userId };
       mockReq.body = { secret: 'SECRET123' };
 

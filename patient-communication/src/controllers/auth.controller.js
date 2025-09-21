@@ -43,9 +43,12 @@ class AuthController {
         verificationToken: result.verificationToken
       });
     } catch (error) {
-      console.error('User registration controller error', {
-        error: error.message
-      });
+      if (this.authService && this.authService.logger) {
+        this.authService.logger.error('User registration controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Handle specific error cases
       if (error.message.includes('Password')) {
@@ -101,9 +104,12 @@ class AuthController {
         tokens: result.tokens
       });
     } catch (error) {
-      console.error('User login controller error', {
-        error: error.message
-      });
+      if (this.authService && this.authService.logger) {
+        this.authService.logger.error('User login controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Handle specific error cases
       if (error.message.includes('Invalid') || error.message.includes('verify')) {
@@ -144,9 +150,12 @@ class AuthController {
         message: result.message
       });
     } catch (error) {
-      console.error('Email verification controller error', {
-        error: error.message
-      });
+      if (this.authService && this.authService.logger) {
+        this.authService.logger.error('Email verification controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to verify email',
@@ -184,9 +193,12 @@ class AuthController {
         resetToken: result.resetToken // In production, don't expose this!
       });
     } catch (error) {
-      console.error('Password reset request controller error', {
-        error: error.message
-      });
+      if (this.authService && this.authService.logger) {
+        this.authService.logger.error('Password reset request controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to process password reset request',
@@ -220,9 +232,12 @@ class AuthController {
         message: result.message
       });
     } catch (error) {
-      console.error('Password reset controller error', {
-        error: error.message
-      });
+      if (this.authService && this.authService.logger) {
+        this.authService.logger.error('Password reset controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Handle specific error cases
       if (error.message.includes('Password')) {
@@ -258,9 +273,12 @@ class AuthController {
         qrCode: result.qrCode
       });
     } catch (error) {
-      console.error('Two-factor authentication setup controller error', {
-        error: error.message
-      });
+      if (this.authService && this.authService.logger) {
+        this.authService.logger.error('Two-factor authentication setup controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to enable two-factor authentication',
@@ -301,9 +319,12 @@ class AuthController {
         });
       }
     } catch (error) {
-      console.error('Two-factor token verification controller error', {
-        error: error.message
-      });
+      if (this.authService && this.authService.logger) {
+        this.authService.logger.error('Two-factor token verification controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to verify two-factor token',
@@ -345,9 +366,12 @@ class AuthController {
         accessToken: result.accessToken
       });
     } catch (error) {
-      console.error('Token refresh controller error', {
-        error: error.message
-      });
+      if (this.authService && this.authService.logger) {
+        this.authService.logger.error('Token refresh controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(401).json({
         error: 'Failed to refresh token',
@@ -373,9 +397,12 @@ class AuthController {
         message: 'Logged out successfully'
       });
     } catch (error) {
-      console.error('Logout controller error', {
-        error: error.message
-      });
+      if (this.authService && this.authService.logger) {
+        this.authService.logger.error('Logout controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to logout',
@@ -398,9 +425,12 @@ class AuthController {
         user: req.user
       });
     } catch (error) {
-      console.error('Authentication status check controller error', {
-        error: error.message
-      });
+      if (this.authService && this.authService.logger) {
+        this.authService.logger.error('Authentication status check controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to check authentication status',
@@ -444,9 +474,12 @@ class AuthController {
         // User is authorized
         next();
       } catch (error) {
-        console.error('Authorization middleware error', {
-          error: error.message
-        });
+        if (this.authService && this.authService.logger) {
+          this.authService.logger.error('Authorization middleware error', {
+            error: error.message,
+            stack: error.stack
+          });
+        }
 
         res.status(500).json({
           error: 'Authorization check failed',
@@ -484,9 +517,12 @@ class AuthController {
         // User has required role
         next();
       } catch (error) {
-        console.error('Role-based authorization middleware error', {
-          error: error.message
-        });
+        if (this.authService && this.authService.logger) {
+          this.authService.logger.error('Role-based authorization middleware error', {
+            error: error.message,
+            stack: error.stack
+          });
+        }
 
         res.status(500).json({
           error: 'Role check failed',
