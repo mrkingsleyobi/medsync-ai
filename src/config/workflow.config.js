@@ -17,12 +17,26 @@ module.exports = {
     literatureReview: {
       name: 'Literature Review',
       description: 'Automated literature review and analysis workflow',
-      steps: ['documentCollection', 'preprocessing', 'entityExtraction', 'topicModeling', 'sentimentAnalysis', 'summarization', 'reportGeneration']
+      steps: [
+        'documentCollection',
+        'preprocessing',
+        'entityExtraction',
+        'topicModeling',
+        'sentimentAnalysis',
+        'summarization',
+        'reportGeneration'
+      ]
     },
     clinicalTrialMatching: {
       name: 'Clinical Trial Matching',
       description: 'Patient-to-trial matching workflow',
-      steps: ['patientProfileAnalysis', 'trialDatabaseQuery', 'eligibilityMatching', 'ranking', 'recommendationGeneration']
+      steps: [
+        'patientProfileAnalysis',
+        'trialDatabaseQuery',
+        'eligibilityMatching',
+        'ranking',
+        'recommendationGeneration'
+      ]
     },
     researchImpactAnalysis: {
       name: 'Research Impact Analysis',
@@ -32,7 +46,14 @@ module.exports = {
     collaborativeResearch: {
       name: 'Collaborative Research',
       description: 'Collaborative research project workflow',
-      steps: ['projectSetup', 'collaboratorInvitation', 'documentSharing', 'realTimeCollaboration', 'versionControl', 'reviewAndApproval']
+      steps: [
+        'projectSetup',
+        'collaboratorInvitation',
+        'documentSharing',
+        'realTimeCollaboration',
+        'versionControl',
+        'reviewAndApproval'
+      ]
     }
   },
 
