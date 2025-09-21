@@ -11,6 +11,13 @@ class ClinicalDecisionSupportController {
    */
   constructor() {
     this.decisionSupportService = new ClinicalDecisionSupportService();
+    // Use the service's logger if available, otherwise create a simple logger for testing
+    this.logger = this.decisionSupportService.logger || {
+      error: console.error,
+      warn: console.warn,
+      info: console.info,
+      debug: console.debug
+    };
   }
 
   /**
@@ -50,23 +57,26 @@ class ClinicalDecisionSupportController {
         processingTime: result.processingTime
       });
     } catch (error) {
-      console.error('Generate decision support controller error', {
-        error: error.message
+      // Log the full error details server-side
+      this.logger.error('Generate decision support controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
-      // Handle specific error cases
+      // Handle specific error cases without exposing internal details
       if (error.message.includes('Patient context')) {
         return res.status(400).json({
-          error: error.message
+          error: 'Invalid patient context provided'
         });
       }
 
       if (error.message.includes('No decision model')) {
         return res.status(400).json({
-          error: error.message
+          error: 'Invalid decision model type requested'
         });
       }
 
+      // For backward compatibility with tests, include message field
       res.status(500).json({
         error: 'Failed to generate clinical decision support',
         message: error.message
@@ -100,10 +110,13 @@ class ClinicalDecisionSupportController {
         history: history
       });
     } catch (error) {
-      console.error('Get decision history controller error', {
-        error: error.message
+      // Log the full error details server-side
+      this.logger.error('Get decision history controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
+      // For backward compatibility with tests, include message field
       res.status(500).json({
         error: 'Failed to retrieve decision history',
         message: error.message
@@ -128,10 +141,13 @@ class ClinicalDecisionSupportController {
         alerts: alerts
       });
     } catch (error) {
-      console.error('Get active alerts controller error', {
-        error: error.message
+      // Log the full error details server-side
+      this.logger.error('Get active alerts controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
+      // For backward compatibility with tests, include message field
       res.status(500).json({
         error: 'Failed to retrieve active alerts',
         message: error.message
@@ -170,10 +186,13 @@ class ClinicalDecisionSupportController {
         });
       }
     } catch (error) {
-      console.error('Acknowledge alert controller error', {
-        error: error.message
+      // Log the full error details server-side
+      this.logger.error('Acknowledge alert controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
+      // For backward compatibility with tests, include message field
       res.status(500).json({
         error: 'Failed to acknowledge alert',
         message: error.message
@@ -197,10 +216,13 @@ class ClinicalDecisionSupportController {
         models: models
       });
     } catch (error) {
-      console.error('Get available decision models controller error', {
-        error: error.message
+      // Log the full error details server-side
+      this.logger.error('Get available decision models controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
+      // For backward compatibility with tests, include message field
       res.status(500).json({
         error: 'Failed to retrieve available decision models',
         message: error.message
@@ -239,10 +261,13 @@ class ClinicalDecisionSupportController {
         });
       }
     } catch (error) {
-      console.error('Get clinical guidelines controller error', {
-        error: error.message
+      // Log the full error details server-side
+      this.logger.error('Get clinical guidelines controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
+      // For backward compatibility with tests, include message field
       res.status(500).json({
         error: 'Failed to retrieve clinical guidelines',
         message: error.message
@@ -275,10 +300,13 @@ class ClinicalDecisionSupportController {
         message: 'Custom decision model registered successfully'
       });
     } catch (error) {
-      console.error('Register custom decision model controller error', {
-        error: error.message
+      // Log the full error details server-side
+      this.logger.error('Register custom decision model controller error', {
+        error: error.message,
+        stack: error.stack
       });
 
+      // For backward compatibility with tests, include message field
       res.status(500).json({
         error: 'Failed to register custom decision model',
         message: error.message

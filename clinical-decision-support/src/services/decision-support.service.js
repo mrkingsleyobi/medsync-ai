@@ -6,6 +6,9 @@
 const config = require('../config/decision-support.config.js');
 const { v4: uuidv4 } = require('uuid');
 const winston = require('winston');
+const fs = require('fs');
+const path = require('path');
+const { cleanupOldEntries } = require('../../../src/utils/cleanup.util.js');
 
 class ClinicalDecisionSupportService {
   /**
@@ -22,6 +25,9 @@ class ClinicalDecisionSupportService {
     // Initialize decision support components
     this._initializeDecisionSupport();
 
+    // Start cleanup intervals
+    this._startCleanupIntervals();
+
     this.logger.info('Clinical Decision Support Service created', {
       service: 'clinical-decision-support-service'
     });
@@ -32,8 +38,14 @@ class ClinicalDecisionSupportService {
    * @returns {Object} Winston logger instance
    */
   _createLogger() {
+    // Create logs directory if it doesn't exist
+    const logsDir = path.join(process.cwd(), 'logs');
+    if (!fs.existsSync(logsDir)) {
+      fs.mkdirSync(logsDir, { recursive: true });
+    }
+
     return winston.createLogger({
-      level: 'info',
+      level: process.env.LOG_LEVEL || 'info',
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.errors({ stack: true }),
@@ -42,8 +54,26 @@ class ClinicalDecisionSupportService {
       ),
       defaultMeta: { service: 'clinical-decision-support-service' },
       transports: [
-        new winston.transports.File({ filename: 'logs/clinical-decision-support-service-error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'logs/clinical-decision-support-service-combined.log' })
+        new winston.transports.File({
+          filename: path.join(logsDir, 'clinical-decision-support-service-error.log'),
+          level: 'error',
+          maxsize: 10000000, // 10MB
+          maxFiles: 5
+        }),
+        new winston.transports.File({
+          filename: path.join(logsDir, 'clinical-decision-support-service-combined.log'),
+          maxsize: 10000000, // 10MB
+          maxFiles: 5
+        }),
+        new winston.transports.Console({
+          format: winston.format.combine(
+            winston.format.colorize(),
+            winston.format.timestamp(),
+            winston.format.printf(({ timestamp, level, message, service, ...meta }) => {
+              return `${timestamp} [${level}] ${service || 'clinical-decision-support-service'}: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`;
+            })
+          )
+        })
       ]
     });
   }
@@ -60,6 +90,68 @@ class ClinicalDecisionSupportService {
     this._loadClinicalGuidelines();
 
     this.logger.info('Clinical decision support components initialized');
+  }
+
+  /**
+   * Start cleanup intervals for Map data structures
+   * @private
+   */
+  _startCleanupIntervals() {
+    // Clean up decision history periodically
+    const cleanupDecisionHistory = () => {
+      try {
+        const stats = cleanupOldEntries(this.decisionHistory, {
+          maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+          maxEntries: 10000
+        });
+
+        if (stats.totalRemoved > 0) {
+          this.logger.debug('Decision history cleanup completed', {
+            removedByAge: stats.removedByAge,
+            removedByCount: stats.removedByCount,
+            totalRemoved: stats.totalRemoved
+          });
+        }
+      } catch (error) {
+        this.logger.error('Decision history cleanup failed', {
+          error: error.message,
+          stack: error.stack
+        });
+      } finally {
+        setTimeout(cleanupDecisionHistory, 60 * 60 * 1000); // Run every hour
+      }
+    };
+
+    // Clean up alerts periodically
+    const cleanupAlerts = () => {
+      try {
+        const stats = cleanupOldEntries(this.alerts, {
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+          maxEntries: 5000
+        });
+
+        if (stats.totalRemoved > 0) {
+          this.logger.debug('Alerts cleanup completed', {
+            removedByAge: stats.removedByAge,
+            removedByCount: stats.removedByCount,
+            totalRemoved: stats.totalRemoved
+          });
+        }
+      } catch (error) {
+        this.logger.error('Alerts cleanup failed', {
+          error: error.message,
+          stack: error.stack
+        });
+      } finally {
+        setTimeout(cleanupAlerts, 30 * 60 * 1000); // Run every 30 minutes
+      }
+    };
+
+    // Start cleanup processes
+    cleanupDecisionHistory();
+    cleanupAlerts();
+
+    this.logger.info('Cleanup intervals started for Map data structures');
   }
 
   /**
