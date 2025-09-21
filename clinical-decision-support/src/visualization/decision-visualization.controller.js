@@ -49,18 +49,27 @@ class DecisionVisualizationController {
         generationTime: result.generationTime
       });
     } catch (error) {
-      console.error('Generate visualization controller error', {
-        error: error.message
-      });
+      if (this.decisionVisualizationService && this.decisionVisualizationService.logger) {
+        this.decisionVisualizationService.logger.error('Generate visualization controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Handle specific error cases
-      if (error.message.includes('Component type')) {
+      if (error.message.includes('Component type') || error.message.includes('Visualization component type')) {
         return res.status(400).json({
           error: error.message
         });
       }
 
       if (error.message.includes('Data is required')) {
+        return res.status(400).json({
+          error: error.message
+        });
+      }
+
+      if (error.message.includes('Component type') || error.message.includes('Visualization component type')) {
         return res.status(400).json({
           error: error.message
         });
@@ -103,9 +112,12 @@ class DecisionVisualizationController {
         status: result.status
       });
     } catch (error) {
-      console.error('Export visualization controller error', {
-        error: error.message
-      });
+      if (this.decisionVisualizationService && this.decisionVisualizationService.logger) {
+        this.decisionVisualizationService.logger.error('Export visualization controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Handle specific error cases
       if (error.message.includes('Visualization not found')) {
@@ -158,9 +170,12 @@ class DecisionVisualizationController {
         });
       }
     } catch (error) {
-      console.error('Get visualization status controller error', {
-        error: error.message
-      });
+      if (this.decisionVisualizationService && this.decisionVisualizationService.logger) {
+        this.decisionVisualizationService.logger.error('Get visualization status controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve visualization status',
@@ -185,9 +200,12 @@ class DecisionVisualizationController {
         components: components
       });
     } catch (error) {
-      console.error('Get available components controller error', {
-        error: error.message
-      });
+      if (this.decisionVisualizationService && this.decisionVisualizationService.logger) {
+        this.decisionVisualizationService.logger.error('Get available components controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve available visualization components',
@@ -227,9 +245,12 @@ class DecisionVisualizationController {
         });
       }
     } catch (error) {
-      console.error('Get component configuration controller error', {
-        error: error.message
-      });
+      if (this.decisionVisualizationService && this.decisionVisualizationService.logger) {
+        this.decisionVisualizationService.logger.error('Get component configuration controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve component configuration',

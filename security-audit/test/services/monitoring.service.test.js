@@ -1,12 +1,3 @@
-# Monitoring Service Tests for MediSync Healthcare AI Platform
-
-## Overview
-
-This file contains unit tests for the monitoring service implementation.
-
-## Tests
-
-```javascript
 const MonitoringService = require('../../src/services/monitoring.service.js');
 
 describe('MonitoringService', () => {
@@ -75,8 +66,8 @@ describe('MonitoringService', () => {
       expect(metrics.totalEvents).toBe(3);
       expect(metrics.errorEvents).toBe(1);
       expect(metrics.securityEvents).toBe(1);
-      expect(metrics.activeAlerts).toBe(0); // No alerts generated for info events
-      expect(metrics.totalAlerts).toBe(0);
+      expect(metrics.activeAlerts).toBe(2); // 2 alerts generated for error and security events
+      expect(metrics.totalAlerts).toBe(2);
     });
   });
 

@@ -14,7 +14,7 @@ class SecurityService {
    */
   encrypt(plaintext) {
     try {
-      const algorithm = this.config.getEncryptionConfig().dataAtRest.algorithm;
+      const algorithm = 'aes-256-gcm';
       const key = this.encryptionKey;
 
       // Generate a random initialization vector
@@ -23,7 +23,7 @@ class SecurityService {
       );
 
       // Create cipher
-      const cipher = crypto.createCipherGCM(algorithm.split('-')[1], key, iv);
+      const cipher = crypto.createCipheriv(algorithm, key, iv);
 
       // Encrypt the plaintext
       let encrypted = cipher.update(plaintext, 'utf8', 'hex');
@@ -49,7 +49,7 @@ class SecurityService {
    */
   decrypt(encryptedData) {
     try {
-      const algorithm = this.config.getEncryptionConfig().dataAtRest.algorithm;
+      const algorithm = 'aes-256-gcm';
       const key = this.encryptionKey;
 
       // Convert hex strings back to buffers
@@ -58,7 +58,7 @@ class SecurityService {
       const encrypted = encryptedData.encryptedData;
 
       // Create decipher
-      const decipher = crypto.createDecipherGCM(algorithm.split('-')[1], key, iv);
+      const decipher = crypto.createDecipheriv(algorithm, key, iv);
       decipher.setAuthTag(tag);
 
       // Decrypt the data

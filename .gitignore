@@ -36,4 +36,6 @@ node_modules/
 package-lock.json.bak
 test/
 .claude-flow/
+.roo/
+.roomodes
 .github/workflows/ci.yml.backup

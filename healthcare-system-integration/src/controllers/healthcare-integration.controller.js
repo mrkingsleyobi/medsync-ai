@@ -36,10 +36,12 @@ class HealthcareIntegrationController {
       });
     } catch (error) {
       // Log the full error details server-side
-      this.healthcareIntegrationService.logger.error('FHIR integration controller error', {
-        error: error.message,
-        stack: error.stack
-      });
+      if (this.healthcareIntegrationService && this.healthcareIntegrationService.logger) {
+        this.healthcareIntegrationService.logger.error('FHIR integration controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Handle specific errors with user-friendly messages
       if (error.message.includes('FHIR integration is not enabled')) {
@@ -50,7 +52,8 @@ class HealthcareIntegrationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to integrate with FHIR API'
+        error: 'Failed to integrate with FHIR API',
+        message: error.message
       });
     }
   }
@@ -86,10 +89,12 @@ class HealthcareIntegrationController {
       });
     } catch (error) {
       // Log the full error details server-side
-      this.healthcareIntegrationService.logger.error('HL7 message processing controller error', {
-        error: error.message,
-        stack: error.stack
-      });
+      if (this.healthcareIntegrationService && this.healthcareIntegrationService.logger) {
+        this.healthcareIntegrationService.logger.error('HL7 message processing controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Handle validation errors with user-friendly messages
       if (error.message.includes('Messages array is required') || error.message.includes('cannot be empty')) {
@@ -100,7 +105,8 @@ class HealthcareIntegrationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to process HL7 messages'
+        error: 'Failed to process HL7 messages',
+        message: error.message
       });
     }
   }
@@ -128,10 +134,12 @@ class HealthcareIntegrationController {
       });
     } catch (error) {
       // Log the full error details server-side
-      this.healthcareIntegrationService.logger.error('DICOM integration controller error', {
-        error: error.message,
-        stack: error.stack
-      });
+      if (this.healthcareIntegrationService && this.healthcareIntegrationService.logger) {
+        this.healthcareIntegrationService.logger.error('DICOM integration controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Handle specific errors with user-friendly messages
       if (error.message.includes('DICOM integration is not enabled')) {
@@ -142,7 +150,8 @@ class HealthcareIntegrationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to integrate with DICOM'
+        error: 'Failed to integrate with DICOM',
+        message: error.message
       });
     }
   }
@@ -171,10 +180,12 @@ class HealthcareIntegrationController {
       });
     } catch (error) {
       // Log the full error details server-side
-      this.healthcareIntegrationService.logger.error('EHR data synchronization controller error', {
-        error: error.message,
-        stack: error.stack
-      });
+      if (this.healthcareIntegrationService && this.healthcareIntegrationService.logger) {
+        this.healthcareIntegrationService.logger.error('EHR data synchronization controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Handle specific errors with user-friendly messages
       if (error.message.includes('EHR synchronization is not enabled')) {
@@ -185,7 +196,8 @@ class HealthcareIntegrationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to synchronize EHR data'
+        error: 'Failed to synchronize EHR data',
+        message: error.message
       });
     }
   }
@@ -226,10 +238,12 @@ class HealthcareIntegrationController {
       });
     } catch (error) {
       // Log the full error details server-side
-      this.healthcareIntegrationService.logger.error('Patient record matching controller error', {
-        error: error.message,
-        stack: error.stack
-      });
+      if (this.healthcareIntegrationService && this.healthcareIntegrationService.logger) {
+        this.healthcareIntegrationService.logger.error('Patient record matching controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Handle validation errors with user-friendly messages
       if (error.message.includes('Patient data is required') || error.message.includes('firstName and lastName are required')) {
@@ -247,7 +261,8 @@ class HealthcareIntegrationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to match patient records'
+        error: 'Failed to match patient records',
+        message: error.message
       });
     }
   }
@@ -284,10 +299,12 @@ class HealthcareIntegrationController {
       });
     } catch (error) {
       // Log the full error details server-side
-      this.healthcareIntegrationService.logger.error('Medical image processing controller error', {
-        error: error.message,
-        stack: error.stack
-      });
+      if (this.healthcareIntegrationService && this.healthcareIntegrationService.logger) {
+        this.healthcareIntegrationService.logger.error('Medical image processing controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Handle validation errors with user-friendly messages
       if (error.message.includes('Images array is required') || error.message.includes('cannot be empty')) {
@@ -305,7 +322,8 @@ class HealthcareIntegrationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to process medical images'
+        error: 'Failed to process medical images',
+        message: error.message
       });
     }
   }
@@ -327,14 +345,17 @@ class HealthcareIntegrationController {
       });
     } catch (error) {
       // Log the full error details server-side
-      this.healthcareIntegrationService.logger.error('Get service status controller error', {
-        error: error.message,
-        stack: error.stack
-      });
+      if (this.healthcareIntegrationService && this.healthcareIntegrationService.logger) {
+        this.healthcareIntegrationService.logger.error('Get service status controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve service status'
+        error: 'Failed to retrieve service status',
+        message: error.message
       });
     }
   }
@@ -371,14 +392,17 @@ class HealthcareIntegrationController {
       }
     } catch (error) {
       // Log the full error details server-side
-      this.healthcareIntegrationService.logger.error('Get FHIR integration job status controller error', {
-        error: error.message,
-        stack: error.stack
-      });
+      if (this.healthcareIntegrationService && this.healthcareIntegrationService.logger) {
+        this.healthcareIntegrationService.logger.error('Get FHIR integration job status controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve FHIR integration job status'
+        error: 'Failed to retrieve FHIR integration job status',
+        message: error.message
       });
     }
   }
@@ -415,14 +439,17 @@ class HealthcareIntegrationController {
       }
     } catch (error) {
       // Log the full error details server-side
-      this.healthcareIntegrationService.logger.error('Get HL7 processing job status controller error', {
-        error: error.message,
-        stack: error.stack
-      });
+      if (this.healthcareIntegrationService && this.healthcareIntegrationService.logger) {
+        this.healthcareIntegrationService.logger.error('Get HL7 processing job status controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve HL7 processing job status'
+        error: 'Failed to retrieve HL7 processing job status',
+        message: error.message
       });
     }
   }
@@ -459,14 +486,17 @@ class HealthcareIntegrationController {
       }
     } catch (error) {
       // Log the full error details server-side
-      this.healthcareIntegrationService.logger.error('Get DICOM integration job status controller error', {
-        error: error.message,
-        stack: error.stack
-      });
+      if (this.healthcareIntegrationService && this.healthcareIntegrationService.logger) {
+        this.healthcareIntegrationService.logger.error('Get DICOM integration job status controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve DICOM integration job status'
+        error: 'Failed to retrieve DICOM integration job status',
+        message: error.message
       });
     }
   }
@@ -503,14 +533,17 @@ class HealthcareIntegrationController {
       }
     } catch (error) {
       // Log the full error details server-side
-      this.healthcareIntegrationService.logger.error('Get synchronization job status controller error', {
-        error: error.message,
-        stack: error.stack
-      });
+      if (this.healthcareIntegrationService && this.healthcareIntegrationService.logger) {
+        this.healthcareIntegrationService.logger.error('Get synchronization job status controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve synchronization job status'
+        error: 'Failed to retrieve synchronization job status',
+        message: error.message
       });
     }
   }
@@ -547,14 +580,17 @@ class HealthcareIntegrationController {
       }
     } catch (error) {
       // Log the full error details server-side
-      this.healthcareIntegrationService.logger.error('Get patient matching job status controller error', {
-        error: error.message,
-        stack: error.stack
-      });
+      if (this.healthcareIntegrationService && this.healthcareIntegrationService.logger) {
+        this.healthcareIntegrationService.logger.error('Get patient matching job status controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve patient matching job status'
+        error: 'Failed to retrieve patient matching job status',
+        message: error.message
       });
     }
   }
@@ -591,14 +627,17 @@ class HealthcareIntegrationController {
       }
     } catch (error) {
       // Log the full error details server-side
-      this.healthcareIntegrationService.logger.error('Get image processing job status controller error', {
-        error: error.message,
-        stack: error.stack
-      });
+      if (this.healthcareIntegrationService && this.healthcareIntegrationService.logger) {
+        this.healthcareIntegrationService.logger.error('Get image processing job status controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve image processing job status'
+        error: 'Failed to retrieve image processing job status',
+        message: error.message
       });
     }
   }
