@@ -3,29 +3,29 @@
  * Service for integrating with IoT devices and wearable technology
  */
 
-const fs = require('fs');
-const path = require('path');
 const config = require('../config/iot-wearable.config.js');
 const { v4: uuidv4 } = require('uuid');
 const winston = require('winston');
+const fs = require('fs');
+const path = require('path');
 const { cleanupOldEntries } = require('../../../src/utils/cleanup.util.js');
 
 class IoTWearableService {
   /**
-   * Create a new Wearable Device Integration Service
+   * Create a new IoT Sensor Integration Service
    * NOTE: This is a simulation implementation for demonstration purposes.
-   * In a production environment, this would integrate with real wearable technology APIs.
+   * In a production environment, this would integrate with real IoT sensor APIs.
    */
   constructor() {
     this.config = config;
     this.logger = this._createLogger();
-    this.wearableConnections = new Map();
+    this.sensorConnections = new Map();
 
     // Initialize services
     this._initializeServices();
 
-    this.logger.info('Wearable Device Integration Service created', {
-      service: 'wearable-device-service'
+    this.logger.info('IoT Sensor Integration Service created', {
+      service: 'iot-sensor-service'
     });
   }
 
@@ -79,71 +79,74 @@ class IoTWearableService {
    * @private
    */
   _initializeServices() {
-    // Initialize wearable device connections if enabled
-    if (this.config.wearables.enabled) {
-      this._initializeWearableConnections();
+    // Initialize IoT sensor connections if enabled
+    if (this.config.sensors.enabled) {
+      this._initializeSensorConnections();
     }
 
-    this.logger.info('Wearable device services initialized');
+    this.logger.info('IoT sensor services initialized');
   }
 
   /**
-   * Initialize wearable device connections
+   * Initialize IoT sensor connections
    * @private
    */
-  _initializeWearableConnections() {
-    // In a real implementation, this would initialize connections to wearable device APIs
-    this.logger.info('Wearable device connections initialized');
+  _initializeSensorConnections() {
+    // In a real implementation, this would initialize connections to IoT sensors
+    this.logger.info('IoT sensor connections initialized');
   }
 
-
   /**
-   * Integrate with wearable devices
-   * @param {Object} options - Wearable integration options
-   * @returns {Promise<Object>} Wearable integration result
+   * Process IoT sensor data
+   * @param {Array} sensorData - Sensor data to process
+   * @returns {Promise<Object>} Sensor data processing result
    */
-  async integrateWithWearables(options = {}) {
+  async processSensorData(sensorData = []) {
     const jobId = uuidv4();
 
-    // Create wearable job record
+    // Create sensor job record
     const job = {
       id: jobId,
       status: 'pending',
       createdAt: new Date().toISOString(),
       startedAt: null,
       completedAt: null,
-      options: options,
+      sensorData: sensorData,
       result: null,
       error: null
     };
 
-    this.wearableJobs = this.wearableJobs || new Map();
-    this.wearableJobs.set(jobId, job);
+    this.sensorJobs = this.sensorJobs || new Map();
+    this.sensorJobs.set(jobId, job);
     // Clean up old jobs if we have too many
-    this._cleanupOldJobs(this.wearableJobs);
+    this._cleanupOldJobs(this.sensorJobs);
 
     try {
-      if (!this.config.wearables.enabled) {
-        throw new Error('Wearable device integration is not enabled');
+      if (!this.config.sensors.enabled) {
+        throw new Error('IoT sensor integration is not enabled');
       }
 
-      this.logger.info('Starting wearable device integration', {
+      if (!Array.isArray(sensorData) || sensorData.length === 0) {
+        throw new Error('Sensor data array is required and cannot be empty');
+      }
+
+      this.logger.info('Processing IoT sensor data', {
         jobId,
-        options
+        dataPoints: sensorData.length
       });
 
       // Start job
       job.status = 'running';
       job.startedAt = new Date().toISOString();
 
-      // Simulate wearable device integration process
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Simulate sensor data processing
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
       const result = {
         jobId: jobId,
-        devicesConnected: this._generateSampleDeviceList(),
-        dataPoints: Math.floor(Math.random() * 1000) + 100,
-        processingTime: 1500
+        processedDataPoints: sensorData.length,
+        anomaliesDetected: Math.floor(sensorData.length * 0.05), // 5% anomaly rate
+        processingTime: 2000
       };
 
       // Complete job
@@ -151,10 +154,10 @@ class IoTWearableService {
       job.completedAt = new Date().toISOString();
       job.result = result;
 
-      this.logger.info('Wearable device integration completed', {
+      this.logger.info('IoT sensor data processing completed', {
         jobId,
-        devicesConnected: result.devicesConnected.length,
-        dataPoints: result.dataPoints,
+        processedDataPoints: result.processedDataPoints,
+        anomaliesDetected: result.anomaliesDetected,
         processingTime: result.processingTime
       });
 
@@ -163,7 +166,7 @@ class IoTWearableService {
       job.status = 'failed';
       job.error = error.message;
 
-      this.logger.error('Wearable device integration failed', {
+      this.logger.error('IoT sensor data processing failed', {
         jobId,
         error: error.message,
         stack: error.stack
@@ -173,30 +176,6 @@ class IoTWearableService {
     }
   }
 
-  /**
-   * Generate sample device list
-   * @returns {Array} Sample device list
-   * @private
-   */
-  _generateSampleDeviceList() {
-    const devices = [];
-    const deviceTypes = Object.keys(this.config.wearables.supportedDevices);
-
-    for (let i = 0; i < 5; i++) {
-      const deviceType = deviceTypes[Math.floor(Math.random() * deviceTypes.length)];
-      devices.push({
-        id: `DEVICE-${Math.floor(Math.random() * 100000)}`,
-        type: deviceType,
-        model: `${deviceType}-Model-${Math.floor(Math.random() * 1000)}`,
-        connected: true,
-        lastSync: new Date().toISOString()
-      });
-    }
-
-    return devices;
-  }
-
-
 
   /**
    * Get service status
@@ -204,24 +183,24 @@ class IoTWearableService {
    */
   getServiceStatus() {
     return {
-      wearables: {
-        enabled: this.config.wearables.enabled,
-        devicesConnected: this.wearableConnections.size
+      sensors: {
+        enabled: this.config.sensors.enabled,
+        sensorsConnected: this.sensorConnections.size
       }
     };
   }
 
   /**
-   * Get wearable integration job status
-   * @param {string} jobId - Wearable integration job ID
+   * Get sensor data processing job status
+   * @param {string} jobId - Sensor data processing job ID
    * @returns {Object|null} Job status or null if not found
    */
-  getWearableIntegrationStatus(jobId) {
-    if (!this.wearableJobs) {
+  getSensorDataProcessingStatus(jobId) {
+    if (!this.sensorJobs) {
       return null;
     }
 
-    const job = this.wearableJobs.get(jobId);
+    const job = this.sensorJobs.get(jobId);
     if (!job) {
       return null;
     }
