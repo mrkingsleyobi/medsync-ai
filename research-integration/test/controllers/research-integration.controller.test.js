@@ -58,7 +58,9 @@ describe('Research Integration Controller', () => {
         topics: analysisResult.topics,
         sentiment: analysisResult.sentiment,
         summary: analysisResult.summary,
-        processingTime: analysisResult.processingTime
+        processingTime: analysisResult.processingTime,
+        usedAgent: false,
+        agentResults: undefined
       });
     });
 
@@ -125,7 +127,9 @@ describe('Research Integration Controller', () => {
         taskId: matchingResult.taskId,
         patientId: matchingResult.patientId,
         trials: matchingResult.trials,
-        processingTime: matchingResult.processingTime
+        processingTime: matchingResult.processingTime,
+        usedAgent: false,
+        agentResults: undefined
       });
     });
 
@@ -186,7 +190,9 @@ describe('Research Integration Controller', () => {
         taskId: trackingResult.taskId,
         researchId: trackingResult.researchId,
         metrics: trackingResult.metrics,
-        processingTime: trackingResult.processingTime
+        processingTime: trackingResult.processingTime,
+        usedAgent: false,
+        agentResults: undefined
       });
     });
 
@@ -244,7 +250,8 @@ describe('Research Integration Controller', () => {
       expect(mockRes.json).toHaveBeenCalledWith({
         success: true,
         message: 'Collaborative research project created successfully',
-        project: project
+        project: project,
+        hasResearchContext: false
       });
     });
 

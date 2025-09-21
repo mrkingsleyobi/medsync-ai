@@ -42,12 +42,17 @@ class ResearchIntegrationController {
         topics: result.topics,
         sentiment: result.sentiment,
         summary: result.summary,
-        processingTime: result.processingTime
+        processingTime: result.processingTime,
+        usedAgent: !!result.agentResults,
+        agentResults: result.agentResults
       });
     } catch (error) {
-      console.error('Analyze medical literature controller error', {
-        error: error.message
-      });
+      if (this.researchIntegrationService && this.researchIntegrationService.logger) {
+        this.researchIntegrationService.logger.error('Analyze medical literature controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to analyze medical literature',
@@ -82,12 +87,17 @@ class ResearchIntegrationController {
         taskId: result.taskId,
         patientId: result.patientId,
         trials: result.trials,
-        processingTime: result.processingTime
+        processingTime: result.processingTime,
+        usedAgent: !!result.agentResults,
+        agentResults: result.agentResults
       });
     } catch (error) {
-      console.error('Match clinical trials controller error', {
-        error: error.message
-      });
+      if (this.researchIntegrationService && this.researchIntegrationService.logger) {
+        this.researchIntegrationService.logger.error('Match clinical trials controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to match clinical trials',
@@ -122,12 +132,17 @@ class ResearchIntegrationController {
         taskId: result.taskId,
         researchId: result.researchId,
         metrics: result.metrics,
-        processingTime: result.processingTime
+        processingTime: result.processingTime,
+        usedAgent: !!result.agentResults,
+        agentResults: result.agentResults
       });
     } catch (error) {
-      console.error('Track research impact controller error', {
-        error: error.message
-      });
+      if (this.researchIntegrationService && this.researchIntegrationService.logger) {
+        this.researchIntegrationService.logger.error('Track research impact controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to track research impact',
@@ -159,12 +174,16 @@ class ResearchIntegrationController {
       res.status(200).json({
         success: true,
         message: 'Collaborative research project created successfully',
-        project: project
+        project: project,
+        hasResearchContext: !!project.researchContext
       });
     } catch (error) {
-      console.error('Create collaborative research project controller error', {
-        error: error.message
-      });
+      if (this.researchIntegrationService && this.researchIntegrationService.logger) {
+        this.researchIntegrationService.logger.error('Create collaborative research project controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to create collaborative research project',
@@ -204,9 +223,12 @@ class ResearchIntegrationController {
         });
       }
     } catch (error) {
-      console.error('Get research task status controller error', {
-        error: error.message
-      });
+      if (this.researchIntegrationService && this.researchIntegrationService.logger) {
+        this.researchIntegrationService.logger.error('Get research task status controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve research task status',
@@ -231,9 +253,12 @@ class ResearchIntegrationController {
         workflows: workflows
       });
     } catch (error) {
-      console.error('Get available workflows controller error', {
-        error: error.message
-      });
+      if (this.researchIntegrationService && this.researchIntegrationService.logger) {
+        this.researchIntegrationService.logger.error('Get available workflows controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve available research workflows',
@@ -273,9 +298,12 @@ class ResearchIntegrationController {
         });
       }
     } catch (error) {
-      console.error('Get workflow definition controller error', {
-        error: error.message
-      });
+      if (this.researchIntegrationService && this.researchIntegrationService.logger) {
+        this.researchIntegrationService.logger.error('Get workflow definition controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve workflow definition',
