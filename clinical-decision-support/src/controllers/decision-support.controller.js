@@ -76,11 +76,12 @@ class ClinicalDecisionSupportController {
         });
       }
 
-      // For backward compatibility with tests, include message field
-      res.status(500).json({
-        error: 'Failed to generate clinical decision support',
-        message: error.message
-      });
+      // For backward compatibility with tests, include message field in non-production environments
+      const response = { error: 'Failed to generate clinical decision support' };
+      if (process.env.NODE_ENV !== 'production') {
+        response.message = error.message;
+      }
+      res.status(500).json(response);
     }
   }
 
@@ -116,11 +117,12 @@ class ClinicalDecisionSupportController {
         stack: error.stack
       });
 
-      // For backward compatibility with tests, include message field
-      res.status(500).json({
-        error: 'Failed to retrieve decision history',
-        message: error.message
-      });
+      // For backward compatibility with tests, include message field in non-production environments
+      const response = { error: 'Failed to retrieve decision history' };
+      if (process.env.NODE_ENV !== 'production') {
+        response.message = error.message;
+      }
+      res.status(500).json(response);
     }
   }
 
@@ -147,11 +149,12 @@ class ClinicalDecisionSupportController {
         stack: error.stack
       });
 
-      // For backward compatibility with tests, include message field
-      res.status(500).json({
-        error: 'Failed to retrieve active alerts',
-        message: error.message
-      });
+      // For backward compatibility with tests, include message field in non-production environments
+      const response = { error: 'Failed to retrieve active alerts' };
+      if (process.env.NODE_ENV !== 'production') {
+        response.message = error.message;
+      }
+      res.status(500).json(response);
     }
   }
 
@@ -192,11 +195,12 @@ class ClinicalDecisionSupportController {
         stack: error.stack
       });
 
-      // For backward compatibility with tests, include message field
-      res.status(500).json({
-        error: 'Failed to acknowledge alert',
-        message: error.message
-      });
+      // For backward compatibility with tests, include message field in non-production environments
+      const response = { error: 'Failed to acknowledge alert' };
+      if (process.env.NODE_ENV !== 'production') {
+        response.message = error.message;
+      }
+      res.status(500).json(response);
     }
   }
 
@@ -222,11 +226,12 @@ class ClinicalDecisionSupportController {
         stack: error.stack
       });
 
-      // For backward compatibility with tests, include message field
-      res.status(500).json({
-        error: 'Failed to retrieve available decision models',
-        message: error.message
-      });
+      // For backward compatibility with tests, include message field in non-production environments
+      const response = { error: 'Failed to retrieve available decision models' };
+      if (process.env.NODE_ENV !== 'production') {
+        response.message = error.message;
+      }
+      res.status(500).json(response);
     }
   }
 
@@ -267,11 +272,12 @@ class ClinicalDecisionSupportController {
         stack: error.stack
       });
 
-      // For backward compatibility with tests, include message field
-      res.status(500).json({
-        error: 'Failed to retrieve clinical guidelines',
-        message: error.message
-      });
+      // For backward compatibility with tests, include message field in non-production environments
+      const response = { error: 'Failed to retrieve clinical guidelines' };
+      if (process.env.NODE_ENV !== 'production') {
+        response.message = error.message;
+      }
+      res.status(500).json(response);
     }
   }
 
@@ -306,11 +312,12 @@ class ClinicalDecisionSupportController {
         stack: error.stack
       });
 
-      // For backward compatibility with tests, include message field
-      res.status(500).json({
-        error: 'Failed to register custom decision model',
-        message: error.message
-      });
+      // For backward compatibility with tests, include message field in non-production environments
+      const response = { error: 'Failed to register custom decision model' };
+      if (process.env.NODE_ENV !== 'production') {
+        response.message = error.message;
+      }
+      res.status(500).json(response);
     }
   }
 }

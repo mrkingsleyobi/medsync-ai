@@ -25,36 +25,51 @@ function cleanupOldEntries(map, options = {}) {
     totalRemoved: 0
   };
 
-  const now = Date.now();
+  try {
+    const now = Date.now();
 
-  // Remove entries that are too old
-  for (const [key, value] of map.entries()) {
-    if (value && value[timestampField]) {
-      const entryAge = now - new Date(value[timestampField]).getTime();
-      if (entryAge > maxAge) {
-        map.delete(key);
-        stats.removedByAge++;
+    // Remove entries that are too old
+    for (const [key, value] of map.entries()) {
+      if (value && value[timestampField]) {
+        // Handle potential invalid dates
+        const timestamp = new Date(value[timestampField]).getTime();
+        if (!isNaN(timestamp)) {
+          const entryAge = now - timestamp;
+          if (entryAge > maxAge) {
+            map.delete(key);
+            stats.removedByAge++;
+          }
+        }
       }
     }
-  }
 
-  // Remove oldest entries if we still have too many
-  if (map.size > maxEntries) {
-    const entries = Array.from(map.entries())
-      .sort((a, b) => {
-        const timeA = a[1][timestampField] ? new Date(a[1][timestampField]).getTime() : 0;
-        const timeB = b[1][timestampField] ? new Date(b[1][timestampField]).getTime() : 0;
-        return timeA - timeB; // Oldest first
-      });
+    // Remove oldest entries if we still have too many
+    if (map.size > maxEntries) {
+      // Convert map entries to array and sort by timestamp
+      const entries = Array.from(map.entries())
+        .map(([key, value]) => ({
+          key,
+          value,
+          timestamp: value && value[timestampField] ? new Date(value[timestampField]).getTime() : 0
+        }))
+        // Filter out invalid timestamps and sort by timestamp (oldest first)
+        .filter(entry => !isNaN(entry.timestamp))
+        .sort((a, b) => a.timestamp - b.timestamp); // Oldest first
 
-    const excessCount = map.size - maxEntries;
-    for (let i = 0; i < excessCount; i++) {
-      map.delete(entries[i][0]);
-      stats.removedByCount++;
+      const excessCount = Math.min(map.size - maxEntries, entries.length);
+      for (let i = 0; i < excessCount; i++) {
+        map.delete(entries[i].key);
+        stats.removedByCount++;
+      }
     }
+
+    stats.totalRemoved = stats.removedByAge + stats.removedByCount;
+  } catch (error) {
+    // Don't throw errors to prevent breaking the calling function
+    // In a real implementation, you might want to log this error
+    console.warn('Cleanup utility encountered an error:', error.message);
   }
 
-  stats.totalRemoved = stats.removedByAge + stats.removedByCount;
   return stats;
 }
 
