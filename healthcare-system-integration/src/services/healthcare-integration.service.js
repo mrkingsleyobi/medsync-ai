@@ -3,11 +3,12 @@
  * Service for integrating with healthcare systems (EHR, imaging, etc.)
  */
 
-const config = require('../config/healthcare-integration.config.js');
-const { v4: uuidv4 } = require('uuid');
-const winston = require('winston');
 const fs = require('fs');
 const path = require('path');
+const { v4: uuidv4 } = require('uuid');
+const winston = require('winston');
+const config = require('../config/healthcare-integration.config.js');
+const { cleanupOldEntries } = require('../../../src/utils/cleanup.util.js');
 
 class HealthcareIntegrationService {
   /**
@@ -25,18 +26,11 @@ class HealthcareIntegrationService {
     this.syncJobs = new Map();
     this.matchingResults = new Map();
     this.imageProcessingJobs = new Map();
-  }
 
-  /**
-   * Check for required environment variables
-   * @private
-   */
-  _checkRequiredEnvironmentVariables() {
     // Check for required environment variables
     if (this.config.fhir.enabled && (!process.env.FHIR_CLIENT_ID || !process.env.FHIR_CLIENT_SECRET)) {
       throw new Error('FATAL: Missing required environment variables FHIR_CLIENT_ID and/or FHIR_CLIENT_SECRET');
     }
-  }
 
     // Initialize services
     this._initializeServices();
@@ -113,7 +107,19 @@ class HealthcareIntegrationService {
 
     // Start synchronization if enabled
     if (this.config.sync.enabled) {
-      setInterval(() => this._performSync(), this.config.sync.frequency);
+      const runSync = async () => {
+        try {
+          await this._performSync();
+        } catch (error) {
+          this.logger.error('Synchronization failed', {
+            error: error.message,
+            stack: error.stack
+          });
+        } finally {
+          setTimeout(runSync, this.config.sync.frequency);
+        }
+      };
+      runSync();
     }
 
     this.logger.info('Healthcare integration services initialized');
@@ -124,9 +130,6 @@ class HealthcareIntegrationService {
    * @private
    */
   _initializeFhirClients() {
-    // Check for required environment variables
-    this._checkRequiredEnvironmentVariables();
-
     // In a real implementation, this would initialize FHIR client connections
     this.logger.info('FHIR clients initialized');
   }
@@ -365,6 +368,8 @@ class HealthcareIntegrationService {
       };
 
       this.syncJobs.set(jobId, job);
+      // Clean up old jobs if we have too many
+      this._cleanupOldJobs(this.syncJobs);
 
       // Start job
       job.status = 'running';
@@ -437,6 +442,8 @@ class HealthcareIntegrationService {
       };
 
       this.matchingResults.set(jobId, job);
+      // Clean up old jobs if we have too many
+      this._cleanupOldJobs(this.matchingResults);
 
       // Start job
       job.status = 'running';
@@ -520,6 +527,8 @@ class HealthcareIntegrationService {
       };
 
       this.imageProcessingJobs.set(jobId, job);
+      // Clean up old jobs if we have too many
+      this._cleanupOldJobs(this.imageProcessingJobs);
 
       // Start job
       job.status = 'running';
@@ -702,6 +711,33 @@ class HealthcareIntegrationService {
       startedAt: job.startedAt,
       completedAt: job.completedAt
     };
+  }
+
+  /**
+   * Clean up old jobs to prevent memory leaks
+   * @param {Map} jobMap - The job Map to clean up
+   * @private
+   */
+  _cleanupOldJobs(jobMap) {
+    try {
+      const stats = cleanupOldEntries(jobMap, {
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        maxEntries: 1000
+      });
+
+      if (stats.totalRemoved > 0) {
+        this.logger.debug('Job cleanup completed', {
+          removedByAge: stats.removedByAge,
+          removedByCount: stats.removedByCount,
+          totalRemoved: stats.totalRemoved
+        });
+      }
+    } catch (error) {
+      this.logger.error('Job cleanup failed', {
+        error: error.message,
+        stack: error.stack
+      });
+    }
   }
 }
 
