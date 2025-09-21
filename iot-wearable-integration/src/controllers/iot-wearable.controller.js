@@ -15,6 +15,109 @@ class HealthMonitoringController {
     this.logger = this.healthMonitoringService.logger;
   }
 
+  /**
+   * Integrate with wearable devices
+   * @param {Object} req - Express request object
+   * @param {Object} res - Express response object
+   */
+  async integrateWithWearables(req, res) {
+    try {
+      const { options } = req.body;
+
+      // Integrate with wearable devices
+      const result = await this.healthMonitoringService.integrateWithWearables(options);
+
+      // Return result
+      res.status(200).json({
+        success: true,
+        message: 'Wearable device integration completed successfully',
+        jobId: result.jobId,
+        devicesConnected: result.devicesConnected,
+        dataPoints: result.dataPoints,
+        processingTime: result.processingTime
+      });
+    } catch (error) {
+      // Log the full error details server-side
+      if (this.logger) {
+        this.logger.error('Wearable device integration controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
+
+      // Handle specific errors with user-friendly messages
+      if (error.message.includes('Wearable device integration is not enabled')) {
+        return res.status(400).json({
+          error: 'Wearable device integration is not enabled'
+        });
+      }
+
+      // Return generic error message to client
+      res.status(500).json({
+        error: 'Failed to integrate with wearable devices',
+        message: error.message
+      });
+    }
+  }
+
+  /**
+   * Process IoT sensor data
+   * @param {Object} req - Express request object
+   * @param {Object} res - Express response object
+   */
+  async processSensorData(req, res) {
+    try {
+      const { sensorData } = req.body;
+
+      // Validate required fields
+      if (!sensorData || !Array.isArray(sensorData)) {
+        return res.status(400).json({
+          error: 'Sensor data array is required'
+        });
+      }
+
+      // Process IoT sensor data
+      const result = await this.healthMonitoringService.processSensorData(sensorData);
+
+      // Return result
+      res.status(200).json({
+        success: true,
+        message: 'IoT sensor data processed successfully',
+        jobId: result.jobId,
+        processedDataPoints: result.processedDataPoints,
+        anomaliesDetected: result.anomaliesDetected,
+        processingTime: result.processingTime
+      });
+    } catch (error) {
+      // Log the full error details server-side
+      if (this.logger) {
+        this.logger.error('IoT sensor data processing controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
+
+      // Handle validation errors with user-friendly messages
+      if (error.message.includes('Sensor data array is required') || error.message.includes('cannot be empty')) {
+        return res.status(400).json({
+          error: 'Invalid sensor data format'
+        });
+      }
+
+      // Handle specific errors with user-friendly messages
+      if (error.message.includes('IoT sensor integration is not enabled')) {
+        return res.status(400).json({
+          error: 'IoT sensor integration is not enabled'
+        });
+      }
+
+      // Return generic error message to client
+      res.status(500).json({
+        error: 'Failed to process IoT sensor data',
+        message: error.message
+      });
+    }
+  }
 
   /**
    * Monitor real-time health data
@@ -39,10 +142,12 @@ class HealthMonitoringController {
       });
     } catch (error) {
       // Log the full error details server-side
-      this.logger.error('Real-time health monitoring controller error', {
-        error: error.message,
-        stack: error.stack
-      });
+      if (this.logger) {
+        this.logger.error('Real-time health monitoring controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Handle specific errors with user-friendly messages
       if (error.message.includes('Real-time health monitoring is not enabled')) {
@@ -59,6 +164,171 @@ class HealthMonitoringController {
     }
   }
 
+  /**
+   * Generate early warning
+   * @param {Object} req - Express request object
+   * @param {Object} res - Express response object
+   */
+  async generateEarlyWarning(req, res) {
+    try {
+      const { patientData } = req.body;
+
+      // Validate required fields
+      if (!patientData) {
+        return res.status(400).json({
+          error: 'Patient data is required'
+        });
+      }
+
+      // Generate early warning
+      const result = await this.healthMonitoringService.generateEarlyWarning(patientData);
+
+      // Return result
+      res.status(200).json({
+        success: true,
+        message: 'Early warning generated successfully',
+        jobId: result.jobId,
+        patientId: result.patientId,
+        warnings: result.warnings,
+        confidence: result.confidence,
+        processingTime: result.processingTime
+      });
+    } catch (error) {
+      // Log the full error details server-side
+      if (this.logger) {
+        this.logger.error('Early warning generation controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
+
+      // Handle validation errors with user-friendly messages
+      if (error.message.includes('Patient data is required')) {
+        return res.status(400).json({
+          error: 'Invalid patient data provided'
+        });
+      }
+
+      // Handle specific errors with user-friendly messages
+      if (error.message.includes('Early warning system is not enabled')) {
+        return res.status(400).json({
+          error: 'Early warning system is not enabled'
+        });
+      }
+
+      // Return generic error message to client
+      res.status(500).json({
+        error: 'Failed to generate early warning',
+        message: error.message
+      });
+    }
+  }
+
+  /**
+   * Generate population health analytics
+   * @param {Object} req - Express request object
+   * @param {Object} res - Express response object
+   */
+  async generatePopulationAnalytics(req, res) {
+    try {
+      const { options } = req.body;
+
+      // Generate population health analytics
+      const result = await this.healthMonitoringService.generatePopulationAnalytics(options);
+
+      // Return result
+      res.status(200).json({
+        success: true,
+        message: 'Population health analytics generated successfully',
+        jobId: result.jobId,
+        populationMetrics: result.populationMetrics,
+        benchmarks: result.benchmarks,
+        outliers: result.outliers,
+        processingTime: result.processingTime
+      });
+    } catch (error) {
+      // Log the full error details server-side
+      if (this.logger) {
+        this.logger.error('Population health analytics generation controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
+
+      // Handle specific errors with user-friendly messages
+      if (error.message.includes('Population health analytics is not enabled')) {
+        return res.status(400).json({
+          error: 'Population health analytics is not enabled'
+        });
+      }
+
+      // Return generic error message to client
+      res.status(500).json({
+        error: 'Failed to generate population health analytics',
+        message: error.message
+      });
+    }
+  }
+
+  /**
+   * Generate personalized health predictions
+   * @param {Object} req - Express request object
+   * @param {Object} res - Express response object
+   */
+  async generateHealthPredictions(req, res) {
+    try {
+      const { patientData } = req.body;
+
+      // Validate required fields
+      if (!patientData) {
+        return res.status(400).json({
+          error: 'Patient data is required'
+        });
+      }
+
+      // Generate personalized health predictions
+      const result = await this.healthMonitoringService.generateHealthPredictions(patientData);
+
+      // Return result
+      res.status(200).json({
+        success: true,
+        message: 'Personalized health predictions generated successfully',
+        jobId: result.jobId,
+        patientId: result.patientId,
+        predictions: result.predictions,
+        confidence: result.confidence,
+        processingTime: result.processingTime
+      });
+    } catch (error) {
+      // Log the full error details server-side
+      if (this.logger) {
+        this.logger.error('Personalized health predictions generation controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
+
+      // Handle validation errors with user-friendly messages
+      if (error.message.includes('Patient data is required')) {
+        return res.status(400).json({
+          error: 'Invalid patient data provided'
+        });
+      }
+
+      // Handle specific errors with user-friendly messages
+      if (error.message.includes('Personalized health prediction is not enabled')) {
+        return res.status(400).json({
+          error: 'Personalized health prediction is not enabled'
+        });
+      }
+
+      // Return generic error message to client
+      res.status(500).json({
+        error: 'Failed to generate personalized health predictions',
+        message: error.message
+      });
+    }
+  }
 
   /**
    * Get service status
@@ -77,14 +347,110 @@ class HealthMonitoringController {
       });
     } catch (error) {
       // Log the full error details server-side
-      this.logger.error('Get service status controller error', {
-        error: error.message,
-        stack: error.stack
-      });
+      if (this.logger) {
+        this.logger.error('Get service status controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Return generic error message to client
       res.status(500).json({
         error: 'Failed to retrieve service status',
+        message: error.message
+      });
+    }
+  }
+
+  /**
+   * Get wearable integration job status
+   * @param {Object} req - Express request object
+   * @param {Object} res - Express response object
+   */
+  getWearableIntegrationStatus(req, res) {
+    try {
+      const { jobId } = req.params;
+
+      // Validate required fields
+      if (!jobId) {
+        return res.status(400).json({
+          error: 'Job ID is required'
+        });
+      }
+
+      // Get job status
+      const status = this.healthMonitoringService.getWearableIntegrationStatus(jobId);
+
+      // Return status
+      if (status) {
+        res.status(200).json({
+          success: true,
+          status: status
+        });
+      } else {
+        res.status(404).json({
+          error: 'Wearable integration job not found'
+        });
+      }
+    } catch (error) {
+      // Log the full error details server-side
+      if (this.logger) {
+        this.logger.error('Get wearable integration job status controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
+
+      // Return generic error message to client
+      res.status(500).json({
+        error: 'Failed to retrieve wearable integration job status',
+        message: error.message
+      });
+    }
+  }
+
+  /**
+   * Get sensor data processing job status
+   * @param {Object} req - Express request object
+   * @param {Object} res - Express response object
+   */
+  getSensorDataProcessingStatus(req, res) {
+    try {
+      const { jobId } = req.params;
+
+      // Validate required fields
+      if (!jobId) {
+        return res.status(400).json({
+          error: 'Job ID is required'
+        });
+      }
+
+      // Get job status
+      const status = this.healthMonitoringService.getSensorDataProcessingStatus(jobId);
+
+      // Return status
+      if (status) {
+        res.status(200).json({
+          success: true,
+          status: status
+        });
+      } else {
+        res.status(404).json({
+          error: 'Sensor data processing job not found'
+        });
+      }
+    } catch (error) {
+      // Log the full error details server-side
+      if (this.logger) {
+        this.logger.error('Get sensor data processing job status controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
+
+      // Return generic error message to client
+      res.status(500).json({
+        error: 'Failed to retrieve sensor data processing job status',
         message: error.message
       });
     }
@@ -122,10 +488,12 @@ class HealthMonitoringController {
       }
     } catch (error) {
       // Log the full error details server-side
-      this.logger.error('Get monitoring job status controller error', {
-        error: error.message,
-        stack: error.stack
-      });
+      if (this.logger) {
+        this.logger.error('Get monitoring job status controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Return generic error message to client
       res.status(500).json({
@@ -167,14 +535,110 @@ class HealthMonitoringController {
       }
     } catch (error) {
       // Log the full error details server-side
-      this.logger.error('Get alert status controller error', {
-        error: error.message,
-        stack: error.stack
-      });
+      if (this.logger) {
+        this.logger.error('Get alert status controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Return generic error message to client
       res.status(500).json({
         error: 'Failed to retrieve alert status',
+        message: error.message
+      });
+    }
+  }
+
+  /**
+   * Get prediction job status
+   * @param {Object} req - Express request object
+   * @param {Object} res - Express response object
+   */
+  getPredictionStatus(req, res) {
+    try {
+      const { jobId } = req.params;
+
+      // Validate required fields
+      if (!jobId) {
+        return res.status(400).json({
+          error: 'Job ID is required'
+        });
+      }
+
+      // Get job status
+      const status = this.healthMonitoringService.getPredictionStatus(jobId);
+
+      // Return status
+      if (status) {
+        res.status(200).json({
+          success: true,
+          status: status
+        });
+      } else {
+        res.status(404).json({
+          error: 'Prediction job not found'
+        });
+      }
+    } catch (error) {
+      // Log the full error details server-side
+      if (this.logger) {
+        this.logger.error('Get prediction job status controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
+
+      // Return generic error message to client
+      res.status(500).json({
+        error: 'Failed to retrieve prediction job status',
+        message: error.message
+      });
+    }
+  }
+
+  /**
+   * Get analytics job status
+   * @param {Object} req - Express request object
+   * @param {Object} res - Express response object
+   */
+  getAnalyticsStatus(req, res) {
+    try {
+      const { jobId } = req.params;
+
+      // Validate required fields
+      if (!jobId) {
+        return res.status(400).json({
+          error: 'Job ID is required'
+        });
+      }
+
+      // Get job status
+      const status = this.healthMonitoringService.getAnalyticsStatus(jobId);
+
+      // Return status
+      if (status) {
+        res.status(200).json({
+          success: true,
+          status: status
+        });
+      } else {
+        res.status(404).json({
+          error: 'Analytics job not found'
+        });
+      }
+    } catch (error) {
+      // Log the full error details server-side
+      if (this.logger) {
+        this.logger.error('Get analytics job status controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
+
+      // Return generic error message to client
+      res.status(500).json({
+        error: 'Failed to retrieve analytics job status',
         message: error.message
       });
     }
@@ -213,10 +677,12 @@ class HealthMonitoringController {
       }
     } catch (error) {
       // Log the full error details server-side
-      this.logger.error('Acknowledge alert controller error', {
-        error: error.message,
-        stack: error.stack
-      });
+      if (this.logger) {
+        this.logger.error('Acknowledge alert controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Return generic error message to client
       res.status(500).json({
@@ -259,10 +725,12 @@ class HealthMonitoringController {
       }
     } catch (error) {
       // Log the full error details server-side
-      this.logger.error('Resolve alert controller error', {
-        error: error.message,
-        stack: error.stack
-      });
+      if (this.logger) {
+        this.logger.error('Resolve alert controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Return generic error message to client
       res.status(500).json({

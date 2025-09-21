@@ -1,12 +1,3 @@
-# Security Controller for MediSync Healthcare AI Platform
-
-## Overview
-
-This controller provides REST API endpoints for the security features implemented in the security service.
-
-## Implementation
-
-```javascript
 const SecurityService = require('../services/security.service.js');
 
 class SecurityController {
@@ -35,7 +26,7 @@ class SecurityController {
       if (this.securityService.isRateLimited(req.ip)) {
         return res.status(429).json({
           error: 'Too many requests',
-          message: this.config.getApiSecurityConfig().rateLimiting.message
+          message: this.securityService.config.getApiSecurityConfig().rateLimiting.message
         });
       }
 
@@ -103,7 +94,7 @@ class SecurityController {
       if (this.securityService.isRateLimited(req.ip)) {
         return res.status(429).json({
           error: 'Too many requests',
-          message: this.config.getApiSecurityConfig().rateLimiting.message
+          message: this.securityService.config.getApiSecurityConfig().rateLimiting.message
         });
       }
 
@@ -175,7 +166,7 @@ class SecurityController {
       if (this.securityService.isRateLimited(req.ip)) {
         return res.status(429).json({
           error: 'Too many requests',
-          message: this.config.getApiSecurityConfig().rateLimiting.message
+          message: this.securityService.config.getApiSecurityConfig().rateLimiting.message
         });
       }
 
@@ -243,7 +234,7 @@ class SecurityController {
       if (this.securityService.isRateLimited(req.ip)) {
         return res.status(429).json({
           error: 'Too many requests',
-          message: this.config.getApiSecurityConfig().rateLimiting.message
+          message: this.securityService.config.getApiSecurityConfig().rateLimiting.message
         });
       }
 
@@ -303,7 +294,7 @@ class SecurityController {
       if (this.securityService.isRateLimited(req.ip)) {
         return res.status(429).json({
           error: 'Too many requests',
-          message: this.config.getApiSecurityConfig().rateLimiting.message
+          message: this.securityService.config.getApiSecurityConfig().rateLimiting.message
         });
       }
 
@@ -363,7 +354,7 @@ class SecurityController {
       if (this.securityService.isRateLimited(req.ip)) {
         return res.status(429).json({
           error: 'Too many requests',
-          message: this.config.getApiSecurityConfig().rateLimiting.message
+          message: this.securityService.config.getApiSecurityConfig().rateLimiting.message
         });
       }
 

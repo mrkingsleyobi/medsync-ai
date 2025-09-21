@@ -4,6 +4,7 @@
  */
 
 const ResearcherPreferenceService = require('./researcher-preference.service.js');
+const winston = require('winston');
 
 class ResearcherPreferenceController {
   /**
@@ -11,6 +12,28 @@ class ResearcherPreferenceController {
    */
   constructor() {
     this.researcherPreferenceService = new ResearcherPreferenceService();
+    this.logger = this._createLogger();
+  }
+
+  /**
+   * Create logger instance
+   * @returns {Object} Winston logger instance
+   */
+  _createLogger() {
+    return winston.createLogger({
+      level: 'info',
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.errors({ stack: true }),
+        winston.format.splat(),
+        winston.format.json()
+      ),
+      defaultMeta: { service: 'researcher-preference-controller' },
+      transports: [
+        new winston.transports.File({ filename: 'logs/researcher-preference-controller-error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'logs/researcher-preference-controller-combined.log' })
+      ]
+    });
   }
 
   /**
@@ -41,9 +64,15 @@ class ResearcherPreferenceController {
         preferences: preferences
       });
     } catch (error) {
-      console.error('Get researcher preferences controller error', {
-        error: error.message
-      });
+      if (this.logger) {
+        this.logger.error('Get researcher preferences controller error', {
+          error: error.message
+        });
+      } else {
+        console.error('Get researcher preferences controller error', {
+          error: error.message
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve researcher preferences',
@@ -105,9 +134,15 @@ class ResearcherPreferenceController {
         preferences: preferences
       });
     } catch (error) {
-      console.error('Set researcher preference controller error', {
-        error: error.message
-      });
+      if (this.logger) {
+        this.logger.error('Set researcher preference controller error', {
+          error: error.message
+        });
+      } else {
+        console.error('Set researcher preference controller error', {
+          error: error.message
+        });
+      }
 
       // Handle validation errors
       if (error.message.includes('required') ||
@@ -165,9 +200,15 @@ class ResearcherPreferenceController {
         preferences: updatedPreferences
       });
     } catch (error) {
-      console.error('Update researcher preferences controller error', {
-        error: error.message
-      });
+      if (this.logger) {
+        this.logger.error('Update researcher preferences controller error', {
+          error: error.message
+        });
+      } else {
+        console.error('Update researcher preferences controller error', {
+          error: error.message
+        });
+      }
 
       // Handle validation errors
       if (error.message.includes('required') ||
@@ -215,9 +256,15 @@ class ResearcherPreferenceController {
         preferences: preferences
       });
     } catch (error) {
-      console.error('Reset researcher preferences controller error', {
-        error: error.message
-      });
+      if (this.logger) {
+        this.logger.error('Reset researcher preferences controller error', {
+          error: error.message
+        });
+      } else {
+        console.error('Reset researcher preferences controller error', {
+          error: error.message
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to reset researcher preferences',
@@ -242,9 +289,15 @@ class ResearcherPreferenceController {
         categories: categories
       });
     } catch (error) {
-      console.error('Get available categories controller error', {
-        error: error.message
-      });
+      if (this.logger) {
+        this.logger.error('Get available categories controller error', {
+          error: error.message
+        });
+      } else {
+        console.error('Get available categories controller error', {
+          error: error.message
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve preference categories',
@@ -285,9 +338,15 @@ class ResearcherPreferenceController {
         });
       }
     } catch (error) {
-      console.error('Get category configuration controller error', {
-        error: error.message
-      });
+      if (this.logger) {
+        this.logger.error('Get category configuration controller error', {
+          error: error.message
+        });
+      } else {
+        console.error('Get category configuration controller error', {
+          error: error.message
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve category configuration',
@@ -335,9 +394,15 @@ class ResearcherPreferenceController {
         });
       }
     } catch (error) {
-      console.error('Get preference configuration controller error', {
-        error: error.message
-      });
+      if (this.logger) {
+        this.logger.error('Get preference configuration controller error', {
+          error: error.message
+        });
+      } else {
+        console.error('Get preference configuration controller error', {
+          error: error.message
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve preference configuration',
@@ -373,9 +438,15 @@ class ResearcherPreferenceController {
         exportedPreferences: exportedPreferences
       });
     } catch (error) {
-      console.error('Export researcher preferences controller error', {
-        error: error.message
-      });
+      if (this.logger) {
+        this.logger.error('Export researcher preferences controller error', {
+          error: error.message
+        });
+      } else {
+        console.error('Export researcher preferences controller error', {
+          error: error.message
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to export researcher preferences',
@@ -421,9 +492,15 @@ class ResearcherPreferenceController {
         importedPreferences: importedPreferences
       });
     } catch (error) {
-      console.error('Import researcher preferences controller error', {
-        error: error.message
-      });
+      if (this.logger) {
+        this.logger.error('Import researcher preferences controller error', {
+          error: error.message
+        });
+      } else {
+        console.error('Import researcher preferences controller error', {
+          error: error.message
+        });
+      }
 
       // Handle validation errors
       if (error.message.includes('required') || error.message.includes('Invalid preferences structure')) {

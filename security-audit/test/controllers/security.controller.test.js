@@ -1,12 +1,3 @@
-# Security Controller Tests for MediSync Healthcare AI Platform
-
-## Overview
-
-This file contains unit tests for the security controller implementation.
-
-## Tests
-
-```javascript
 const SecurityController = require('../../src/controllers/security.controller.js');
 
 // Mock Express request and response objects

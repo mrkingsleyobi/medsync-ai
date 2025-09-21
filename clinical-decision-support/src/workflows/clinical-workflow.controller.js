@@ -54,9 +54,12 @@ class ClinicalWorkflowController {
         executionTime: result.executionTime
       });
     } catch (error) {
-      console.error('Execute workflow controller error', {
-        error: error.message
-      });
+      if (this.clinicalWorkflowService && this.clinicalWorkflowService.logger) {
+        this.clinicalWorkflowService.logger.error('Execute workflow controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Handle specific error cases
       if (error.message.includes('Workflow type')) {
@@ -109,9 +112,12 @@ class ClinicalWorkflowController {
         });
       }
     } catch (error) {
-      console.error('Get workflow status controller error', {
-        error: error.message
-      });
+      if (this.clinicalWorkflowService && this.clinicalWorkflowService.logger) {
+        this.clinicalWorkflowService.logger.error('Get workflow status controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve workflow status',
@@ -136,9 +142,12 @@ class ClinicalWorkflowController {
         workflows: workflows
       });
     } catch (error) {
-      console.error('Get available workflows controller error', {
-        error: error.message
-      });
+      if (this.clinicalWorkflowService && this.clinicalWorkflowService.logger) {
+        this.clinicalWorkflowService.logger.error('Get available workflows controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve available workflows',
@@ -178,9 +187,12 @@ class ClinicalWorkflowController {
         });
       }
     } catch (error) {
-      console.error('Get workflow definition controller error', {
-        error: error.message
-      });
+      if (this.clinicalWorkflowService && this.clinicalWorkflowService.logger) {
+        this.clinicalWorkflowService.logger.error('Get workflow definition controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve workflow definition',

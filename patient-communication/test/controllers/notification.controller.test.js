@@ -15,6 +15,33 @@ describe('Notification Controller', () => {
 
   beforeEach(() => {
     notificationController = new NotificationController();
+
+    // Manually set up the mock service properties that the controller expects
+    notificationController.notificationService.types = {
+      APPOINTMENT_REMINDER: 'appointment_reminder',
+      MEDICATION_REMINDER: 'medication_reminder',
+      HEALTH_ALERT: 'health_alert',
+      EDUCATION_RECOMMENDATION: 'education_recommendation',
+      DOCUMENT_AVAILABLE: 'document_available',
+      MESSAGE_RECEIVED: 'message_received',
+      SYSTEM_UPDATE: 'system_update',
+      SECURITY_ALERT: 'security_alert'
+    };
+
+    notificationController.notificationService.priorities = {
+      LOW: 'low',
+      NORMAL: 'normal',
+      HIGH: 'high',
+      URGENT: 'urgent'
+    };
+
+    notificationController.notificationService.channels = {
+      EMAIL: 'email',
+      SMS: 'sms',
+      PUSH: 'push',
+      IN_APP: 'in_app'
+    };
+
     mockReq = {
       body: {},
       params: {},

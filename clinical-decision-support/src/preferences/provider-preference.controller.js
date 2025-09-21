@@ -41,9 +41,12 @@ class ProviderPreferenceController {
         preferences: preferences
       });
     } catch (error) {
-      console.error('Get provider preferences controller error', {
-        error: error.message
-      });
+      if (this.providerPreferenceService && this.providerPreferenceService.logger) {
+        this.providerPreferenceService.logger.error('Get provider preferences controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve provider preferences',
@@ -105,12 +108,15 @@ class ProviderPreferenceController {
         preferences: preferences
       });
     } catch (error) {
-      console.error('Set provider preference controller error', {
-        error: error.message
-      });
+      if (this.providerPreferenceService && this.providerPreferenceService.logger) {
+        this.providerPreferenceService.logger.error('Set provider preference controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Handle validation errors
-      if (error.message.includes('required') || error.message.includes('Unknown preference')) {
+      if (error.message.includes('required') || error.message.includes('Unknown preference') || error.message.includes('Preference')) {
         return res.status(400).json({
           error: error.message
         });
@@ -162,9 +168,12 @@ class ProviderPreferenceController {
         preferences: updatedPreferences
       });
     } catch (error) {
-      console.error('Update provider preferences controller error', {
-        error: error.message
-      });
+      if (this.providerPreferenceService && this.providerPreferenceService.logger) {
+        this.providerPreferenceService.logger.error('Update provider preferences controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to update provider preferences',
@@ -202,9 +211,12 @@ class ProviderPreferenceController {
         preferences: preferences
       });
     } catch (error) {
-      console.error('Reset provider preferences controller error', {
-        error: error.message
-      });
+      if (this.providerPreferenceService && this.providerPreferenceService.logger) {
+        this.providerPreferenceService.logger.error('Reset provider preferences controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to reset provider preferences',
@@ -229,9 +241,12 @@ class ProviderPreferenceController {
         categories: categories
       });
     } catch (error) {
-      console.error('Get available categories controller error', {
-        error: error.message
-      });
+      if (this.providerPreferenceService && this.providerPreferenceService.logger) {
+        this.providerPreferenceService.logger.error('Get available categories controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve preference categories',
@@ -272,9 +287,12 @@ class ProviderPreferenceController {
         });
       }
     } catch (error) {
-      console.error('Get category configuration controller error', {
-        error: error.message
-      });
+      if (this.providerPreferenceService && this.providerPreferenceService.logger) {
+        this.providerPreferenceService.logger.error('Get category configuration controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve category configuration',
@@ -322,9 +340,12 @@ class ProviderPreferenceController {
         });
       }
     } catch (error) {
-      console.error('Get preference configuration controller error', {
-        error: error.message
-      });
+      if (this.providerPreferenceService && this.providerPreferenceService.logger) {
+        this.providerPreferenceService.logger.error('Get preference configuration controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve preference configuration',
@@ -360,9 +381,12 @@ class ProviderPreferenceController {
         exportedPreferences: exportedPreferences
       });
     } catch (error) {
-      console.error('Export provider preferences controller error', {
-        error: error.message
-      });
+      if (this.providerPreferenceService && this.providerPreferenceService.logger) {
+        this.providerPreferenceService.logger.error('Export provider preferences controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to export provider preferences',
@@ -408,12 +432,15 @@ class ProviderPreferenceController {
         importedPreferences: importedPreferences
       });
     } catch (error) {
-      console.error('Import provider preferences controller error', {
-        error: error.message
-      });
+      if (this.providerPreferenceService && this.providerPreferenceService.logger) {
+        this.providerPreferenceService.logger.error('Import provider preferences controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Handle validation errors
-      if (error.message.includes('required') || error.message.includes('Invalid preferences structure')) {
+      if (error.message.includes('required') || error.message.includes('Invalid preferences structure') || error.message.includes('Preference')) {
         return res.status(400).json({
           error: error.message
         });

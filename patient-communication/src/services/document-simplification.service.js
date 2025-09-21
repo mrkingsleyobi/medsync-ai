@@ -4,14 +4,55 @@
  */
 
 const config = require('../config/document-simplification.config.js');
-const { Readability } = require('@mozilla/readability');
 const { JSDOM } = require('jsdom');
+const winston = require('winston');
 
 class DocumentSimplificationService {
   constructor() {
     this.config = config;
     this.medicalTerms = config.medicalTerms;
     this.simplificationLevels = config.simplificationLevels;
+    this.logger = this._createLogger();
+  }
+
+  /**
+   * Create logger instance
+   * @returns {Object} Winston logger instance
+   */
+  _createLogger() {
+    // In test environment, use a simple console logger to avoid fs issues
+    if (process.env.NODE_ENV === 'test') {
+      return winston.createLogger({
+        level: 'info',
+        format: winston.format.combine(
+          winston.format.timestamp(),
+          winston.format.errors({ stack: true }),
+          winston.format.splat(),
+          winston.format.printf(({ timestamp, level, message, ...meta }) => {
+            return `${timestamp} [${level.toUpperCase()}] ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`;
+          })
+        ),
+        defaultMeta: { service: 'document-simplification-service' },
+        transports: [
+          new winston.transports.Console()
+        ]
+      });
+    }
+
+    return winston.createLogger({
+      level: 'info',
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.errors({ stack: true }),
+        winston.format.splat(),
+        winston.format.json()
+      ),
+      defaultMeta: { service: 'document-simplification-service' },
+      transports: [
+        new winston.transports.File({ filename: 'logs/document-simplification-service-error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'logs/document-simplification-service-combined.log' })
+      ]
+    });
   }
 
   /**
@@ -32,10 +73,17 @@ class DocumentSimplificationService {
         throw new Error(`Invalid simplification level: ${level}`);
       }
 
-      console.log('Simplifying document', {
-        originalLength: documentText.length,
-        level: level
-      });
+      if (this.logger) {
+        this.logger.info('Simplifying document', {
+          originalLength: documentText.length,
+          level: level
+        });
+      } else {
+        console.log('Simplifying document', {
+          originalLength: documentText.length,
+          level: level
+        });
+      }
 
       // Process the document
       let simplifiedText = documentText;
@@ -52,18 +100,33 @@ class DocumentSimplificationService {
       // 4. Format for better readability
       simplifiedText = this.formatForReadability(simplifiedText);
 
-      console.log('Document simplification completed', {
-        originalLength: documentText.length,
-        simplifiedLength: simplifiedText.length,
-        level: level
-      });
+      if (this.logger) {
+        this.logger.info('Document simplification completed', {
+          originalLength: documentText.length,
+          simplifiedLength: simplifiedText.length,
+          level: level
+        });
+      } else {
+        console.log('Document simplification completed', {
+          originalLength: documentText.length,
+          simplifiedLength: simplifiedText.length,
+          level: level
+        });
+      }
 
       return simplifiedText;
     } catch (error) {
-      console.error('Document simplification failed', {
-        error: error.message,
-        documentLength: documentText ? documentText.length : 0
-      });
+      if (this.logger) {
+        this.logger.error('Document simplification failed', {
+          error: error.message,
+          documentLength: documentText ? documentText.length : 0
+        });
+      } else {
+        console.error('Document simplification failed', {
+          error: error.message,
+          documentLength: documentText ? documentText.length : 0
+        });
+      }
       throw error;
     }
   }
@@ -168,28 +231,45 @@ class DocumentSimplificationService {
    * @returns {Object} Complexity metrics
    */
   analyzeComplexity(documentText) {
-    const words = documentText.split(/\s+/);
-    const sentences = documentText.split(/(?<=[.!?])\s+/);
+    // Handle empty document
+    if (!documentText || documentText.trim() === '') {
+      return {
+        wordCount: 0,
+        sentenceCount: 0,
+        avgWordsPerSentence: NaN,
+        complexTermCount: 0,
+        estimatedReadingLevel: 5 // Minimum reading level
+      };
+    }
+
+    const words = documentText.trim() !== '' ? documentText.trim().split(/\s+/) : [];
+    const sentences = documentText.split(/(?<=[.!?])\s+/).filter(s => s.trim() !== '');
+
+    // Handle case where there are no sentences
+    const sentenceCount = sentences.length || 1;
+    const wordCount = words.length;
 
     // Calculate average words per sentence
-    const avgWordsPerSentence = words.length / sentences.length;
+    const avgWordsPerSentence = sentenceCount > 0 ? wordCount / sentenceCount : 0;
 
     // Count complex medical terms
     let complexTermCount = 0;
-    for (const complexTerm of Object.keys(this.medicalTerms)) {
-      const regex = new RegExp(`\\b${complexTerm}\\b`, 'gi');
-      const matches = documentText.match(regex);
-      if (matches) {
-        complexTermCount += matches.length;
+    if (documentText) {
+      for (const complexTerm of Object.keys(this.medicalTerms)) {
+        const regex = new RegExp(`\\b${complexTerm}\\b`, 'gi');
+        const matches = documentText.match(regex);
+        if (matches) {
+          complexTermCount += matches.length;
+        }
       }
     }
 
     return {
-      wordCount: words.length,
-      sentenceCount: sentences.length,
-      avgWordsPerSentence: Math.round(avgWordsPerSentence * 100) / 100,
+      wordCount: wordCount,
+      sentenceCount: sentenceCount,
+      avgWordsPerSentence: sentenceCount > 0 ? Math.round(avgWordsPerSentence * 100) / 100 : 0,
       complexTermCount: complexTermCount,
-      estimatedReadingLevel: this.estimateReadingLevel(avgWordsPerSentence)
+      estimatedReadingLevel: this.estimateReadingLevel(sentenceCount > 0 ? avgWordsPerSentence : 0)
     };
   }
 
