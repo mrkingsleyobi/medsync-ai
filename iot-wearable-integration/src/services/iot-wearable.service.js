@@ -1,6 +1,6 @@
 /**
- * Real-time Health Monitoring Service
- * Service for real-time health monitoring functionality
+ * Alert Generation and Notification Service
+ * Service for generating alerts and sending notifications
  */
 
 const config = require('../config/iot-wearable.config.js');
@@ -10,23 +10,22 @@ const fs = require('fs');
 const path = require('path');
 const { cleanupOldEntries } = require('../../../src/utils/cleanup.util.js');
 
-class HealthMonitoringService {
+class AlertGenerationService {
   /**
-   * Create a new Real-time Health Monitoring Service
+   * Create a new Alert Generation and Notification Service
    * NOTE: This is a simulation implementation for demonstration purposes.
-   * In a production environment, this would integrate with real health monitoring APIs.
+   * In a production environment, this would generate real alerts and send notifications.
    */
   constructor() {
     this.config = config;
     this.logger = this._createLogger();
-    this.monitoringData = new Map();
     this.alerts = new Map();
 
     // Initialize services
     this._initializeServices();
 
-    this.logger.info('Real-time Health Monitoring Service created', {
-      service: 'health-monitoring-service'
+    this.logger.info('Alert Generation and Notification Service created', {
+      service: 'alert-generation-service'
     });
   }
 
@@ -49,16 +48,16 @@ class HealthMonitoringService {
         winston.format.splat(),
         winston.format.json()
       ),
-      defaultMeta: { service: 'health-monitoring-service' },
+      defaultMeta: { service: 'iot-wearable-service' },
       transports: [
         new winston.transports.File({
-          filename: path.join(logsDir, 'health-monitoring-service-error.log'),
+          filename: path.join(logsDir, 'iot-wearable-service-error.log'),
           level: 'error',
           maxsize: 10000000, // 10MB
           maxFiles: 5
         }),
         new winston.transports.File({
-          filename: path.join(logsDir, 'health-monitoring-service-combined.log'),
+          filename: path.join(logsDir, 'iot-wearable-service-combined.log'),
           maxsize: 10000000, // 10MB
           maxFiles: 5
         }),
@@ -67,7 +66,7 @@ class HealthMonitoringService {
             winston.format.colorize(),
             winston.format.timestamp(),
             winston.format.printf(({ timestamp, level, message, service, ...meta }) => {
-              return `${timestamp} [${level}] ${service || 'health-monitoring-service'}: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`;
+              return `${timestamp} [${level}] ${service || 'iot-wearable-service'}: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`;
             })
           )
         })
@@ -80,227 +79,37 @@ class HealthMonitoringService {
    * @private
    */
   _initializeServices() {
-    // Start monitoring if enabled
-    if (this.config.monitoring.enabled) {
-      const runMonitoring = async () => {
+    // Clean up old alerts periodically if enabled
+    if (this.config.alerts.enabled) {
+      const runAlertCleanup = async () => {
         try {
-          await this._collectMonitoringData();
-          // Clean up old jobs periodically
-          this._cleanupOldMonitoringJobs();
-          // Clean up old alerts periodically
           this._cleanupOldAlerts();
         } catch (error) {
-          this.logger.error('Monitoring data collection failed', {
+          this.logger.error('Alert cleanup failed', {
             error: error.message,
             stack: error.stack
           });
         } finally {
-          setTimeout(runMonitoring, this.config.monitoring.frequency);
+          setTimeout(runAlertCleanup, this.config.alerts.cleanupFrequency || 3600000); // Default 1 hour
         }
       };
-      runMonitoring();
+      runAlertCleanup();
     }
 
-    this.logger.info('Real-time health monitoring services initialized');
+    this.logger.info('Alert generation services initialized');
   }
 
-  /**
-   * Collect monitoring data
-   * @private
-   */
-  async _collectMonitoringData() {
-    try {
-      this.logger.debug('Collecting monitoring data');
 
-      // In a real implementation, this would collect data from devices and sensors
-      await new Promise(resolve => setTimeout(resolve, 500));
 
-      this.logger.debug('Monitoring data collection completed');
-    } catch (error) {
-      this.logger.error('Monitoring data collection failed', {
-        error: error.message,
-        stack: error.stack
-      });
-    }
-  }
 
-  /**
-   * Clean up old monitoring jobs to prevent memory leaks
-   * @private
-   */
-  _cleanupOldMonitoringJobs() {
-    try {
-      const maxAge = 24 * 60 * 60 * 1000; // 24 hours
-      const now = Date.now();
 
-      for (const [key, job] of this.monitoringData.entries()) {
-        if (job.createdAt && (now - new Date(job.createdAt).getTime()) > maxAge) {
-          this.monitoringData.delete(key);
-        }
-      }
-    } catch (error) {
-      this.logger.error('Monitoring job cleanup failed', {
-        error: error.message,
-        stack: error.stack
-      });
-    }
-  }
 
-  /**
-   * Monitor real-time health data
-   * @param {Object} options - Monitoring options
-   * @returns {Promise<Object>} Real-time monitoring result
-   */
-  async monitorRealTimeHealth(options = {}) {
-    try {
-      if (!this.config.monitoring.enabled) {
-        throw new Error('Real-time health monitoring is not enabled');
-      }
 
-      const jobId = uuidv4();
-      this.logger.info('Starting real-time health monitoring', {
-        jobId,
-        options
-      });
 
-      // Create monitoring job record
-      const job = {
-        id: jobId,
-        status: 'pending',
-        createdAt: new Date().toISOString(),
-        startedAt: null,
-        completedAt: null,
-        options: options,
-        result: null,
-        error: null
-      };
 
-      this.monitoringData.set(jobId, job);
 
-      // Start job
-      job.status = 'running';
-      job.startedAt = new Date().toISOString();
 
-      // Simulate real-time monitoring
-      await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Generate sample monitoring data
-      const vitals = this._generateSampleVitals();
-
-      // Check for alerts
-      const alerts = this._checkVitalsForAlerts(vitals);
-
-      // Complete job
-      job.completedAt = new Date().toISOString();
-      job.status = 'completed';
-      job.result = {
-        jobId: jobId,
-        vitals: vitals,
-        alerts: alerts,
-        processingTime: 1000
-      };
-
-      // Create alerts if any were detected
-      if (alerts.length > 0) {
-        alerts.forEach(alert => {
-          this.createAlert(alert);
-        });
-      }
-
-      this.logger.info('Real-time health monitoring completed', {
-        jobId,
-        vitals: Object.keys(vitals).length,
-        alerts: alerts.length,
-        processingTime: job.result.processingTime
-      });
-
-      return job.result;
-    } catch (error) {
-      this.logger.error('Real-time health monitoring failed', {
-        error: error.message,
-        stack: error.stack
-      });
-
-      throw error;
-    }
-  }
-
-  /**
-   * Generate sample vitals data
-   * @returns {Object} Sample vitals data
-   * @private
-   */
-  _generateSampleVitals() {
-    return {
-      heartRate: Math.floor(Math.random() * 40) + 60, // 60-100 bpm
-      bloodPressure: {
-        systolic: Math.floor(Math.random() * 30) + 90, // 90-120 mmHg
-        diastolic: Math.floor(Math.random() * 20) + 60 // 60-80 mmHg
-      },
-      glucose: Math.floor(Math.random() * 70) + 70, // 70-140 mg/dL
-      temperature: (Math.random() * 2.5 + 97.0).toFixed(1), // 97.0-99.5 °F
-      steps: Math.floor(Math.random() * 5000) + 1000 // 1000-6000 steps
-    };
-  }
-
-  /**
-   * Check vitals for alerts
-   * @param {Object} vitals - Vitals data
-   * @returns {Array} Alerts if any thresholds are exceeded
-   * @private
-   */
-  _checkVitalsForAlerts(vitals) {
-    const alerts = [];
-    const thresholds = this.config.monitoring.metrics;
-
-    // Check heart rate
-    if (vitals.heartRate < thresholds.heartRate.criticalThreshold.min ||
-        vitals.heartRate > thresholds.heartRate.criticalThreshold.max) {
-      alerts.push({
-        type: 'abnormal_heart_rate',
-        value: vitals.heartRate,
-        threshold: thresholds.heartRate.criticalThreshold,
-        severity: 'high'
-      });
-    }
-
-    // Check blood pressure
-    if (vitals.bloodPressure.systolic < thresholds.bloodPressure.criticalThreshold.systolic.min ||
-        vitals.bloodPressure.systolic > thresholds.bloodPressure.criticalThreshold.systolic.max ||
-        vitals.bloodPressure.diastolic < thresholds.bloodPressure.criticalThreshold.diastolic.min ||
-        vitals.bloodPressure.diastolic > thresholds.bloodPressure.criticalThreshold.diastolic.max) {
-      alerts.push({
-        type: 'abnormal_blood_pressure',
-        value: vitals.bloodPressure,
-        threshold: thresholds.bloodPressure.criticalThreshold,
-        severity: 'high'
-      });
-    }
-
-    // Check glucose
-    if (vitals.glucose < thresholds.glucose.criticalThreshold.min ||
-        vitals.glucose > thresholds.glucose.criticalThreshold.max) {
-      alerts.push({
-        type: 'abnormal_glucose',
-        value: vitals.glucose,
-        threshold: thresholds.glucose.criticalThreshold,
-        severity: 'high'
-      });
-    }
-
-    // Check temperature
-    if (vitals.temperature < thresholds.temperature.criticalThreshold.min ||
-        vitals.temperature > thresholds.temperature.criticalThreshold.max) {
-      alerts.push({
-        type: 'abnormal_temperature',
-        value: vitals.temperature,
-        threshold: thresholds.temperature.criticalThreshold,
-        severity: 'high'
-      });
-    }
-
-    return alerts;
-  }
 
   /**
    * Generate alert
@@ -344,17 +153,18 @@ class HealthMonitoringService {
     }
   }
 
+
+
+
+
+
+
   /**
    * Get service status
    * @returns {Object} Service status
    */
   getServiceStatus() {
     return {
-      monitoring: {
-        enabled: this.config.monitoring.enabled,
-        activeMonitoring: Array.from(this.monitoringData.values())
-          .filter(job => job.status === 'running').length
-      },
       alerts: {
         enabled: this.config.alerts.enabled,
         activeAlerts: Array.from(this.alerts.values())
@@ -363,25 +173,8 @@ class HealthMonitoringService {
     };
   }
 
-  /**
-   * Get monitoring job status
-   * @param {string} jobId - Monitoring job ID
-   * @returns {Object|null} Job status or null if not found
-   */
-  getMonitoringStatus(jobId) {
-    const job = this.monitoringData.get(jobId);
-    if (!job) {
-      return null;
-    }
 
-    return {
-      jobId: job.id,
-      status: job.status,
-      createdAt: job.createdAt,
-      startedAt: job.startedAt,
-      completedAt: job.completedAt
-    };
-  }
+
 
   /**
    * Get alert status
@@ -403,6 +196,8 @@ class HealthMonitoringService {
       resolved: alert.resolved
     };
   }
+
+
 
   /**
    * Acknowledge an alert
@@ -455,6 +250,33 @@ class HealthMonitoringService {
   }
 
   /**
+   * Clean up old jobs to prevent memory leaks
+   * @param {Map} jobMap - The job Map to clean up
+   * @private
+   */
+  _cleanupOldJobs(jobMap) {
+    try {
+      const stats = cleanupOldEntries(jobMap, {
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        maxEntries: 1000
+      });
+
+      if (stats.totalRemoved > 0) {
+        this.logger.debug('Job cleanup completed', {
+          removedByAge: stats.removedByAge,
+          removedByCount: stats.removedByCount,
+          totalRemoved: stats.totalRemoved
+        });
+      }
+    } catch (error) {
+      this.logger.error('Job cleanup failed', {
+        error: error.message,
+        stack: error.stack
+      });
+    }
+  }
+
+  /**
    * Clean up old alerts to prevent memory leaks
    * @private
    */
@@ -490,4 +312,4 @@ class HealthMonitoringService {
   }
 }
 
-module.exports = HealthMonitoringService;
+module.exports = AlertGenerationService;
