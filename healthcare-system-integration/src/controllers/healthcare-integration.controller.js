@@ -52,7 +52,6 @@ class HealthcareIntegrationController {
       res.status(500).json({
         error: 'Failed to integrate with FHIR API'
       });
-      });
     }
   }
 
@@ -103,7 +102,6 @@ class HealthcareIntegrationController {
       res.status(500).json({
         error: 'Failed to process HL7 messages'
       });
-      });
     }
   }
 
@@ -145,7 +143,6 @@ class HealthcareIntegrationController {
       // Return generic error message to client
       res.status(500).json({
         error: 'Failed to integrate with DICOM'
-      });
       });
     }
   }
@@ -189,7 +186,6 @@ class HealthcareIntegrationController {
       // Return generic error message to client
       res.status(500).json({
         error: 'Failed to synchronize EHR data'
-      });
       });
     }
   }
@@ -253,7 +249,6 @@ class HealthcareIntegrationController {
       res.status(500).json({
         error: 'Failed to match patient records'
       });
-      });
     }
   }
 
@@ -312,7 +307,6 @@ class HealthcareIntegrationController {
       res.status(500).json({
         error: 'Failed to process medical images'
       });
-      });
     }
   }
 
@@ -341,7 +335,6 @@ class HealthcareIntegrationController {
       // Return generic error message to client
       res.status(500).json({
         error: 'Failed to retrieve service status'
-      });
       });
     }
   }

@@ -54,7 +54,6 @@ class IoTWearableController {
       res.status(500).json({
         error: 'Failed to integrate with wearable devices'
       });
-      });
     }
   }
 
