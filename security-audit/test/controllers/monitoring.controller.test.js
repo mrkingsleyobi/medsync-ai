@@ -1,12 +1,3 @@
-# Monitoring Controller Tests for MediSync Healthcare AI Platform
-
-## Overview
-
-This file contains unit tests for the monitoring controller implementation.
-
-## Tests
-
-```javascript
 const MonitoringController = require('../../src/controllers/monitoring.controller.js');
 
 // Mock Express request and response objects
