@@ -38,7 +38,7 @@ class IoTWearableController {
       });
     } catch (error) {
       // Log the full error details server-side
-      if (this.logger && typeof this.logger.error === 'function') {
+      if (this.logger) {
         this.logger.error('Wearable device integration controller error', {
           error: error.message,
           stack: error.stack
@@ -90,7 +90,7 @@ class IoTWearableController {
       });
     } catch (error) {
       // Log the full error details server-side
-      if (this.logger && typeof this.logger.error === 'function') {
+      if (this.logger) {
         this.logger.error('IoT sensor data processing controller error', {
           error: error.message,
           stack: error.stack
@@ -142,7 +142,7 @@ class IoTWearableController {
       });
     } catch (error) {
       // Log the full error details server-side
-      if (this.logger && typeof this.logger.error === 'function') {
+      if (this.logger) {
         this.logger.error('Real-time health monitoring controller error', {
           error: error.message,
           stack: error.stack
@@ -195,7 +195,7 @@ class IoTWearableController {
       });
     } catch (error) {
       // Log the full error details server-side
-      if (this.logger && typeof this.logger.error === 'function') {
+      if (this.logger) {
         this.logger.error('Early warning generation controller error', {
           error: error.message,
           stack: error.stack
@@ -248,7 +248,7 @@ class IoTWearableController {
       });
     } catch (error) {
       // Log the full error details server-side
-      if (this.logger && typeof this.logger.error === 'function') {
+      if (this.logger) {
         this.logger.error('Population health analytics generation controller error', {
           error: error.message,
           stack: error.stack
@@ -301,7 +301,7 @@ class IoTWearableController {
       });
     } catch (error) {
       // Log the full error details server-side
-      if (this.logger && typeof this.logger.error === 'function') {
+      if (this.logger) {
         this.logger.error('Personalized health predictions generation controller error', {
           error: error.message,
           stack: error.stack
@@ -347,7 +347,7 @@ class IoTWearableController {
       });
     } catch (error) {
       // Log the full error details server-side
-      if (this.logger && typeof this.logger.error === 'function') {
+      if (this.logger) {
         this.logger.error('Get service status controller error', {
           error: error.message,
           stack: error.stack
@@ -394,7 +394,7 @@ class IoTWearableController {
       }
     } catch (error) {
       // Log the full error details server-side
-      if (this.logger && typeof this.logger.error === 'function') {
+      if (this.logger) {
         this.logger.error('Get wearable integration job status controller error', {
           error: error.message,
           stack: error.stack
@@ -441,7 +441,7 @@ class IoTWearableController {
       }
     } catch (error) {
       // Log the full error details server-side
-      if (this.logger && typeof this.logger.error === 'function') {
+      if (this.logger) {
         this.logger.error('Get sensor data processing job status controller error', {
           error: error.message,
           stack: error.stack
@@ -488,7 +488,7 @@ class IoTWearableController {
       }
     } catch (error) {
       // Log the full error details server-side
-      if (this.logger && typeof this.logger.error === 'function') {
+      if (this.logger) {
         this.logger.error('Get monitoring job status controller error', {
           error: error.message,
           stack: error.stack
@@ -535,7 +535,7 @@ class IoTWearableController {
       }
     } catch (error) {
       // Log the full error details server-side
-      if (this.logger && typeof this.logger.error === 'function') {
+      if (this.logger) {
         this.logger.error('Get alert status controller error', {
           error: error.message,
           stack: error.stack
@@ -582,7 +582,7 @@ class IoTWearableController {
       }
     } catch (error) {
       // Log the full error details server-side
-      if (this.logger && typeof this.logger.error === 'function') {
+      if (this.logger) {
         this.logger.error('Get prediction job status controller error', {
           error: error.message,
           stack: error.stack
@@ -629,7 +629,7 @@ class IoTWearableController {
       }
     } catch (error) {
       // Log the full error details server-side
-      if (this.logger && typeof this.logger.error === 'function') {
+      if (this.logger) {
         this.logger.error('Get analytics job status controller error', {
           error: error.message,
           stack: error.stack
@@ -677,7 +677,7 @@ class IoTWearableController {
       }
     } catch (error) {
       // Log the full error details server-side
-      if (this.logger && typeof this.logger.error === 'function') {
+      if (this.logger) {
         this.logger.error('Acknowledge alert controller error', {
           error: error.message,
           stack: error.stack
@@ -725,7 +725,7 @@ class IoTWearableController {
       }
     } catch (error) {
       // Log the full error details server-side
-      if (this.logger && typeof this.logger.error === 'function') {
+      if (this.logger) {
         this.logger.error('Resolve alert controller error', {
           error: error.message,
           stack: error.stack
