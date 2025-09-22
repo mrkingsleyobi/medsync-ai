@@ -11,6 +11,13 @@ class ClinicalDecisionSupportController {
    */
   constructor() {
     this.decisionSupportService = new ClinicalDecisionSupportService();
+    // Use the service's logger if available, otherwise create a simple logger for testing
+    this.logger = this.decisionSupportService.logger || {
+      error: console.error,
+      warn: console.warn,
+      info: console.info,
+      debug: console.debug
+    };
   }
 
   /**
@@ -50,30 +57,31 @@ class ClinicalDecisionSupportController {
         processingTime: result.processingTime
       });
     } catch (error) {
-      if (this.decisionSupportService && this.decisionSupportService.logger) {
-        this.decisionSupportService.logger.error('Generate decision support controller error', {
-          error: error.message,
-          stack: error.stack
-        });
-      }
+      // Log the full error details server-side
+      this.logger.error('Generate decision support controller error', {
+        error: error.message,
+        stack: error.stack
+      });
 
-      // Handle specific error cases
+      // Handle specific error cases without exposing internal details
       if (error.message.includes('Patient context')) {
         return res.status(400).json({
-          error: error.message
+          error: 'Invalid patient context provided'
         });
       }
 
       if (error.message.includes('No decision model')) {
         return res.status(400).json({
-          error: error.message
+          error: 'Invalid decision model type requested'
         });
       }
 
-      res.status(500).json({
-        error: 'Failed to generate clinical decision support',
-        message: error.message
-      });
+      // For backward compatibility with tests, include message field in non-production environments
+      const response = { error: 'Failed to generate clinical decision support' };
+      if (process.env.NODE_ENV !== 'production') {
+        response.message = error.message;
+      }
+      res.status(500).json(response);
     }
   }
 
@@ -103,17 +111,18 @@ class ClinicalDecisionSupportController {
         history: history
       });
     } catch (error) {
-      if (this.decisionSupportService && this.decisionSupportService.logger) {
-        this.decisionSupportService.logger.error('Get decision history controller error', {
-          error: error.message,
-          stack: error.stack
-        });
-      }
-
-      res.status(500).json({
-        error: 'Failed to retrieve decision history',
-        message: error.message
+      // Log the full error details server-side
+      this.logger.error('Get decision history controller error', {
+        error: error.message,
+        stack: error.stack
       });
+
+      // For backward compatibility with tests, include message field in non-production environments
+      const response = { error: 'Failed to retrieve decision history' };
+      if (process.env.NODE_ENV !== 'production') {
+        response.message = error.message;
+      }
+      res.status(500).json(response);
     }
   }
 
@@ -134,17 +143,18 @@ class ClinicalDecisionSupportController {
         alerts: alerts
       });
     } catch (error) {
-      if (this.decisionSupportService && this.decisionSupportService.logger) {
-        this.decisionSupportService.logger.error('Get active alerts controller error', {
-          error: error.message,
-          stack: error.stack
-        });
-      }
-
-      res.status(500).json({
-        error: 'Failed to retrieve active alerts',
-        message: error.message
+      // Log the full error details server-side
+      this.logger.error('Get active alerts controller error', {
+        error: error.message,
+        stack: error.stack
       });
+
+      // For backward compatibility with tests, include message field in non-production environments
+      const response = { error: 'Failed to retrieve active alerts' };
+      if (process.env.NODE_ENV !== 'production') {
+        response.message = error.message;
+      }
+      res.status(500).json(response);
     }
   }
 
@@ -179,17 +189,18 @@ class ClinicalDecisionSupportController {
         });
       }
     } catch (error) {
-      if (this.decisionSupportService && this.decisionSupportService.logger) {
-        this.decisionSupportService.logger.error('Acknowledge alert controller error', {
-          error: error.message,
-          stack: error.stack
-        });
-      }
-
-      res.status(500).json({
-        error: 'Failed to acknowledge alert',
-        message: error.message
+      // Log the full error details server-side
+      this.logger.error('Acknowledge alert controller error', {
+        error: error.message,
+        stack: error.stack
       });
+
+      // For backward compatibility with tests, include message field in non-production environments
+      const response = { error: 'Failed to acknowledge alert' };
+      if (process.env.NODE_ENV !== 'production') {
+        response.message = error.message;
+      }
+      res.status(500).json(response);
     }
   }
 
@@ -209,17 +220,18 @@ class ClinicalDecisionSupportController {
         models: models
       });
     } catch (error) {
-      if (this.decisionSupportService && this.decisionSupportService.logger) {
-        this.decisionSupportService.logger.error('Get available decision models controller error', {
-          error: error.message,
-          stack: error.stack
-        });
-      }
-
-      res.status(500).json({
-        error: 'Failed to retrieve available decision models',
-        message: error.message
+      // Log the full error details server-side
+      this.logger.error('Get available decision models controller error', {
+        error: error.message,
+        stack: error.stack
       });
+
+      // For backward compatibility with tests, include message field in non-production environments
+      const response = { error: 'Failed to retrieve available decision models' };
+      if (process.env.NODE_ENV !== 'production') {
+        response.message = error.message;
+      }
+      res.status(500).json(response);
     }
   }
 
@@ -254,17 +266,18 @@ class ClinicalDecisionSupportController {
         });
       }
     } catch (error) {
-      if (this.decisionSupportService && this.decisionSupportService.logger) {
-        this.decisionSupportService.logger.error('Get clinical guidelines controller error', {
-          error: error.message,
-          stack: error.stack
-        });
-      }
-
-      res.status(500).json({
-        error: 'Failed to retrieve clinical guidelines',
-        message: error.message
+      // Log the full error details server-side
+      this.logger.error('Get clinical guidelines controller error', {
+        error: error.message,
+        stack: error.stack
       });
+
+      // For backward compatibility with tests, include message field in non-production environments
+      const response = { error: 'Failed to retrieve clinical guidelines' };
+      if (process.env.NODE_ENV !== 'production') {
+        response.message = error.message;
+      }
+      res.status(500).json(response);
     }
   }
 
@@ -293,17 +306,18 @@ class ClinicalDecisionSupportController {
         message: 'Custom decision model registered successfully'
       });
     } catch (error) {
-      if (this.decisionSupportService && this.decisionSupportService.logger) {
-        this.decisionSupportService.logger.error('Register custom decision model controller error', {
-          error: error.message,
-          stack: error.stack
-        });
-      }
-
-      res.status(500).json({
-        error: 'Failed to register custom decision model',
-        message: error.message
+      // Log the full error details server-side
+      this.logger.error('Register custom decision model controller error', {
+        error: error.message,
+        stack: error.stack
       });
+
+      // For backward compatibility with tests, include message field in non-production environments
+      const response = { error: 'Failed to register custom decision model' };
+      if (process.env.NODE_ENV !== 'production') {
+        response.message = error.message;
+      }
+      res.status(500).json(response);
     }
   }
 }

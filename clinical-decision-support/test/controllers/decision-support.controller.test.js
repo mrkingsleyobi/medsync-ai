@@ -89,6 +89,7 @@ describe('Clinical Decision Support Controller', () => {
     test('should return 400 if service throws patient context error', async () => {
       const patientContext = { patientId: 'PAT-12345' };
       const errorMessage = 'Patient context with patientId is required';
+      const expectedClientError = 'Invalid patient context provided';
 
       mockReq.body = { patientContext };
 
@@ -99,7 +100,7 @@ describe('Clinical Decision Support Controller', () => {
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({
-        error: errorMessage
+        error: expectedClientError
       });
     });
 
@@ -107,6 +108,7 @@ describe('Clinical Decision Support Controller', () => {
       const patientContext = { patientId: 'PAT-12345' };
       const decisionConfig = { decisionType: 'invalid-type' };
       const errorMessage = 'No decision model available for type: invalid-type';
+      const expectedClientError = 'Invalid decision model type requested';
 
       mockReq.body = { patientContext, decisionConfig };
 
@@ -117,7 +119,7 @@ describe('Clinical Decision Support Controller', () => {
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({
-        error: errorMessage
+        error: expectedClientError
       });
     });
 
