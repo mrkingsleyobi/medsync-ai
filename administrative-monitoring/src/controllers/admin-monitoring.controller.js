@@ -62,7 +62,6 @@ class AdminMonitoringController {
       res.status(500).json({
         error: 'Failed to generate documentation'
       });
-      });
     }
   }
 
@@ -122,7 +121,6 @@ class AdminMonitoringController {
       res.status(500).json({
         error: 'Failed to schedule task'
       });
-      });
     }
   }
 
@@ -155,7 +153,6 @@ class AdminMonitoringController {
       // Return generic error message to client
       res.status(500).json({
         error: 'Failed to optimize resource allocation'
-      });
       });
     }
   }
@@ -205,7 +202,6 @@ class AdminMonitoringController {
       res.status(500).json({
         error: 'Failed to process billing'
       });
-      });
     }
   }
 
@@ -234,7 +230,6 @@ class AdminMonitoringController {
       // Return generic error message to client
       res.status(500).json({
         error: 'Failed to retrieve service status'
-      });
       });
     }
   }
@@ -280,7 +275,6 @@ class AdminMonitoringController {
       res.status(500).json({
         error: 'Failed to retrieve documentation job status'
       });
-      });
     }
   }
 
@@ -310,7 +304,6 @@ class AdminMonitoringController {
       res.status(500).json({
         error: 'Failed to retrieve scheduled tasks'
       });
-      });
     }
   }
 
@@ -339,7 +332,6 @@ class AdminMonitoringController {
       // Return generic error message to client
       res.status(500).json({
         error: 'Failed to retrieve billing records'
-      });
       });
     }
   }
@@ -380,7 +372,6 @@ class AdminMonitoringController {
       res.status(500).json({
         error: 'Failed to generate usage report'
       });
-      });
     }
   }
 
@@ -409,7 +400,6 @@ class AdminMonitoringController {
       // Return generic error message to client
       res.status(500).json({
         error: 'Failed to retrieve active alerts'
-      });
       });
     }
   }
@@ -456,7 +446,6 @@ class AdminMonitoringController {
       res.status(500).json({
         error: 'Failed to acknowledge alert'
       });
-      });
     }
   }
 
@@ -501,7 +490,6 @@ class AdminMonitoringController {
       // Return generic error message to client
       res.status(500).json({
         error: 'Failed to resolve alert'
-      });
       });
     }
   }
