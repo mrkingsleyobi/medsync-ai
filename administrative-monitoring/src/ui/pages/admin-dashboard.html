@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediSync Admin Dashboard</title>
+    <link rel="stylesheet" href="../styles/admin-dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <h1>MediSync Administrative Dashboard</h1>
+            <nav class="header-nav">
+                <button class="nav-button active" data-tab="overview">Overview</button>
+                <button class="nav-button" data-tab="monitoring">Monitoring</button>
+                <button class="nav-button" data-tab="analytics">Analytics</button>
+                <button class="nav-button" data-tab="scheduling">Scheduling</button>
+                <button class="nav-button" data-tab="billing">Billing</button>
+                <button class="nav-button" data-tab="alerts">Alerts</button>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-content">
+            <!-- Overview Tab -->
+            <section id="overview" class="tab-content active">
+                <h2>System Overview</h2>
+                <div class="overview-grid">
+                    <div class="card">
+                        <h3>System Status</h3>
+                        <div class="status-indicator status-ok">Operational</div>
+                        <p>Last updated: <span id="last-updated">Just now</span></p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Active Alerts</h3>
+                        <div class="metric-value" id="active-alerts">0</div>
+                        <p>Currently active system alerts</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Scheduled Tasks</h3>
+                        <div class="metric-value" id="scheduled-tasks">12</div>
+                        <p>Tasks scheduled for execution</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>System Performance</h3>
+                        <div class="performance-metrics">
+                            <div class="metric">
+                                <span class="metric-label">CPU:</span>
+                                <span class="metric-value" id="cpu-usage">42%</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Memory:</span>
+                                <span class="metric-value" id="memory-usage">68%</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Disk:</span>
+                                <span class="metric-value" id="disk-usage">35%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <h3>Quick Actions</h3>
+                    <div class="actions-grid">
+                        <button class="action-button" id="generate-docs">
+                            <span class="action-icon">📄</span>
+                            <span>Generate Documentation</span>
+                        </button>
+                        <button class="action-button" id="optimize-resources">
+                            <span class="action-icon">⚙️</span>
+                            <span>Optimize Resources</span>
+                        </button>
+                        <button class="action-button" id="generate-report">
+                            <span class="action-icon">📊</span>
+                            <span>Generate Report</span>
+                        </button>
+                        <button class="action-button" id="view-logs">
+                            <span class="action-icon">📝</span>
+                            <span>View Logs</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Monitoring Tab -->
+            <section id="monitoring" class="tab-content">
+                <h2>System Monitoring</h2>
+                <div class="monitoring-grid">
+                    <div class="card">
+                        <h3>Real-time Metrics</h3>
+                        <div class="chart-container">
+                            <canvas id="performance-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Resource Usage</h3>
+                        <div class="resource-bars">
+                            <div class="resource-bar">
+                                <span class="resource-label">CPU Usage</span>
+                                <div class="bar-container">
+                                    <div class="bar-fill" style="width: 42%"></div>
+                                </div>
+                                <span class="resource-value">42%</span>
+                            </div>
+                            <div class="resource-bar">
+                                <span class="resource-label">Memory Usage</span>
+                                <div class="bar-container">
+                                    <div class="bar-fill" style="width: 68%"></div>
+                                </div>
+                                <span class="resource-value">68%</span>
+                            </div>
+                            <div class="resource-bar">
+                                <span class="resource-label">Disk Usage</span>
+                                <div class="bar-container">
+                                    <div class="bar-fill" style="width: 35%"></div>
+                                </div>
+                                <span class="resource-value">35%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Tab -->
+            <section id="analytics" class="tab-content">
+                <h2>Performance Analytics</h2>
+                <div class="analytics-grid">
+                    <div class="card">
+                        <h3>User Activity</h3>
+                        <div class="chart-container">
+                            <canvas id="user-activity-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>AI Model Performance</h3>
+                        <div class="chart-container">
+                            <canvas id="ai-performance-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reports-section">
+                    <h3>Generated Reports</h3>
+                    <table class="reports-table">
+                        <thead>
+                            <tr>
+                                <th>Report</th>
+                                <th>Period</th>
+                                <th>Generated</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Monthly Usage Report</td>
+                                <td>September 2025</td>
+                                <td>2025-09-01</td>
+                                <td><span class="status-completed">Completed</span></td>
+                                <td><button class="btn-small">Download</button></td>
+                            </tr>
+                            <tr>
+                                <td>Performance Analytics</td>
+                                <td>Q3 2025</td>
+                                <td>2025-08-15</td>
+                                <td><span class="status-completed">Completed</span></td>
+                                <td><button class="btn-small">Download</button></td>
+                            </tr>
+                            <tr>
+                                <td>Resource Utilization</td>
+                                <td>August 2025</td>
+                                <td>2025-08-01</td>
+                                <td><span class="status-completed">Completed</span></td>
+                                <td><button class="btn-small">Download</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Scheduling Tab -->
+            <section id="scheduling" class="tab-content">
+                <h2>Task Scheduling</h2>
+                <div class="scheduling-grid">
+                    <div class="card">
+                        <h3>Schedule New Task</h3>
+                        <form id="schedule-task-form" class="task-form">
+                            <div class="form-group">
+                                <label for="task-name">Task Name</label>
+                                <input type="text" id="task-name" name="task-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="task-schedule">Schedule (Cron)</label>
+                                <input type="text" id="task-schedule" name="task-schedule" placeholder="0 0 * * *" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="task-description">Description</label>
+                                <textarea id="task-description" name="task-description" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary">Schedule Task</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3>Scheduled Tasks</h3>
+                        <table class="tasks-table">
+                            <thead>
+                                <tr>
+                                    <th>Task</th>
+                                    <th>Schedule</th>
+                                    <th>Next Run</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Documentation Generation</td>
+                                    <td>0 1 * * *</td>
+                                    <td>2025-09-20 01:00</td>
+                                    <td><span class="status-active">Active</span></td>
+                                    <td>
+                                        <button class="btn-small">Edit</button>
+                                        <button class="btn-small btn-danger">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Resource Optimization</td>
+                                    <td>*/30 * * * *</td>
+                                    <td>2025-09-19 15:30</td>
+                                    <td><span class="status-active">Active</span></td>
+                                    <td>
+                                        <button class="btn-small">Edit</button>
+                                        <button class="btn-small btn-danger">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Backup Database</td>
+                                    <td>0 2 * * 0</td>
+                                    <td>2025-09-21 02:00</td>
+                                    <td><span class="status-active">Active</span></td>
+                                    <td>
+                                        <button class="btn-small">Edit</button>
+                                        <button class="btn-small btn-danger">Delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Billing Tab -->
+            <section id="billing" class="tab-content">
+                <h2>Billing Management</h2>
+                <div class="billing-grid">
+                    <div class="card">
+                        <h3>Billing Overview</h3>
+                        <div class="billing-summary">
+                            <div class="summary-item">
+                                <span class="summary-label">Current Balance</span>
+                                <span class="summary-value">$2,450.00</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">This Month</span>
+                                <span class="summary-value">$845.50</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">Next Invoice</span>
+                                <span class="summary-value">2025-10-01</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Process Payment</h3>
+                        <form id="billing-form" class="billing-form">
+                            <div class="form-group">
+                                <label for="customer-id">Customer ID</label>
+                                <input type="text" id="customer-id" name="customer-id" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="amount">Amount ($)</label>
+                                <input type="number" id="amount" name="amount" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea id="description" name="description" rows="2"></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary">Process Payment</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="billing-history">
+                    <h3>Billing History</h3>
+                    <table class="billing-table">
+                        <thead>
+                            <tr>
+                                <th>Transaction</th>
+                                <th>Date</th>
+                                <th>Customer</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>INV-2025-09-001</td>
+                                <td>2025-09-01</td>
+                                <td>Hospital ABC</td>
+                                <td>$1,250.00</td>
+                                <td><span class="status-completed">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>INV-2025-08-002</td>
+                                <td>2025-08-15</td>
+                                <td>Clinic XYZ</td>
+                                <td>$845.50</td>
+                                <td><span class="status-completed">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>INV-2025-08-001</td>
+                                <td>2025-08-01</td>
+                                <td>Hospital ABC</td>
+                                <td>$1,125.75</td>
+                                <td><span class="status-completed">Completed</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Alerts Tab -->
+            <section id="alerts" class="tab-content">
+                <h2>System Alerts</h2>
+                <div class="alerts-grid">
+                    <div class="card">
+                        <h3>Active Alerts</h3>
+                        <div class="alerts-list">
+                            <div class="alert-item alert-high">
+                                <div class="alert-header">
+                                    <span class="alert-type">High Memory Usage</span>
+                                    <span class="alert-time">2 minutes ago</span>
+                                </div>
+                                <div class="alert-message">
+                                    Memory usage on server-01 has exceeded 85% threshold
+                                </div>
+                                <div class="alert-actions">
+                                    <button class="btn-small">Acknowledge</button>
+                                    <button class="btn-small btn-danger">Resolve</button>
+                                </div>
+                            </div>
+
+                            <div class="alert-item alert-medium">
+                                <div class="alert-header">
+                                    <span class="alert-type">Slow Response Time</span>
+                                    <span class="alert-time">15 minutes ago</span>
+                                </div>
+                                <div class="alert-message">
+                                    Average response time exceeded 2 seconds threshold
+                                </div>
+                                <div class="alert-actions">
+                                    <button class="btn-small">Acknowledge</button>
+                                    <button class="btn-small btn-danger">Resolve</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Alert Configuration</h3>
+                        <form id="alert-config-form" class="config-form">
+                            <div class="form-group">
+                                <label for="cpu-threshold">CPU Threshold (%)</label>
+                                <input type="number" id="cpu-threshold" name="cpu-threshold" value="85" min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="memory-threshold">Memory Threshold (%)</label>
+                                <input type="number" id="memory-threshold" name="memory-threshold" value="85" min="0" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="disk-threshold">Disk Threshold (%)</label>
+                                <input type="number" id="disk-threshold" name="disk-threshold" value="90" min="0" max="100">
+                            </div>
+                            <button type="submit" class="btn-primary">Update Configuration</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <p>MediSync Administrative Dashboard &copy; 2025 | HIPAA Compliant | GDPR Ready</p>
+        </footer>
+    </div>
+
+    <script src="../scripts/admin-dashboard.js"></script>
+</body>
+</html>

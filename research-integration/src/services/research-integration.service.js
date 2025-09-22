@@ -6,10 +6,18 @@
 const config = require('../config/research-integration.config.js');
 const { v4: uuidv4 } = require('uuid');
 const winston = require('winston');
+const fs = require('fs');
+const path = require('path');
+
+// Import swarm agents
+const ResearchIntegrationAgent = require('../../../neural-mesh/agents/research-integration-agent.js');
 
 class ResearchIntegrationService {
   /**
    * Create a new Research Integration Service
+   * NOTE: This is a simulation implementation for demonstration purposes.
+   * In a production environment, this would connect to real medical databases
+   * and use actual NLP/ML models for analysis.
    */
   constructor() {
     this.config = config;
@@ -18,6 +26,13 @@ class ResearchIntegrationService {
     this.literatureDatabase = new Map();
     this.trialDatabase = new Map();
     this.researchProjects = new Map();
+
+    // Initialize swarm agents
+    this.researchAgent = null;
+    this._initializeAgents();
+
+    // TODO: Replace in-memory Maps with persistent storage (e.g., database) for production use
+    // This will prevent data loss when the service restarts
 
     this.logger.info('Research Integration Service created', {
       service: 'research-integration-service'
@@ -29,8 +44,14 @@ class ResearchIntegrationService {
    * @returns {Object} Winston logger instance
    */
   _createLogger() {
+    // Create logs directory if it doesn't exist
+    const logsDir = path.join(process.cwd(), 'logs');
+    if (!fs.existsSync(logsDir)) {
+      fs.mkdirSync(logsDir, { recursive: true });
+    }
+
     return winston.createLogger({
-      level: 'info',
+      level: process.env.LOG_LEVEL || 'info',
       format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.errors({ stack: true }),
@@ -39,10 +60,52 @@ class ResearchIntegrationService {
       ),
       defaultMeta: { service: 'research-integration-service' },
       transports: [
-        new winston.transports.File({ filename: 'logs/research-integration-service-error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'logs/research-integration-service-combined.log' })
+        new winston.transports.File({
+          filename: path.join(logsDir, 'research-integration-service-error.log'),
+          level: 'error',
+          maxsize: 10000000, // 10MB
+          maxFiles: 5
+        }),
+        new winston.transports.File({
+          filename: path.join(logsDir, 'research-integration-service-combined.log'),
+          maxsize: 10000000, // 10MB
+          maxFiles: 5
+        }),
+        new winston.transports.Console({
+          format: winston.format.combine(
+            winston.format.colorize(),
+            winston.format.timestamp(),
+            winston.format.printf(({ timestamp, level, message, service, ...meta }) => {
+              return `${timestamp} [${level}] ${service || 'research-integration-service'}: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`;
+            })
+          )
+        })
       ]
     });
+  }
+
+  /**
+   * Initialize swarm agents
+   * @private
+   */
+  async _initializeAgents() {
+    try {
+      // Initialize Research Integration Agent
+      this.researchAgent = new ResearchIntegrationAgent({
+        agentId: 'research-integration-001',
+        capabilities: ['literature-analysis', 'evidence-synthesis', 'clinical-guidelines']
+      });
+
+      // Initialize the agent
+      await this.researchAgent.initialize();
+
+      this.logger.info('Research agents initialized successfully');
+    } catch (error) {
+      this.logger.error('Failed to initialize research agents', {
+        error: error.message,
+        stack: error.stack
+      });
+    }
   }
 
   /**
@@ -83,19 +146,67 @@ class ResearchIntegrationService {
       task.status = 'running';
       task.startedAt = new Date().toISOString();
 
-      // Simulate literature analysis process
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Use Research Integration Agent for literature analysis
+      let results;
+      if (this.researchAgent) {
+        try {
+          const agentTask = {
+            id: taskId,
+            type: 'literature-search',
+            data: {
+              query: analysisConfig.query || 'medical research',
+              limit: documents.length,
+              literature: documents
+            }
+          };
 
-      // Generate sample results
-      const results = {
-        taskId: taskId,
-        documentCount: documents.length,
-        entities: this._extractEntities(documents),
-        topics: this._identifyTopics(documents),
-        sentiment: this._analyzeSentiment(documents),
-        summary: this._generateSummary(documents),
-        processingTime: new Date().getTime() - new Date(task.startedAt).getTime()
-      };
+          const agentResult = await this.researchAgent.processTask(agentTask);
+
+          // Process agent results
+          results = {
+            taskId: taskId,
+            documentCount: agentResult.result.resultCount || documents.length,
+            entities: this._extractEntities(documents), // Keep existing extraction for compatibility
+            topics: this._identifyTopics(documents), // Keep existing identification for compatibility
+            sentiment: this._analyzeSentiment(documents), // Keep existing analysis for compatibility
+            summary: agentResult.result.results ?
+              agentResult.result.results.map(doc => doc.abstract).join(' ') :
+              this._generateSummary(documents),
+            agentResults: agentResult.result,
+            processingTime: agentResult.processingTime
+          };
+        } catch (agentError) {
+          this.logger.warn('Agent-based analysis failed, falling back to simulation', {
+            error: agentError.message
+          });
+
+          // Fallback to simulation if agent fails
+          await new Promise(resolve => setTimeout(resolve, 2000));
+
+          results = {
+            taskId: taskId,
+            documentCount: documents.length,
+            entities: this._extractEntities(documents),
+            topics: this._identifyTopics(documents),
+            sentiment: this._analyzeSentiment(documents),
+            summary: this._generateSummary(documents),
+            processingTime: new Date().getTime() - new Date(task.startedAt).getTime()
+          };
+        }
+      } else {
+        // Fallback to simulation if agent is not available
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        results = {
+          taskId: taskId,
+          documentCount: documents.length,
+          entities: this._extractEntities(documents),
+          topics: this._identifyTopics(documents),
+          sentiment: this._analyzeSentiment(documents),
+          summary: this._generateSummary(documents),
+          processingTime: new Date().getTime() - new Date(task.startedAt).getTime()
+        };
+      }
 
       // Complete task
       task.completedAt = new Date().toISOString();
@@ -104,7 +215,8 @@ class ResearchIntegrationService {
 
       this.logger.info('Medical literature analysis completed', {
         taskId,
-        processingTime: results.processingTime
+        processingTime: results.processingTime,
+        usedAgent: !!this.researchAgent
       });
 
       return results;
@@ -231,16 +343,70 @@ class ResearchIntegrationService {
       task.status = 'running';
       task.startedAt = new Date().toISOString();
 
-      // Simulate trial matching process
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Use Research Integration Agent for clinical trial matching
+      let results;
+      if (this.researchAgent) {
+        try {
+          const agentTask = {
+            id: taskId,
+            type: 'literature-search', // Using literature search for now, could be extended
+            data: {
+              query: `clinical trials for ${patientProfile.conditions ? patientProfile.conditions.join(' ') : 'medical conditions'}`,
+              limit: matchingConfig.maxTrials || 10,
+              patientProfile: patientProfile
+            }
+          };
 
-      // Generate sample results
-      const results = {
-        taskId: taskId,
-        patientId: patientProfile.patientId,
-        trials: this._findMatchingTrials(patientProfile),
-        processingTime: new Date().getTime() - new Date(task.startedAt).getTime()
-      };
+          const agentResult = await this.researchAgent.processTask(agentTask);
+
+          // Process agent results and map to trial format
+          const trials = agentResult.result.results ?
+            agentResult.result.results.map((doc, index) => ({
+              id: `trial-${taskId}-${index}`,
+              nctId: doc.id || `NCT${Math.floor(Math.random() * 1000000)}`,
+              title: doc.title || 'Clinical Trial',
+              condition: patientProfile.conditions ? patientProfile.conditions[0] : 'Medical Condition',
+              phase: ['Phase I', 'Phase II', 'Phase III', 'Phase IV'][Math.floor(Math.random() * 4)],
+              location: matchingConfig.location || 'Multiple Locations',
+              distance: Math.floor(Math.random() * 100) + 10,
+              eligibilityScore: Math.random() * 0.4 + 0.6,
+              enrollmentStatus: Math.random() > 0.5 ? 'Recruiting' : 'Not yet recruiting',
+              startDate: new Date(Date.now() + Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+            })) : this._findMatchingTrials(patientProfile);
+
+          results = {
+            taskId: taskId,
+            patientId: patientProfile.patientId,
+            trials: trials,
+            agentResults: agentResult.result,
+            processingTime: agentResult.processingTime
+          };
+        } catch (agentError) {
+          this.logger.warn('Agent-based trial matching failed, falling back to simulation', {
+            error: agentError.message
+          });
+
+          // Fallback to simulation if agent fails
+          await new Promise(resolve => setTimeout(resolve, 1500));
+
+          results = {
+            taskId: taskId,
+            patientId: patientProfile.patientId,
+            trials: this._findMatchingTrials(patientProfile),
+            processingTime: new Date().getTime() - new Date(task.startedAt).getTime()
+          };
+        }
+      } else {
+        // Fallback to simulation if agent is not available
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        results = {
+          taskId: taskId,
+          patientId: patientProfile.patientId,
+          trials: this._findMatchingTrials(patientProfile),
+          processingTime: new Date().getTime() - new Date(task.startedAt).getTime()
+        };
+      }
 
       // Complete task
       task.completedAt = new Date().toISOString();
@@ -250,7 +416,8 @@ class ResearchIntegrationService {
       this.logger.info('Clinical trial matching completed', {
         taskId,
         trialCount: results.trials.length,
-        processingTime: results.processingTime
+        processingTime: results.processingTime,
+        usedAgent: !!this.researchAgent
       });
 
       return results;
@@ -336,16 +503,67 @@ class ResearchIntegrationService {
       task.status = 'running';
       task.startedAt = new Date().toISOString();
 
-      // Simulate impact tracking process
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Use Research Integration Agent for research impact tracking
+      let results;
+      if (this.researchAgent) {
+        try {
+          const agentTask = {
+            id: taskId,
+            type: 'trend-analysis', // Using trend analysis for impact tracking
+            data: {
+              conditions: [researchId],
+              timeframe: trackingConfig.timeframe || '1_year'
+            }
+          };
 
-      // Generate sample results
-      const results = {
-        taskId: taskId,
-        researchId: researchId,
-        metrics: this._collectImpactMetrics(researchId),
-        processingTime: new Date().getTime() - new Date(task.startedAt).getTime()
-      };
+          const agentResult = await this.researchAgent.processTask(agentTask);
+
+          // Process agent results and map to impact metrics
+          const metrics = agentResult.result.trends && agentResult.result.trends[researchId] ?
+            {
+              citations: agentResult.result.trends[researchId].citationImpact || Math.floor(Math.random() * 1000) + 100,
+              downloads: Math.floor(Math.random() * 5000),
+              socialMediaMentions: Math.floor(Math.random() * 500),
+              clinicalAdoption: Math.random() * 100,
+              patientOutcomes: Math.random() * 100,
+              altmetricScore: Math.floor(Math.random() * 100),
+              publicationCount: agentResult.result.trends[researchId].publicationCount || 0,
+              recentGrowth: agentResult.result.trends[researchId].recentGrowth || 0
+            } : this._collectImpactMetrics(researchId);
+
+          results = {
+            taskId: taskId,
+            researchId: researchId,
+            metrics: metrics,
+            agentResults: agentResult.result,
+            processingTime: agentResult.processingTime
+          };
+        } catch (agentError) {
+          this.logger.warn('Agent-based impact tracking failed, falling back to simulation', {
+            error: agentError.message
+          });
+
+          // Fallback to simulation if agent fails
+          await new Promise(resolve => setTimeout(resolve, 1000));
+
+          results = {
+            taskId: taskId,
+            researchId: researchId,
+            metrics: this._collectImpactMetrics(researchId),
+            processingTime: new Date().getTime() - new Date(task.startedAt).getTime()
+          };
+        }
+      } else {
+        // Fallback to simulation if agent is not available
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        results = {
+          taskId: taskId,
+          researchId: researchId,
+          metrics: this._collectImpactMetrics(researchId),
+          processingTime: new Date().getTime() - new Date(task.startedAt).getTime()
+        };
+      }
 
       // Complete task
       task.completedAt = new Date().toISOString();
@@ -354,7 +572,8 @@ class ResearchIntegrationService {
 
       this.logger.info('Research impact tracking completed', {
         taskId,
-        processingTime: results.processingTime
+        processingTime: results.processingTime,
+        usedAgent: !!this.researchAgent
       });
 
       return results;
@@ -415,10 +634,45 @@ class ResearchIntegrationService {
         tasks: projectData.tasks || []
       };
 
+      // Use Research Integration Agent for project initialization if available
+      if (this.researchAgent) {
+        try {
+          const agentTask = {
+            id: projectId,
+            type: 'literature-search',
+            data: {
+              query: `research project ${projectData.title}`,
+              limit: 5,
+              projectContext: projectData
+            }
+          };
+
+          const agentResult = await this.researchAgent.processTask(agentTask);
+
+          // Add relevant research context to project
+          project.researchContext = {
+            relatedLiterature: agentResult.result.results || [],
+            initializationTime: agentResult.processingTime,
+            agentId: this.researchAgent.config.agentId
+          };
+
+          this.logger.info('Project initialized with research context', {
+            projectId,
+            literatureCount: agentResult.result.resultCount || 0
+          });
+        } catch (agentError) {
+          this.logger.warn('Agent-based project initialization failed', {
+            projectId,
+            error: agentError.message
+          });
+        }
+      }
+
       this.researchProjects.set(projectId, project);
 
       this.logger.info('Collaborative research project created', {
-        projectId
+        projectId,
+        hasResearchContext: !!project.researchContext
       });
 
       return project;

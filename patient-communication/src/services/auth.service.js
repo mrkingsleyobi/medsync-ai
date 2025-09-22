@@ -376,6 +376,12 @@ class AuthService {
       console.error('Token validation failed', {
         error: error.message
       });
+
+      // Preserve specific error messages for missing/required tokens
+      if (error.message === 'Token is required') {
+        throw error;
+      }
+
       throw new Error('Invalid or expired token');
     }
   }
@@ -415,6 +421,12 @@ class AuthService {
       console.error('Token refresh failed', {
         error: error.message
       });
+
+      // Preserve specific error messages for missing/required tokens
+      if (error.message === 'Refresh token is required') {
+        throw error;
+      }
+
       throw new Error('Invalid or expired refresh token');
     }
   }
@@ -634,10 +646,13 @@ class AuthService {
     // In a real implementation, this would retrieve user from database
     // For demonstration, we'll return a mock user if email matches
     if (email === 'patient@example.com') {
+      // Hash the password on the fly to ensure it matches
+      const hashedPassword = bcrypt.hashSync('Password123', 12);
+
       return {
         id: 'user_1234567890',
         email: 'patient@example.com',
-        password: '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj/RK.PZvO.S', // bcrypt hash of "Password123!"
+        password: hashedPassword,
         firstName: 'John',
         lastName: 'Doe',
         role: this.roles.PATIENT,

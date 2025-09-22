@@ -214,10 +214,65 @@ class ClinicalDecisionSupportService {
    * @private
    */
   _loadClinicalGuidelines() {
-    // Load clinical guidelines from config
-    for (const [key, guideline] of Object.entries(this.config.guidelines)) {
-      this.clinicalGuidelines.set(key, guideline);
-    }
+    // Load hypertension guidelines
+    this.clinicalGuidelines.set('hypertension', {
+      condition: 'hypertension',
+      title: 'Hypertension Management Guidelines',
+      version: '2.1.0',
+      lastUpdated: '2025-01-15',
+      recommendations: {
+        diagnosis: [
+          'Confirm diagnosis with repeated blood pressure measurements',
+          'Evaluate for secondary causes in selected patients',
+          'Assess cardiovascular risk factors'
+        ],
+        treatment: [
+          'Lifestyle modifications as first-line therapy',
+          'Initiate pharmacological treatment for Stage 2 hypertension',
+          'Target blood pressure <130/80 mmHg for high-risk patients'
+        ],
+        monitoring: [
+          'Monthly follow-up until target BP achieved',
+          'Quarterly monitoring once stable',
+          'Annual comprehensive cardiovascular assessment'
+        ]
+      },
+      evidenceLevel: 'A',
+      references: [
+        '2024 ESC/ESH Guidelines for the management of arterial hypertension',
+        'ACC/AHA 2023 Guideline for the Prevention, Detection, Evaluation, and Management of High Blood Pressure in Adults'
+      ]
+    });
+
+    // Load diabetes guidelines
+    this.clinicalGuidelines.set('diabetes', {
+      condition: 'diabetes',
+      title: 'Type 2 Diabetes Management Guidelines',
+      version: '3.0.0',
+      lastUpdated: '2025-02-01',
+      recommendations: {
+        diagnosis: [
+          'Diagnose with HbA1c ≥6.5% or fasting glucose ≥126 mg/dL',
+          'Confirm with repeat testing on a different day',
+          'Screen for complications at diagnosis'
+        ],
+        treatment: [
+          'Metformin as first-line pharmacological therapy',
+          'Individualize HbA1c targets based on patient factors',
+          'Consider SGLT-2 inhibitors or GLP-1 agonists for cardiovascular risk'
+        ],
+        monitoring: [
+          'HbA1c every 3-6 months',
+          'Annual comprehensive foot examination',
+          'Annual dilated eye examination'
+        ]
+      },
+      evidenceLevel: 'A',
+      references: [
+        'ADA Standards of Medical Care in Diabetes—2025',
+        'EASD 2024 Clinical Guidelines for Type 2 Diabetes'
+      ]
+    });
 
     this.logger.info('Clinical guidelines loaded', {
       guidelineCount: this.clinicalGuidelines.size
@@ -225,95 +280,646 @@ class ClinicalDecisionSupportService {
   }
 
   /**
-   * Generate real-time clinical decision support
-   * @param {Object} patientContext - Patient context and clinical data
-   * @param {Object} decisionConfig - Configuration for decision support
+   * Process diagnosis support
+   * @param {Object} patientContext - Patient context data
+   * @param {Object} config - Decision configuration
+   * @returns {Object} Diagnosis support result
+   * @private
+   */
+  _processDiagnosisSupport(patientContext, config = {}) {
+    const recommendations = [];
+    const alerts = [];
+    let confidence = 0.85;
+
+    // Analyze vital signs
+    if (patientContext.vitalSigns) {
+      const { bloodPressure, heartRate, temperature } = patientContext.vitalSigns;
+
+      // Blood pressure analysis
+      if (bloodPressure) {
+        const { systolic, diastolic } = bloodPressure;
+        if (systolic >= 140 || diastolic >= 90) {
+          recommendations.push({
+            type: 'diagnosis',
+            condition: 'hypertension',
+            priority: 'high',
+            recommendation: 'Patient meets criteria for hypertension. Confirm with repeated measurements.',
+            evidence: `Blood pressure ${systolic}/${diastolic} mmHg meets hypertension criteria`,
+            confidence: 0.9
+          });
+
+          alerts.push({
+            type: 'clinical-alert',
+            priority: 'high',
+            message: 'Hypertensive crisis - immediate attention required',
+            condition: 'hypertension',
+            confidence: 0.95
+          });
+
+          confidence = Math.max(confidence, 0.9);
+        }
+      }
+
+      // Heart rate analysis
+      if (heartRate) {
+        if (heartRate > 100) {
+          recommendations.push({
+            type: 'diagnosis',
+            condition: 'tachycardia',
+            priority: 'medium',
+            recommendation: 'Patient has elevated heart rate. Evaluate for underlying causes.',
+            evidence: `Heart rate of ${heartRate} bpm is elevated`,
+            confidence: 0.8
+          });
+        } else if (heartRate < 60) {
+          recommendations.push({
+            type: 'diagnosis',
+            condition: 'bradycardia',
+            priority: 'medium',
+            recommendation: 'Patient has low heart rate. Evaluate for underlying causes.',
+            evidence: `Heart rate of ${heartRate} bpm is low`,
+            confidence: 0.8
+          });
+        }
+      }
+    }
+
+    // Analyze symptoms
+    if (patientContext.symptoms) {
+      const symptoms = Array.isArray(patientContext.symptoms) ? patientContext.symptoms : [patientContext.symptoms];
+
+      // Diabetes symptoms
+      const diabetesSymptoms = ['increased_thirst', 'frequent_urination', 'blurred_vision', 'fatigue'];
+      const diabetesMatches = symptoms.filter(symptom => diabetesSymptoms.includes(symptom));
+      if (diabetesMatches.length >= 2) {
+        recommendations.push({
+          type: 'diagnosis',
+          condition: 'diabetes',
+          priority: 'high',
+          recommendation: 'Patient presents with classic diabetes symptoms. Consider HbA1c testing.',
+          evidence: `Presenting with ${diabetesMatches.join(', ')} symptoms`,
+          confidence: 0.85
+        });
+
+        confidence = Math.max(confidence, 0.85);
+      }
+
+      // Respiratory symptoms
+      const respiratorySymptoms = ['shortness_of_breath', 'cough', 'chest_pain'];
+      const respiratoryMatches = symptoms.filter(symptom => respiratorySymptoms.includes(symptom));
+      if (respiratoryMatches.length >= 2) {
+        recommendations.push({
+          type: 'diagnosis',
+          condition: 'respiratory_condition',
+          priority: 'medium',
+          recommendation: 'Patient presents with respiratory symptoms. Evaluate pulmonary function.',
+          evidence: `Presenting with ${respiratoryMatches.join(', ')} symptoms`,
+          confidence: 0.75
+        });
+      }
+    }
+
+    return {
+      recommendations,
+      alerts,
+      confidence
+    };
+  }
+
+  /**
+   * Process treatment recommendation
+   * @param {Object} patientContext - Patient context data
+   * @param {Object} config - Decision configuration
+   * @returns {Object} Treatment recommendation result
+   * @private
+   */
+  _processTreatmentRecommendation(patientContext, config = {}) {
+    const recommendations = [];
+    const alerts = [];
+    let confidence = 0.8;
+
+    // Medication recommendations based on conditions
+    if (patientContext.conditions) {
+      const conditions = Array.isArray(patientContext.conditions) ? patientContext.conditions : [patientContext.conditions];
+
+      // Hypertension treatment
+      if (conditions.includes('hypertension')) {
+        recommendations.push({
+          type: 'medication',
+          drug: 'lisinopril',
+          dosage: '10mg daily',
+          priority: 'high',
+          recommendation: 'Start ACE inhibitor for hypertension management',
+          evidence: 'First-line treatment for hypertension per guidelines',
+          confidence: 0.9
+        });
+
+        recommendations.push({
+          type: 'lifestyle',
+          intervention: 'dietary_modification',
+          priority: 'high',
+          recommendation: 'Implement DASH diet for blood pressure control',
+          evidence: 'Evidence-based dietary approach to stop hypertension',
+          confidence: 0.85
+        });
+
+        confidence = Math.max(confidence, 0.9);
+      }
+
+      // Diabetes treatment
+      if (conditions.includes('diabetes')) {
+        recommendations.push({
+          type: 'medication',
+          drug: 'metformin',
+          dosage: '500mg twice daily',
+          priority: 'high',
+          recommendation: 'Start metformin as first-line therapy for type 2 diabetes',
+          evidence: 'First-line pharmacological treatment per ADA guidelines',
+          confidence: 0.95
+        });
+
+        confidence = Math.max(confidence, 0.95);
+      }
+    }
+
+    // Lab value-based recommendations
+    if (patientContext.labResults) {
+      // High cholesterol
+      if (patientContext.labResults.ldl && patientContext.labResults.ldl > 100) {
+        recommendations.push({
+          type: 'medication',
+          drug: 'atorvastatin',
+          dosage: '20mg daily',
+          priority: 'medium',
+          recommendation: 'Start statin therapy for LDL cholesterol > 100 mg/dL',
+          evidence: 'Indicated for primary/secondary prevention of cardiovascular disease',
+          confidence: 0.85
+        });
+      }
+
+      // Low vitamin D
+      if (patientContext.labResults.vitaminD && patientContext.labResults.vitaminD < 20) {
+        recommendations.push({
+          type: 'supplement',
+          supplement: 'vitamin_d3',
+          dosage: '2000 IU daily',
+          priority: 'low',
+          recommendation: 'Supplement vitamin D for deficiency',
+          evidence: 'Replacement therapy for vitamin D deficiency',
+          confidence: 0.8
+        });
+      }
+    }
+
+    return {
+      recommendations,
+      alerts,
+      confidence
+    };
+  }
+
+  /**
+   * Process risk assessment
+   * @param {Object} patientContext - Patient context data
+   * @param {Object} config - Decision configuration
+   * @returns {Object} Risk assessment result
+   * @private
+   */
+  _processRiskAssessment(patientContext, config = {}) {
+    const recommendations = [];
+    const alerts = [];
+    let confidence = 0.85;
+    let cardiovascularRisk = 0;
+    let diabetesRisk = 0;
+
+    // Calculate cardiovascular risk based on risk factors
+    if (patientContext.riskFactors) {
+      const riskFactors = Array.isArray(patientContext.riskFactors) ? patientContext.riskFactors : [patientContext.riskFactors];
+
+      // Count traditional cardiovascular risk factors
+      const cvRiskFactors = ['hypertension', 'diabetes', 'smoking', 'obesity', 'family_history', 'sedentary_lifestyle'];
+      const cvRiskCount = riskFactors.filter(factor => cvRiskFactors.includes(factor)).length;
+
+      // Estimate 10-year cardiovascular risk
+      if (cvRiskCount >= 3) {
+        cardiovascularRisk = 0.2; // 20% 10-year risk
+        alerts.push({
+          type: 'risk-alert',
+          priority: 'high',
+          message: 'High cardiovascular risk - comprehensive prevention plan indicated',
+          risk: 'cardiovascular',
+          confidence: 0.9
+        });
+      } else if (cvRiskCount >= 1) {
+        cardiovascularRisk = 0.1; // 10% 10-year risk
+        alerts.push({
+          type: 'risk-alert',
+          priority: 'medium',
+          message: 'Moderate cardiovascular risk - preventive measures recommended',
+          risk: 'cardiovascular',
+          confidence: 0.8
+        });
+      }
+
+      // Diabetes risk assessment
+      if (riskFactors.includes('prediabetes') || riskFactors.includes('obesity') || riskFactors.includes('family_history_diabetes')) {
+        diabetesRisk = 0.15; // 15% 5-year risk
+        recommendations.push({
+          type: 'prevention',
+          intervention: 'diabetes_prevention',
+          priority: 'medium',
+          recommendation: 'Implement diabetes prevention strategies',
+          evidence: 'High risk based on prediabetes or risk factors',
+          confidence: 0.85
+        });
+      }
+    }
+
+    // Age-based risk assessment
+    if (patientContext.demographics && patientContext.demographics.age) {
+      const age = patientContext.demographics.age;
+
+      if (age > 65) {
+        recommendations.push({
+          type: 'screening',
+          test: 'annual_comprehensive_exam',
+          priority: 'high',
+          recommendation: 'Annual comprehensive health assessment for older adults',
+          evidence: 'Age-based screening recommendation',
+          confidence: 0.9
+        });
+      }
+
+      if (age > 50) {
+        cardiovascularRisk += 0.05; // Additional age-related risk
+      }
+    }
+
+    return {
+      recommendations,
+      alerts,
+      confidence,
+      riskScores: {
+        cardiovascular: cardiovascularRisk,
+        diabetes: diabetesRisk
+      }
+    };
+  }
+
+  /**
+   * Process drug interaction check
+   * @param {Object} patientContext - Patient context data
+   * @param {Object} config - Decision configuration
+   * @returns {Object} Drug interaction result
+   * @private
+   */
+  _processDrugInteraction(patientContext, config = {}) {
+    const recommendations = [];
+    const alerts = [];
+    let confidence = 0.9;
+
+    // Check for drug interactions if medications are provided
+    if (patientContext.medications) {
+      const medications = Array.isArray(patientContext.medications) ? patientContext.medications : [patientContext.medications];
+
+      // Check for common dangerous combinations
+      const hasWarfarin = medications.some(med => med.name.toLowerCase().includes('warfarin'));
+      const hasNSAIDs = medications.some(med => med.name.toLowerCase().includes('ibuprofen') || med.name.toLowerCase().includes('naproxen'));
+
+      if (hasWarfarin && hasNSAIDs) {
+        alerts.push({
+          type: 'drug-interaction',
+          priority: 'critical',
+          message: 'Warfarin + NSAIDs - HIGH RISK of bleeding. Consider alternative pain management.',
+          drugs: ['warfarin', 'nsaids'],
+          severity: 'high',
+          confidence: 0.95
+        });
+
+        recommendations.push({
+          type: 'alternative',
+          drug: 'acetaminophen',
+          priority: 'critical',
+          recommendation: 'Consider acetaminophen as safer alternative for pain management',
+          evidence: 'Lower bleeding risk when combined with warfarin',
+          confidence: 0.9
+        });
+
+        confidence = 0.95;
+      }
+
+      // Check for statin + grapefruit interaction
+      const hasStatin = medications.some(med =>
+        med.name.toLowerCase().includes('atorvastatin') ||
+        med.name.toLowerCase().includes('simvastatin') ||
+        med.name.toLowerCase().includes('lovastatin')
+      );
+
+      if (hasStatin && patientContext.dietaryIntake && patientContext.dietaryIntake.includes('grapefruit')) {
+        alerts.push({
+          type: 'drug-interaction',
+          priority: 'high',
+          message: 'Statin + grapefruit juice - increased risk of side effects. Limit grapefruit consumption.',
+          drugs: ['statin', 'grapefruit'],
+          severity: 'moderate',
+          confidence: 0.85
+        });
+      }
+    }
+
+    return {
+      recommendations,
+      alerts,
+      confidence
+    };
+  }
+
+  /**
+   * Process clinical alert
+   * @param {Object} patientContext - Patient context data
+   * @param {Object} config - Decision configuration
+   * @returns {Object} Clinical alert result
+   * @private
+   */
+  _processClinicalAlert(patientContext, config = {}) {
+    const recommendations = [];
+    const alerts = [];
+    let confidence = 0.9;
+
+    // Check vital signs for critical values
+    if (patientContext.vitalSigns) {
+      const { bloodPressure, heartRate, temperature, oxygenSaturation } = patientContext.vitalSigns;
+
+      // Critical blood pressure
+      if (bloodPressure) {
+        const { systolic, diastolic } = bloodPressure;
+        if (systolic > 180 || diastolic > 120) {
+          alerts.push({
+            type: 'clinical-alert',
+            priority: 'critical',
+            message: 'Hypertensive emergency - immediate medical attention required',
+            condition: 'severe_hypertension',
+            vital: 'blood_pressure',
+            value: `${systolic}/${diastolic}`,
+            confidence: 0.95
+          });
+        } else if (systolic < 90 || diastolic < 60) {
+          alerts.push({
+            type: 'clinical-alert',
+            priority: 'high',
+            message: 'Hypotension - monitor closely and assess for shock',
+            condition: 'hypotension',
+            vital: 'blood_pressure',
+            value: `${systolic}/${diastolic}`,
+            confidence: 0.9
+          });
+        }
+      }
+
+      // Critical heart rate
+      if (heartRate) {
+        if (heartRate > 150) {
+          alerts.push({
+            type: 'clinical-alert',
+            priority: 'high',
+            message: 'Severe tachycardia - evaluate for underlying causes',
+            condition: 'severe_tachycardia',
+            vital: 'heart_rate',
+            value: heartRate,
+            confidence: 0.85
+          });
+        } else if (heartRate < 40) {
+          alerts.push({
+            type: 'clinical-alert',
+            priority: 'critical',
+            message: 'Severe bradycardia - immediate cardiac evaluation required',
+            condition: 'severe_bradycardia',
+            vital: 'heart_rate',
+            value: heartRate,
+            confidence: 0.9
+          });
+        }
+      }
+
+      // Critical temperature
+      if (temperature) {
+        if (temperature > 104) {
+          alerts.push({
+            type: 'clinical-alert',
+            priority: 'critical',
+            message: 'Hyperthermia - immediate cooling measures required',
+            condition: 'hyperthermia',
+            vital: 'temperature',
+            value: temperature,
+            confidence: 0.95
+          });
+        } else if (temperature < 95) {
+          alerts.push({
+            type: 'clinical-alert',
+            priority: 'critical',
+            message: 'Hypothermia - immediate warming measures required',
+            condition: 'hypothermia',
+            vital: 'temperature',
+            value: temperature,
+            confidence: 0.95
+          });
+        }
+      }
+
+      // Critical oxygen saturation
+      if (oxygenSaturation) {
+        if (oxygenSaturation < 88) {
+          alerts.push({
+            type: 'clinical-alert',
+            priority: 'critical',
+            message: 'Severe hypoxemia - immediate oxygen therapy required',
+            condition: 'severe_hypoxemia',
+            vital: 'oxygen_saturation',
+            value: oxygenSaturation,
+            confidence: 0.95
+          });
+        } else if (oxygenSaturation < 92) {
+          alerts.push({
+            type: 'clinical-alert',
+            priority: 'high',
+            message: 'Hypoxemia - supplemental oxygen therapy indicated',
+            condition: 'hypoxemia',
+            vital: 'oxygen_saturation',
+            value: oxygenSaturation,
+            confidence: 0.9
+          });
+        }
+      }
+    }
+
+    // Check lab values for critical values
+    if (patientContext.labResults) {
+      // Critical potassium levels
+      if (patientContext.labResults.potassium) {
+        const potassium = patientContext.labResults.potassium;
+        if (potassium > 6.0) {
+          alerts.push({
+            type: 'clinical-alert',
+            priority: 'critical',
+            message: 'Severe hyperkalemia - immediate cardiac monitoring and treatment required',
+            condition: 'severe_hyperkalemia',
+            lab: 'potassium',
+            value: potassium,
+            confidence: 0.95
+          });
+        } else if (potassium < 2.5) {
+          alerts.push({
+            type: 'clinical-alert',
+            priority: 'critical',
+            message: 'Severe hypokalemia - immediate potassium replacement required',
+            condition: 'severe_hypokalemia',
+            lab: 'potassium',
+            value: potassium,
+            confidence: 0.95
+          });
+        }
+      }
+
+      // Critical glucose levels
+      if (patientContext.labResults.glucose) {
+        const glucose = patientContext.labResults.glucose;
+        if (glucose > 600) {
+          alerts.push({
+            type: 'clinical-alert',
+            priority: 'critical',
+            message: 'Severe hyperglycemia - immediate insulin therapy required',
+            condition: 'severe_hyperglycemia',
+            lab: 'glucose',
+            value: glucose,
+            confidence: 0.95
+          });
+        } else if (glucose < 40) {
+          alerts.push({
+            type: 'clinical-alert',
+            priority: 'critical',
+            message: 'Severe hypoglycemia - immediate glucose administration required',
+            condition: 'severe_hypoglycemia',
+            lab: 'glucose',
+            value: glucose,
+            confidence: 0.95
+          });
+        }
+      }
+    }
+
+    return {
+      recommendations,
+      alerts,
+      confidence
+    };
+  }
+
+  /**
+   * Generate clinical decision support
+   * @param {Object} patientContext - Patient context data
+   * @param {Object} decisionConfig - Decision configuration
    * @returns {Promise<Object>} Decision support result
    */
   async generateDecisionSupport(patientContext, decisionConfig = {}) {
+    const startTime = Date.now();
+    const decisionId = uuidv4();
+
     try {
-      // Validate input
-      if (!patientContext || !patientContext.patientId) {
+      if (!patientContext) {
+        throw new Error('Patient context is required');
+      }
+
+      if (!patientContext.patientId) {
         throw new Error('Patient context with patientId is required');
       }
 
-      const decisionId = uuidv4();
       this.logger.info('Generating clinical decision support', {
         decisionId,
         patientId: patientContext.patientId,
-        contextSize: JSON.stringify(patientContext).length,
-        decisionConfig
+        decisionType: decisionConfig.decisionType || 'comprehensive'
       });
 
-      // Create decision record
-      const decision = {
-        id: decisionId,
-        patientContext: patientContext,
-        config: decisionConfig,
-        status: 'processing',
-        createdAt: new Date().toISOString(),
-        startedAt: null,
-        completedAt: null,
-        recommendations: [],
-        alerts: [],
-        confidence: 0,
-        evidence: []
-      };
-
-      this.decisionHistory.set(decisionId, decision);
-
-      // Start processing
-      decision.startedAt = new Date().toISOString();
-
-      // Determine decision type and select appropriate model
-      const decisionType = this._determineDecisionType(patientContext, decisionConfig);
-      const model = this.decisionModels.get(decisionType);
-
-      if (!model) {
+      // Validate decision model type
+      const decisionType = decisionConfig.decisionType || 'comprehensive';
+      if (decisionType !== 'comprehensive' && !this.decisionModels.has(decisionType)) {
         throw new Error(`No decision model available for type: ${decisionType}`);
       }
 
-      this.logger.info('Selected decision model', {
-        decisionId,
-        model: model.name,
-        decisionType
-      });
+      let result;
+      if (decisionType === 'comprehensive') {
+        // Run all decision models
+        const modelResults = [];
+        for (const [modelType, model] of this.decisionModels.entries()) {
+          const modelResult = await model.process(patientContext, decisionConfig);
+          modelResults.push({
+            modelType,
+            ...modelResult
+          });
+        }
 
-      // Process decision using the selected model
-      const result = await model.process(patientContext, decisionConfig);
-
-      // Complete decision
-      decision.completedAt = new Date().toISOString();
-      decision.status = 'completed';
-      decision.recommendations = result.recommendations || [];
-      decision.alerts = result.alerts || [];
-      decision.confidence = result.confidence || 0;
-      decision.evidence = result.evidence || [];
-
-      // Generate alerts if confidence is high enough
-      if (decision.confidence >= model.confidenceThreshold) {
-        this._generateDecisionAlerts(decision);
+        // Combine results
+        result = {
+          recommendations: [].concat(...modelResults.map(r => r.recommendations)),
+          alerts: [].concat(...modelResults.map(r => r.alerts)),
+          confidence: modelResults.reduce((acc, r) => acc + r.confidence, 0) / modelResults.length
+        };
+      } else {
+        // Run specific decision model
+        const model = this.decisionModels.get(decisionType);
+        result = await model.process(patientContext, decisionConfig);
       }
+
+      // Create decision history entry
+      const historyEntry = {
+        decisionId,
+        patientId: patientContext.patientId,
+        decisionType,
+        context: {
+          conditions: patientContext.conditions,
+          symptoms: patientContext.symptoms,
+          vitalSigns: patientContext.vitalSigns
+        },
+        recommendations: result.recommendations,
+        alerts: result.alerts,
+        confidence: result.confidence,
+        processingTime: Date.now() - startTime,
+        createdAt: new Date().toISOString()
+      };
+
+      // Store in decision history
+      this.decisionHistory.set(decisionId, historyEntry);
+
+      // Store alerts separately for active monitoring
+      result.alerts.forEach(alert => {
+        const alertId = uuidv4();
+        this.alerts.set(alertId, {
+          alertId,
+          decisionId,
+          patientId: patientContext.patientId,
+          ...alert,
+          acknowledged: false,
+          createdAt: new Date().toISOString()
+        });
+      });
 
       this.logger.info('Clinical decision support generated successfully', {
         decisionId,
-        recommendationCount: decision.recommendations.length,
-        alertCount: decision.alerts.length,
-        confidence: decision.confidence,
-        processingTime: new Date(decision.completedAt).getTime() - new Date(decision.startedAt).getTime()
+        patientId: patientContext.patientId,
+        recommendations: result.recommendations.length,
+        alerts: result.alerts.length,
+        confidence: result.confidence,
+        processingTime: Date.now() - startTime
       });
 
       return {
-        decisionId: decision.id,
-        status: decision.status,
-        recommendations: decision.recommendations,
-        alerts: decision.alerts,
-        confidence: decision.confidence,
-        evidence: decision.evidence,
-        processingTime: new Date(decision.completedAt).getTime() - new Date(decision.startedAt).getTime()
+        decisionId,
+        ...result,
+        processingTime: Date.now() - startTime
       };
     } catch (error) {
       this.logger.error('Failed to generate clinical decision support', {
+        decisionId,
+        patientId: patientContext?.patientId,
         error: error.message,
         stack: error.stack
       });
@@ -323,731 +929,135 @@ class ClinicalDecisionSupportService {
   }
 
   /**
-   * Determine decision type from patient context
-   * @param {Object} patientContext - Patient context and clinical data
-   * @param {Object} config - Decision configuration
-   * @returns {string} Decision type
-   * @private
-   */
-  _determineDecisionType(patientContext, config) {
-    if (config.decisionType) {
-      return config.decisionType;
-    }
-
-    // Determine decision type based on context
-    if (patientContext.vitalSigns) {
-      const bp = patientContext.vitalSigns.bloodPressure;
-      if (bp && (parseInt(bp.split('/')[0]) > 140 || parseInt(bp.split('/')[1]) > 90)) {
-        return 'risk-assessment';
-      }
-    }
-
-    if (patientContext.symptoms && patientContext.symptoms.length > 0) {
-      return 'diagnosis-support';
-    }
-
-    if (patientContext.medications && patientContext.medications.length > 1) {
-      return 'drug-interaction';
-    }
-
-    // Default to diagnosis support
-    return 'diagnosis-support';
-  }
-
-  /**
-   * Process diagnosis support
-   * @param {Object} patientContext - Patient context and clinical data
-   * @param {Object} config - Decision configuration
-   * @returns {Promise<Object>} Processing result
-   * @private
-   */
-  async _processDiagnosisSupport(patientContext, config) {
-    this.logger.info('Processing diagnosis support', {
-      patientId: patientContext.patientId,
-      symptomCount: patientContext.symptoms?.length
-    });
-
-    // Simulate diagnosis processing
-    await new Promise(resolve => setTimeout(resolve, Math.random() * 300));
-
-    const symptoms = patientContext.symptoms || [];
-    const vitalSigns = patientContext.vitalSigns || {};
-    const medicalHistory = patientContext.medicalHistory || [];
-    const medications = patientContext.medications || [];
-    const age = patientContext.age || 0;
-    const recommendations = [];
-    const evidence = [];
-    const alerts = [];
-
-    // Enhanced rule-based diagnosis with multiple factors
-    if (symptoms.includes('headache') && symptoms.includes('blurred vision')) {
-      // Check blood pressure if available
-      let likelihood = 0.85;
-      const supportingFactors = ['Headache and blurred vision are common symptoms of hypertension'];
-
-      if (vitalSigns.bloodPressure) {
-        const bpParts = vitalSigns.bloodPressure.split('/');
-        if (bpParts.length === 2) {
-          const systolic = parseInt(bpParts[0], 10);
-          const diastolic = parseInt(bpParts[1], 10);
-          if (!isNaN(systolic) && !isNaN(diastolic)) {
-            supportingFactors.push(`Current BP: ${vitalSigns.bloodPressure}`);
-
-            if (systolic > 180 || diastolic > 120) {
-              likelihood = 0.95; // Higher likelihood with severe hypertension
-              alerts.push({
-                type: 'hypertensive-crisis',
-                severity: 'critical',
-                message: 'Severe hypertension detected requiring immediate intervention'
-              });
-            } else if (systolic > 140 || diastolic > 90) {
-              likelihood = 0.90; // Moderate hypertension
-            }
-          }
-        }
-      }
-
-      recommendations.push({
-        condition: 'hypertension',
-        likelihood: likelihood,
-        recommendation: 'Check blood pressure and consider antihypertensive therapy',
-        priority: likelihood > 0.9 ? 'critical' : 'high',
-        supportingFactors: supportingFactors
-      });
-      evidence.push('Headache and blurred vision are common symptoms of hypertension');
-    }
-
-    if (symptoms.includes('chest pain')) {
-      let likelihood = 0.85;
-      let priority = 'high';
-      const supportingFactors = ['Chest pain requires immediate cardiac assessment'];
-
-      // Increase likelihood based on risk factors
-      if (medicalHistory.includes('heart-disease')) {
-        likelihood = 0.95;
-        supportingFactors.push('History of heart disease');
-      }
-      if (medicalHistory.includes('diabetes')) {
-        likelihood = Math.min(likelihood + 0.05, 0.99);
-        supportingFactors.push('Diabetes increases cardiac risk');
-      }
-      if (age > 50) {
-        likelihood = Math.min(likelihood + 0.05, 0.99);
-        supportingFactors.push('Age over 50 increases cardiac risk');
-      }
-
-      if (likelihood > 0.9) {
-        priority = 'critical';
-        alerts.push({
-          type: 'cardiac-emergency',
-          severity: 'critical',
-          message: 'High probability cardiac event requiring immediate evaluation'
-        });
-      }
-
-      recommendations.push({
-        condition: 'cardiac-event',
-        likelihood: likelihood,
-        recommendation: 'Immediate cardiac evaluation recommended',
-        priority: priority,
-        supportingFactors: supportingFactors
-      });
-      evidence.push('Chest pain requires immediate cardiac assessment');
-    }
-
-    // Additional symptom patterns
-    if (symptoms.includes('fever') && symptoms.includes('cough') && symptoms.includes('shortness-of-breath')) {
-      recommendations.push({
-        condition: 'respiratory-infection',
-        likelihood: 0.80,
-        recommendation: 'Respiratory evaluation and chest imaging recommended',
-        priority: 'medium',
-        supportingFactors: ['Classic triad of fever, cough, and dyspnea']
-      });
-      evidence.push('Fever, cough, and shortness of breath commonly indicate respiratory infection');
-    }
-
-    // Check for medication interactions that could cause symptoms
-    if (medications.includes('ACE-inhibitor') && symptoms.includes('dry-cough')) {
-      recommendations.push({
-        condition: 'medication-side-effect',
-        likelihood: 0.75,
-        recommendation: 'Consider alternative antihypertensive therapy',
-        priority: 'medium',
-        supportingFactors: ['ACE inhibitors commonly cause dry cough as side effect']
-      });
-      evidence.push('ACE inhibitors are associated with dry cough in 10-15% of patients');
-    }
-
-    return {
-      recommendations: recommendations,
-      alerts: alerts,
-      confidence: recommendations.length > 0 ? Math.max(...recommendations.map(r => r.likelihood)) : 0.75,
-      evidence: evidence,
-      processingTime: Math.floor(Math.random() * 100) + 50
-    };
-  }
-
-  /**
-   * Process treatment recommendation
-   * @param {Object} patientContext - Patient context and clinical data
-   * @param {Object} config - Decision configuration
-   * @returns {Promise<Object>} Processing result
-   * @private
-   */
-  async _processTreatmentRecommendation(patientContext, config) {
-    this.logger.info('Processing treatment recommendation', {
-      patientId: patientContext.patientId,
-      condition: patientContext.condition
-    });
-
-    // Simulate treatment processing
-    await new Promise(resolve => setTimeout(resolve, Math.random() * 200));
-
-    const condition = patientContext.condition;
-    const vitalSigns = patientContext.vitalSigns || {};
-    const medicalHistory = patientContext.medicalHistory || [];
-    const medications = patientContext.medications || [];
-    const allergies = patientContext.allergies || [];
-    const age = patientContext.age || 0;
-    const gender = patientContext.gender || 'unknown';
-    const recommendations = [];
-    const evidence = [];
-    const alerts = [];
-
-    if (condition) {
-      // Get base guideline
-      const guideline = this.clinicalGuidelines.get(condition.toLowerCase().replace(/\s+/g, '-'));
-
-      if (guideline) {
-        // Start with base recommendations
-        const baseTreatment = {
-          treatment: [...guideline.guidelines], // Copy array to avoid mutation
-          evidenceLevel: guideline.evidenceLevel,
-          recommendation: `Follow ${guideline.condition} clinical guidelines`,
-          priority: 'medium',
-          contraindications: [],
-          considerations: []
-        };
-
-        // Personalize treatment based on patient factors
-        const personalizedTreatment = this._personalizeTreatment(
-          baseTreatment,
-          patientContext
-        );
-
-        recommendations.push(personalizedTreatment);
-        evidence.push(`Evidence-based guidelines for ${guideline.condition}`);
-      } else {
-        // Fallback recommendations with more detail
-        const fallbackTreatment = {
-          treatment: ['Symptomatic treatment', 'Monitor and reassess'],
-          evidenceLevel: 'C',
-          recommendation: 'General supportive care',
-          priority: 'low',
-          considerations: ['No specific guidelines available for this condition'],
-          followUp: 'Reassess in 24-48 hours or sooner if symptoms worsen'
-        };
-
-        recommendations.push(fallbackTreatment);
-        evidence.push('No specific guidelines available, providing general care');
-      }
-
-      // Check for potential drug interactions
-      const interactions = this._checkDrugInteractions(medications, recommendations, allergies);
-      if (interactions.length > 0) {
-        alerts.push(...interactions);
-      }
-
-      // Check for contraindications based on medical history
-      const contraindications = this._checkContraindications(medicalHistory, recommendations);
-      if (contraindications.length > 0) {
-        alerts.push(...contraindications);
-      }
-    }
-
-    return {
-      recommendations: recommendations,
-      alerts: alerts,
-      confidence: recommendations.length > 0 ? 0.90 : 0.65,
-      evidence: evidence,
-      processingTime: Math.floor(Math.random() * 100) + 50
-    };
-  }
-
-  /**
-   * Process risk assessment
-   * @param {Object} patientContext - Patient context and clinical data
-   * @param {Object} config - Decision configuration
-   * @returns {Promise<Object>} Processing result
-   * @private
-   */
-  async _processRiskAssessment(patientContext, config) {
-    this.logger.info('Processing risk assessment', {
-      patientId: patientContext.patientId
-    });
-
-    // Simulate risk assessment
-    await new Promise(resolve => setTimeout(resolve, Math.random() * 250));
-
-    // In a real implementation, this would:
-    // 1. Analyze patient risk factors
-    // 2. Calculate risk scores
-    // 3. Compare with population data
-    // 4. Generate risk-based recommendations
-
-    const vitalSigns = patientContext.vitalSigns || {};
-    const riskFactors = patientContext.riskFactors || [];
-    const recommendations = [];
-    const evidence = [];
-
-    let riskScore = 0;
-    let riskLevel = 'low';
-
-    // Simple risk calculation for demo
-    if (vitalSigns.bloodPressure) {
-      const systolic = parseInt(vitalSigns.bloodPressure.split('/')[0]);
-      if (systolic > 180) {
-        riskScore += 3;
-      } else if (systolic > 140) {
-        riskScore += 2;
-      } else if (systolic > 120) {
-        riskScore += 1;
-      }
-    }
-
-    if (vitalSigns.heartRate && vitalSigns.heartRate > 100) {
-      riskScore += 1;
-    }
-
-    riskScore += riskFactors.length;
-
-    if (riskScore >= 5) {
-      riskLevel = 'high';
-      recommendations.push({
-        risk: 'cardiovascular',
-        level: 'high',
-        recommendation: 'Urgent cardiovascular risk assessment',
-        priority: 'high'
-      });
-      evidence.push('Multiple risk factors identified');
-    } else if (riskScore >= 3) {
-      riskLevel = 'moderate';
-      recommendations.push({
-        risk: 'cardiovascular',
-        level: 'moderate',
-        recommendation: 'Regular monitoring and risk factor modification',
-        priority: 'medium'
-      });
-      evidence.push('Moderate risk factors present');
-    }
-
-    return {
-      recommendations: recommendations,
-      alerts: riskLevel === 'high' ? [{ type: 'high-risk', message: 'Patient at high cardiovascular risk' }] : [],
-      confidence: 0.85,
-      evidence: evidence
-    };
-  }
-
-  /**
-   * Process drug interaction
-   * @param {Object} patientContext - Patient context and clinical data
-   * @param {Object} config - Decision configuration
-   * @returns {Promise<Object>} Processing result
-   * @private
-   */
-  async _processDrugInteraction(patientContext, config) {
-    this.logger.info('Processing drug interaction check', {
-      patientId: patientContext.patientId,
-      medicationCount: patientContext.medications?.length
-    });
-
-    // Simulate drug interaction processing
-    await new Promise(resolve => setTimeout(resolve, Math.random() * 150));
-
-    // In a real implementation, this would:
-    // 1. Analyze patient medications
-    // 2. Check for known interactions
-    // 3. Consider patient factors
-    // 4. Generate interaction alerts
-
-    const medications = patientContext.medications || [];
-    const alerts = [];
-    const evidence = [];
-
-    // Simple interaction check for demo
-    if (medications.includes('warfarin') && medications.includes('aspirin')) {
-      alerts.push({
-        type: 'drug-interaction',
-        severity: 'high',
-        message: 'Warfarin + Aspirin: Increased bleeding risk',
-        recommendation: 'Monitor INR closely and consider alternative therapy'
-      });
-      evidence.push('Known drug interaction between warfarin and aspirin');
-    }
-
-    if (medications.includes('simvastatin') && medications.includes('amiodarone')) {
-      alerts.push({
-        type: 'drug-interaction',
-        severity: 'moderate',
-        message: 'Simvastatin + Amiodarone: Increased statin toxicity risk',
-        recommendation: 'Consider dose reduction or alternative statin'
-      });
-      evidence.push('Known drug interaction between simvastatin and amiodarone');
-    }
-
-    return {
-      recommendations: [],
-      alerts: alerts,
-      confidence: alerts.length > 0 ? 0.95 : 0.80,
-      evidence: evidence
-    };
-  }
-
-  /**
-   * Process clinical alert
-   * @param {Object} patientContext - Patient context and clinical data
-   * @param {Object} config - Decision configuration
-   * @returns {Promise<Object>} Processing result
-   * @private
-   */
-  async _processClinicalAlert(patientContext, config) {
-    this.logger.info('Processing clinical alert', {
-      patientId: patientContext.patientId
-    });
-
-    // Simulate clinical alert processing
-    await new Promise(resolve => setTimeout(resolve, Math.random() * 100));
-
-    // In a real implementation, this would:
-    // 1. Monitor vital signs and lab values
-    // 2. Check for critical thresholds
-    // 3. Generate immediate alerts
-    // 4. Prioritize based on severity
-
-    const vitalSigns = patientContext.vitalSigns || {};
-    const labResults = patientContext.labResults || {};
-    const alerts = [];
-    const evidence = [];
-
-    // Check for critical vital signs
-    if (vitalSigns.bloodPressure) {
-      const systolic = parseInt(vitalSigns.bloodPressure.split('/')[0]);
-      const diastolic = parseInt(vitalSigns.bloodPressure.split('/')[1]);
-
-      if (systolic > 180 || diastolic > 120) {
-        alerts.push({
-          type: 'hypertensive-crisis',
-          severity: 'critical',
-          message: 'Hypertensive crisis: Immediate intervention required',
-          recommendation: 'Emergency department evaluation'
-        });
-        evidence.push('Severe hypertension requiring immediate attention');
-      }
-    }
-
-    if (vitalSigns.heartRate && vitalSigns.heartRate > 150) {
-      alerts.push({
-        type: 'tachycardia',
-        severity: 'high',
-        message: 'Severe tachycardia detected',
-        recommendation: 'Cardiac monitoring and beta-blocker consideration'
-      });
-      evidence.push('Heart rate > 150 bpm requires intervention');
-    }
-
-    return {
-      recommendations: [],
-      alerts: alerts,
-      confidence: alerts.length > 0 ? 0.99 : 0.70,
-      evidence: evidence
-    };
-  }
-
-  /**
-   * Generate decision alerts
-   * @param {Object} decision - Decision record
-   * @private
-   */
-  _generateDecisionAlerts(decision) {
-    const alertId = uuidv4();
-
-    const alert = {
-      id: alertId,
-      decisionId: decision.id,
-      patientId: decision.patientContext.patientId,
-      type: 'decision-support',
-      severity: this._calculateAlertSeverity(decision),
-      recommendations: decision.recommendations,
-      confidence: decision.confidence,
-      createdAt: new Date().toISOString(),
-      acknowledged: false
-    };
-
-    this.alerts.set(alertId, alert);
-
-    this.logger.info('Decision alert generated', {
-      alertId,
-      patientId: alert.patientId,
-      severity: alert.severity,
-      recommendationCount: alert.recommendations.length
-    });
-  }
-
-  /**
-   * Calculate alert severity based on decision
-   * @param {Object} decision - Decision record
-   * @returns {string} Alert severity
-   * @private
-   */
-  _calculateAlertSeverity(decision) {
-    // Check for critical alerts first
-    const hasCriticalAlert = decision.alerts.some(alert => alert.severity === 'critical');
-    if (hasCriticalAlert) return 'critical';
-
-    // Check for critical recommendations
-    const hasCritical = decision.recommendations.some(rec => rec.priority === 'critical');
-    if (hasCritical) return 'critical';
-
-    // Check for high-severity alerts
-    const hasHighAlert = decision.alerts.some(alert => alert.severity === 'high');
-    if (hasHighAlert) return 'high';
-
-    // Check for high-priority recommendations
-    const hasHigh = decision.recommendations.some(rec => rec.priority === 'high');
-    if (hasHigh) return 'high';
-
-    // Check for moderate severity/priority
-    const hasMediumAlert = decision.alerts.some(alert => alert.severity === 'medium');
-    const hasMedium = decision.recommendations.some(rec => rec.priority === 'medium');
-    if (hasMediumAlert || hasMedium) return 'medium';
-
-    return 'low';
-  }
-
-  /**
-   * Register a custom decision model
-   * @param {string} type - Decision type identifier
-   * @param {Object} model - Decision model definition
-   */
-  registerDecisionModel(type, model) {
-    if (!type || !model || !model.process) {
-      throw new Error('Invalid decision model registration');
-    }
-
-    this.decisionModels.set(type, model);
-    this.logger.info('Custom decision model registered', {
-      type,
-      model: model.name
-    });
-  }
-
-  /**
-   * Get decision history
-   * @param {string} patientId - Patient identifier
-   * @returns {Array} Array of decisions for the patient
+   * Get decision history for a patient
+   * @param {string} patientId - Patient ID
+   * @returns {Array} Decision history
    */
   getDecisionHistory(patientId) {
-    const patientDecisions = [];
+    if (!patientId) {
+      throw new Error('Patient ID is required');
+    }
 
-    for (const [decisionId, decision] of this.decisionHistory.entries()) {
-      if (decision.patientContext.patientId === patientId) {
-        patientDecisions.push({
-          decisionId: decision.id,
-          patientId: decision.patientContext.patientId,
-          status: decision.status,
-          createdAt: decision.createdAt,
-          completedAt: decision.completedAt,
-          recommendations: decision.recommendations,
-          confidence: decision.confidence
-        });
+    const history = [];
+    for (const [decisionId, entry] of this.decisionHistory.entries()) {
+      if (entry.patientId === patientId) {
+        history.push(entry);
       }
     }
 
-    return patientDecisions;
+    // Sort by creation date (newest first)
+    return history.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }
 
   /**
    * Get active alerts
-   * @returns {Array} Array of active alerts
+   * @returns {Array} Active alerts
    */
   getActiveAlerts() {
     const activeAlerts = [];
-
     for (const [alertId, alert] of this.alerts.entries()) {
       if (!alert.acknowledged) {
         activeAlerts.push({
-          alertId: alert.id,
-          patientId: alert.patientId,
-          type: alert.type,
-          severity: alert.severity,
-          message: alert.recommendations.map(rec => rec.recommendation).join('; '),
-          createdAt: alert.createdAt
+          alertId: alert.alertId,
+          ...alert
         });
       }
     }
 
-    return activeAlerts;
+    // Sort by priority and creation date
+    return activeAlerts.sort((a, b) => {
+      const priorityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+      if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
+        return priorityOrder[a.priority] - priorityOrder[b.priority];
+      }
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
   }
 
   /**
    * Acknowledge an alert
-   * @param {string} alertId - Alert identifier
-   * @returns {boolean} True if alert was acknowledged
+   * @param {string} alertId - Alert ID
+   * @returns {boolean} Success status
    */
   acknowledgeAlert(alertId) {
-    const alert = this.alerts.get(alertId);
-    if (alert) {
-      alert.acknowledged = true;
-      this.logger.info('Alert acknowledged', { alertId });
-      return true;
+    if (!alertId) {
+      throw new Error('Alert ID is required');
     }
 
-    return false;
+    const alert = this.alerts.get(alertId);
+    if (!alert) {
+      return false;
+    }
+
+    alert.acknowledged = true;
+    alert.acknowledgedAt = new Date().toISOString();
+    this.alerts.set(alertId, alert);
+
+    this.logger.info('Alert acknowledged', {
+      alertId,
+      patientId: alert.patientId
+    });
+
+    return true;
   }
 
   /**
    * Get available decision models
-   * @returns {Array} Array of available decision model types
+   * @returns {Array} Available decision models
    */
   getAvailableDecisionModels() {
-    return Array.from(this.decisionModels.keys());
+    const models = [];
+    for (const [type, model] of this.decisionModels.entries()) {
+      models.push({
+        type,
+        name: model.name,
+        description: model.description,
+        version: model.version,
+        confidenceThreshold: model.confidenceThreshold
+      });
+    }
+    return models;
   }
 
   /**
    * Get clinical guidelines
-   * @param {string} condition - Condition to get guidelines for
+   * @param {string} condition - Medical condition
    * @returns {Object|null} Clinical guidelines or null if not found
    */
   getClinicalGuidelines(condition) {
-    return this.clinicalGuidelines.get(condition) || null;
+    if (!condition) {
+      throw new Error('Condition is required');
+    }
+
+    return this.clinicalGuidelines.get(condition.toLowerCase()) || null;
   }
 
   /**
-   * Personalize treatment based on patient factors
-   * @param {Object} baseTreatment - Base treatment recommendation
-   * @param {Object} patientContext - Patient context and clinical data
-   * @returns {Object} Personalized treatment recommendation
-   * @private
+   * Register custom decision model
+   * @param {string} type - Model type
+   * @param {Object} model - Model definition
    */
-  _personalizeTreatment(baseTreatment, patientContext) {
-    const personalizedTreatment = { ...baseTreatment };
-    const { age, gender, medicalHistory = [], medications = [], allergies = [] } = patientContext;
-
-    // Add age-based considerations
-    if (age !== undefined) {
-      if (age > 75) {
-        personalizedTreatment.considerations = personalizedTreatment.considerations || [];
-        personalizedTreatment.considerations.push('Consider reduced dosages for elderly patients');
-        personalizedTreatment.followUp = 'Monitor closely for adverse effects';
-      } else if (age < 18) {
-        personalizedTreatment.considerations = personalizedTreatment.considerations || [];
-        personalizedTreatment.considerations.push('Pediatric dosing guidelines apply');
-      }
+  registerDecisionModel(type, model) {
+    if (!type || !model) {
+      throw new Error('Type and model are required');
     }
 
-    // Add gender-based considerations
-    if (gender && gender !== 'unknown') {
-      personalizedTreatment.considerations = personalizedTreatment.considerations || [];
-      personalizedTreatment.considerations.push(`Gender: ${gender}`);
+    if (typeof model.process !== 'function') {
+      throw new Error('Model must have a process function');
     }
 
-    // Check for contraindications
-    const contraindications = this._checkContraindications(medicalHistory, [baseTreatment]);
-    if (contraindications.length > 0) {
-      personalizedTreatment.contraindications = contraindications;
-    }
+    this.decisionModels.set(type, {
+      name: model.name || type,
+      description: model.description || 'Custom decision model',
+      version: model.version || '1.0.0',
+      confidenceThreshold: model.confidenceThreshold || 0.8,
+      process: model.process
+    });
 
-    return personalizedTreatment;
-  }
-
-  /**
-   * Check for potential drug interactions
-   * @param {Array} medications - Patient medications
-   * @param {Array} recommendations - Treatment recommendations
-   * @param {Array} allergies - Patient allergies
-   * @returns {Array} Array of interaction alerts
-   * @private
-   */
-  _checkDrugInteractions(medications = [], recommendations = [], allergies = []) {
-    const alerts = [];
-
-    // Simple interaction check for demo
-    if (medications.includes('warfarin') && medications.includes('aspirin')) {
-      alerts.push({
-        type: 'drug-interaction',
-        severity: 'high',
-        message: 'Warfarin + Aspirin: Increased bleeding risk',
-        recommendation: 'Monitor INR closely and consider alternative therapy'
-      });
-    }
-
-    if (medications.includes('simvastatin') && medications.includes('amiodarone')) {
-      alerts.push({
-        type: 'drug-interaction',
-        severity: 'moderate',
-        message: 'Simvastatin + Amiodarone: Increased statin toxicity risk',
-        recommendation: 'Consider dose reduction or alternative statin'
-      });
-    }
-
-    // Check for allergies
-    if (allergies.length > 0) {
-      for (const allergy of allergies) {
-        if (allergy.toLowerCase().includes('penicillin') &&
-            recommendations.some(rec =>
-              rec.treatment && rec.treatment.some(t => t.toLowerCase().includes('antibiotic')))) {
-          alerts.push({
-            type: 'allergy-alert',
-            severity: 'high',
-            message: `Potential allergic reaction to ${allergy}`,
-            recommendation: 'Verify patient allergy history before prescribing'
-          });
-        }
-      }
-    }
-
-    return alerts;
-  }
-
-  /**
-   * Check for contraindications based on medical history
-   * @param {Array} medicalHistory - Patient medical history
-   * @param {Array} recommendations - Treatment recommendations
-   * @returns {Array} Array of contraindication alerts
-   * @private
-   */
-  _checkContraindications(medicalHistory = [], recommendations = []) {
-    const alerts = [];
-
-    // Check for contraindications in recommendations
-    for (const recommendation of recommendations) {
-      if (recommendation.treatment) {
-        // Example contraindication checks
-        if (medicalHistory.includes('kidney-disease') &&
-            recommendation.treatment.some(t => t.toLowerCase().includes('nsaids'))) {
-          alerts.push({
-            type: 'contraindication',
-            severity: 'high',
-            message: 'NSAIDs contraindicated in patients with kidney disease',
-            recommendation: 'Consider alternative pain management options'
-          });
-        }
-
-        if (medicalHistory.includes('heart-failure') &&
-            recommendation.treatment.some(t => t.toLowerCase().includes('calcium-channel-blockers'))) {
-          alerts.push({
-            type: 'contraindication',
-            severity: 'moderate',
-            message: 'Calcium channel blockers may worsen heart failure',
-            recommendation: 'Avoid non-dihydropyridine calcium channel blockers'
-          });
-        }
-      }
-    }
-
-    return alerts;
+    this.logger.info('Custom decision model registered', {
+      type,
+      name: model.name || type
+    });
   }
 }
 

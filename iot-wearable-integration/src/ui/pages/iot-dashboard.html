@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediSync IoT & Wearable Dashboard</title>
+    <link rel="stylesheet" href="../styles/iot-dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <h1>MediSync IoT & Wearable Integration Dashboard</h1>
+            <nav class="header-nav">
+                <button class="nav-button active" data-tab="overview">Overview</button>
+                <button class="nav-button" data-tab="devices">Devices</button>
+                <button class="nav-button" data-tab="monitoring">Monitoring</button>
+                <button class="nav-button" data-tab="alerts">Alerts</button>
+                <button class="nav-button" data-tab="analytics">Analytics</button>
+                <button class="nav-button" data-tab="predictions">Predictions</button>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-content">
+            <!-- Overview Tab -->
+            <section id="overview" class="tab-content active">
+                <h2>System Overview</h2>
+                <div class="overview-grid">
+                    <div class="card">
+                        <h3>System Status</h3>
+                        <div class="status-indicator status-ok">Operational</div>
+                        <p>Last updated: <span id="last-updated">Just now</span></p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Connected Devices</h3>
+                        <div class="metric-value" id="connected-devices">24</div>
+                        <p>Active wearable and IoT devices</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Active Alerts</h3>
+                        <div class="metric-value" id="active-alerts">3</div>
+                        <p>Currently active health alerts</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Data Points</h3>
+                        <div class="metric-value" id="data-points">1.2M</div>
+                        <p>Health data points collected today</p>
+                    </div>
+                </div>
+
+                <div class="overview-grid">
+                    <div class="card">
+                        <h3>Vital Signs</h3>
+                        <div class="vitals-grid">
+                            <div class="vital-item">
+                                <span class="vital-label">Heart Rate</span>
+                                <span class="vital-value" id="heart-rate">72</span>
+                                <span class="vital-unit">bpm</span>
+                            </div>
+                            <div class="vital-item">
+                                <span class="vital-label">Blood Pressure</span>
+                                <span class="vital-value" id="blood-pressure">118/76</span>
+                                <span class="vital-unit">mmHg</span>
+                            </div>
+                            <div class="vital-item">
+                                <span class="vital-label">Glucose</span>
+                                <span class="vital-value" id="glucose">98</span>
+                                <span class="vital-unit">mg/dL</span>
+                            </div>
+                            <div class="vital-item">
+                                <span class="vital-label">Temperature</span>
+                                <span class="vital-value" id="temperature">98.6</span>
+                                <span class="vital-unit">°F</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Activity Metrics</h3>
+                        <div class="activity-grid">
+                            <div class="activity-item">
+                                <span class="activity-label">Steps Today</span>
+                                <span class="activity-value" id="steps">8,427</span>
+                            </div>
+                            <div class="activity-item">
+                                <span class="activity-label">Calories Burned</span>
+                                <span class="activity-value" id="calories">426</span>
+                            </div>
+                            <div class="activity-item">
+                                <span class="activity-label">Sleep Last Night</span>
+                                <span class="activity-value" id="sleep">7.2</span>
+                                <span class="activity-unit">hours</span>
+                            </div>
+                            <div class="activity-item">
+                                <span class="activity-label">Active Minutes</span>
+                                <span class="activity-value" id="active-minutes">45</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <h3>Quick Actions</h3>
+                    <div class="actions-grid">
+                        <button class="action-button" id="refresh-data">
+                            <span class="action-icon">🔄</span>
+                            <span>Refresh Data</span>
+                        </button>
+                        <button class="action-button" id="generate-alerts">
+                            <span class="action-icon">⚠️</span>
+                            <span>Generate Alerts</span>
+                        </button>
+                        <button class="action-button" id="run-analytics">
+                            <span class="action-icon">📊</span>
+                            <span>Run Analytics</span>
+                        </button>
+                        <button class="action-button" id="predict-health">
+                            <span class="action-icon">🔮</span>
+                            <span>Health Prediction</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Devices Tab -->
+            <section id="devices" class="tab-content">
+                <h2>Connected Devices</h2>
+                <div class="devices-grid">
+                    <div class="card">
+                        <h3>Wearable Devices</h3>
+                        <table class="devices-table">
+                            <thead>
+                                <tr>
+                                    <th>Device</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Last Sync</th>
+                                    <th>Data Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Fitbit Charge 5</td>
+                                    <td>Wearable</td>
+                                    <td><span class="status-active">Connected</span></td>
+                                    <td>2 minutes ago</td>
+                                    <td>1,247</td>
+                                </tr>
+                                <tr>
+                                    <td>Apple Watch Series 8</td>
+                                    <td>Wearable</td>
+                                    <td><span class="status-active">Connected</span></td>
+                                    <td>1 minute ago</td>
+                                    <td>2,563</td>
+                                </tr>
+                                <tr>
+                                    <td>Garmin Forerunner 255</td>
+                                    <td>Wearable</td>
+                                    <td><span class="status-active">Connected</span></td>
+                                    <td>3 minutes ago</td>
+                                    <td>892</td>
+                                </tr>
+                                <tr>
+                                    <td>Oura Ring Gen 3</td>
+                                    <td>Wearable</td>
+                                    <td><span class="status-active">Connected</span></td>
+                                    <td>5 minutes ago</td>
+                                    <td>1,432</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card">
+                        <h3>IoT Sensors</h3>
+                        <table class="devices-table">
+                            <thead>
+                                <tr>
+                                    <th>Device</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Last Reading</th>
+                                    <th>Protocol</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Omron Blood Pressure</td>
+                                    <td>Sensor</td>
+                                    <td><span class="status-active">Connected</span></td>
+                                    <td>10 seconds ago</td>
+                                    <td>Bluetooth</td>
+                                </tr>
+                                <tr>
+                                    <td>Accu-Chek Glucose</td>
+                                    <td>Sensor</td>
+                                    <td><span class="status-active">Connected</span></td>
+                                    <td>30 seconds ago</td>
+                                    <td>Bluetooth</td>
+                                </tr>
+                                <tr>
+                                    <td>Withings Scale</td>
+                                    <td>Sensor</td>
+                                    <td><span class="status-active">Connected</span></td>
+                                    <td>1 minute ago</td>
+                                    <td>WiFi</td>
+                                </tr>
+                                <tr>
+                                    <td>KardiaMobile ECG</td>
+                                    <td>Sensor</td>
+                                    <td><span class="status-active">Connected</span></td>
+                                    <td>5 minutes ago</td>
+                                    <td>Bluetooth</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Device Management</h3>
+                    <form id="device-management-form" class="device-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="device-type">Device Type</label>
+                                <select id="device-type" name="device-type">
+                                    <option value="wearable">Wearable Device</option>
+                                    <option value="sensor">IoT Sensor</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="device-model">Device Model</label>
+                                <input type="text" id="device-model" name="device-model" placeholder="Enter device model" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="device-id">Device ID</label>
+                                <input type="text" id="device-id" name="device-id" placeholder="Enter device ID" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary">Add Device</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Monitoring Tab -->
+            <section id="monitoring" class="tab-content">
+                <h2>Real-time Health Monitoring</h2>
+                <div class="monitoring-grid">
+                    <div class="card">
+                        <h3>Vital Signs Dashboard</h3>
+                        <div class="chart-container">
+                            <canvas id="vitals-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Current Readings</h3>
+                        <div class="readings-grid">
+                            <div class="reading-item">
+                                <span class="reading-label">Heart Rate</span>
+                                <div class="reading-value">
+                                    <span class="value" id="current-heart-rate">72</span>
+                                    <span class="unit">bpm</span>
+                                </div>
+                                <div class="reading-status status-normal">Normal</div>
+                            </div>
+                            <div class="reading-item">
+                                <span class="reading-label">Blood Pressure</span>
+                                <div class="reading-value">
+                                    <span class="value" id="current-blood-pressure">118/76</span>
+                                    <span class="unit">mmHg</span>
+                                </div>
+                                <div class="reading-status status-normal">Normal</div>
+                            </div>
+                            <div class="reading-item">
+                                <span class="reading-label">Glucose</span>
+                                <div class="reading-value">
+                                    <span class="value" id="current-glucose">98</span>
+                                    <span class="unit">mg/dL</span>
+                                </div>
+                                <div class="reading-status status-normal">Normal</div>
+                            </div>
+                            <div class="reading-item">
+                                <span class="reading-label">Temperature</span>
+                                <div class="reading-value">
+                                    <span class="value" id="current-temperature">98.6</span>
+                                    <span class="unit">°F</span>
+                                </div>
+                                <div class="reading-status status-normal">Normal</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Monitoring Configuration</h3>
+                    <form id="monitoring-config-form" class="config-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="monitoring-frequency">Update Frequency</label>
+                                <select id="monitoring-frequency" name="monitoring-frequency">
+                                    <option value="10000">10 seconds</option>
+                                    <option value="30000">30 seconds</option>
+                                    <option value="60000" selected>1 minute</option>
+                                    <option value="300000">5 minutes</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="alert-thresholds">Alert Thresholds</label>
+                                <select id="alert-thresholds" name="alert-thresholds">
+                                    <option value="conservative">Conservative</option>
+                                    <option value="moderate" selected>Moderate</option>
+                                    <option value="aggressive">Aggressive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary">Update Configuration</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Alerts Tab -->
+            <section id="alerts" class="tab-content">
+                <h2>Health Alerts</h2>
+                <div class="alerts-grid">
+                    <div class="card">
+                        <h3>Active Alerts</h3>
+                        <div class="alerts-list">
+                            <div class="alert-item alert-high">
+                                <div class="alert-header">
+                                    <span class="alert-type">High Heart Rate</span>
+                                    <span class="alert-time">5 minutes ago</span>
+                                </div>
+                                <div class="alert-message">
+                                    Patient heart rate exceeded 120 bpm for more than 5 minutes
+                                </div>
+                                <div class="alert-actions">
+                                    <button class="btn-small">Acknowledge</button>
+                                    <button class="btn-small btn-danger">Resolve</button>
+                                </div>
+                            </div>
+
+                            <div class="alert-item alert-medium">
+                                <div class="alert-header">
+                                    <span class="alert-type">Low Activity</span>
+                                    <span class="alert-time">1 hour ago</span>
+                                </div>
+                                <div class="alert-message">
+                                    Patient steps below 1,000 for the past 2 hours
+                                </div>
+                                <div class="alert-actions">
+                                    <button class="btn-small">Acknowledge</button>
+                                    <button class="btn-small btn-danger">Resolve</button>
+                                </div>
+                            </div>
+
+                            <div class="alert-item alert-medium">
+                                <div class="alert-header">
+                                    <span class="alert-type">Sleep Disruption</span>
+                                    <span class="alert-time">8 hours ago</span>
+                                </div>
+                                <div class="alert-message">
+                                    Patient sleep quality score below 60 for 3 consecutive nights
+                                </div>
+                                <div class="alert-actions">
+                                    <button class="btn-small">Acknowledge</button>
+                                    <button class="btn-small btn-danger">Resolve</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Alert Configuration</h3>
+                        <form id="alert-config-form" class="config-form">
+                            <div class="form-group">
+                                <label for="notification-methods">Notification Methods</label>
+                                <div class="checkbox-group">
+                                    <label for="notif-push"><input type="checkbox" id="notif-push" name="notifications" value="push" checked> Push Notifications</label>
+                                    <label for="notif-sms"><input type="checkbox" id="notif-sms" name="notifications" value="sms" checked> SMS</label>
+                                    <label for="notif-email"><input type="checkbox" id="notif-email" name="notifications" value="email"> Email</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="escalation-time">Escalation Time</label>
+                                <select id="escalation-time" name="escalation-time">
+                                    <option value="5">5 minutes</option>
+                                    <option value="15" selected>15 minutes</option>
+                                    <option value="30">30 minutes</option>
+                                    <option value="60">1 hour</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn-primary">Update Configuration</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Alert History</h3>
+                    <table class="alerts-history-table">
+                        <thead>
+                            <tr>
+                                <th>Alert Type</th>
+                                <th>Severity</th>
+                                <th>Timestamp</th>
+                                <th>Status</th>
+                                <th>Resolved By</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Elevated Blood Pressure</td>
+                                <td><span class="severity-high">High</span></td>
+                                <td>2025-09-19 14:30:22</td>
+                                <td><span class="status-resolved">Resolved</span></td>
+                                <td>Dr. Smith</td>
+                            </tr>
+                            <tr>
+                                <td>Irregular Heartbeat</td>
+                                <td><span class="severity-high">High</span></td>
+                                <td>2025-09-19 12:15:45</td>
+                                <td><span class="status-resolved">Resolved</span></td>
+                                <td>Dr. Johnson</td>
+                            </tr>
+                            <tr>
+                                <td>Low Glucose</td>
+                                <td><span class="severity-medium">Medium</span></td>
+                                <td>2025-09-19 08:45:33</td>
+                                <td><span class="status-resolved">Resolved</span></td>
+                                <td>Auto-resolved</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Analytics Tab -->
+            <section id="analytics" class="tab-content">
+                <h2>Population Health Analytics</h2>
+                <div class="analytics-grid">
+                    <div class="card">
+                        <h3>Population Metrics</h3>
+                        <div class="metrics-grid">
+                            <div class="metric-item">
+                                <span class="metric-label">Total Patients</span>
+                                <span class="metric-value">2,456</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Avg. Heart Rate</span>
+                                <span class="metric-value">74 bpm</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Avg. Blood Pressure</span>
+                                <span class="metric-value">116/74</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Avg. Glucose</span>
+                                <span class="metric-value">96 mg/dL</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Chronic Conditions</h3>
+                        <div class="conditions-grid">
+                            <div class="condition-item">
+                                <span class="condition-label">Hypertension</span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 28%"></div>
+                                </div>
+                                <span class="condition-percent">28%</span>
+                            </div>
+                            <div class="condition-item">
+                                <span class="condition-label">Diabetes</span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 15%"></div>
+                                </div>
+                                <span class="condition-percent">15%</span>
+                            </div>
+                            <div class="condition-item">
+                                <span class="condition-label">Heart Disease</span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 8%"></div>
+                                </div>
+                                <span class="condition-percent">8%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Analytics Dashboard</h3>
+                    <div class="chart-container">
+                        <canvas id="analytics-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Outlier Detection</h3>
+                    <table class="outliers-table">
+                        <thead>
+                            <tr>
+                                <th>Patient ID</th>
+                                <th>Outlier Type</th>
+                                <th>Value</th>
+                                <th>Normal Range</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>PAT-12345</td>
+                                <td>High Heart Rate</td>
+                                <td>142 bpm</td>
+                                <td>60-100 bpm</td>
+                                <td>2025-09-19 14:45:22</td>
+                            </tr>
+                            <tr>
+                                <td>PAT-67890</td>
+                                <td>Low Glucose</td>
+                                <td>45 mg/dL</td>
+                                <td>70-140 mg/dL</td>
+                                <td>2025-09-19 13:22:18</td>
+                            </tr>
+                            <tr>
+                                <td>PAT-11111</td>
+                                <td>High Blood Pressure</td>
+                                <td>185/95</td>
+                                <td>90-120/60-80</td>
+                                <td>2025-09-19 12:30:45</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Predictions Tab -->
+            <section id="predictions" class="tab-content">
+                <h2>Personalized Health Predictions</h2>
+                <div class="predictions-grid">
+                    <div class="card">
+                        <h3>Risk Predictions</h3>
+                        <div class="prediction-list">
+                            <div class="prediction-item">
+                                <div class="prediction-header">
+                                    <span class="prediction-type">Readmission Risk</span>
+                                    <span class="prediction-confidence">85%</span>
+                                </div>
+                                <div class="prediction-details">
+                                    <div class="prediction-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill high-risk" style="width: 85%"></div>
+                                        </div>
+                                    </div>
+                                    <p class="prediction-description">
+                                        Based on recent vitals and activity patterns, patient has elevated risk of readmission within 30 days.
+                                    </p>
+                                    <div class="prediction-factors">
+                                        <span class="factor">Low activity</span>
+                                        <span class="factor">Elevated BP</span>
+                                        <span class="factor">Poor sleep</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="prediction-item">
+                                <div class="prediction-header">
+                                    <span class="prediction-type">Complication Risk</span>
+                                    <span class="prediction-confidence">62%</span>
+                                </div>
+                                <div class="prediction-details">
+                                    <div class="prediction-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill medium-risk" style="width: 62%"></div>
+                                        </div>
+                                    </div>
+                                    <p class="prediction-description">
+                                        Patient shows moderate risk for complications based on current health trajectory.
+                                    </p>
+                                    <div class="prediction-factors">
+                                        <span class="factor">Medication adherence</span>
+                                        <span class="factor">Diet patterns</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Wellness Score</h3>
+                        <div class="wellness-score">
+                            <div class="score-value">78</div>
+                            <div class="score-label">Wellness Index</div>
+                            <div class="score-description">
+                                Patient wellness is above average but shows room for improvement in activity levels.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Treatment Response Prediction</h3>
+                    <div class="treatment-prediction">
+                        <div class="treatment-item">
+                            <div class="treatment-name">Blood Pressure Medication</div>
+                            <div class="treatment-response">
+                                <div class="response-bar">
+                                    <div class="response-fill positive" style="width: 75%"></div>
+                                </div>
+                                <div class="response-percent">75% Positive Response</div>
+                            </div>
+                        </div>
+                        <div class="treatment-item">
+                            <div class="treatment-name">Diabetes Management</div>
+                            <div class="treatment-response">
+                                <div class="response-bar">
+                                    <div class="response-fill mixed" style="width: 60%"></div>
+                                </div>
+                                <div class="response-percent">60% Mixed Response</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Prediction Configuration</h3>
+                    <form id="prediction-config-form" class="config-form">
+                        <div class="form-group">
+                            <label for="prediction-models">Active Models</label>
+                            <div class="checkbox-group">
+                                <label for="model-readmission"><input type="checkbox" id="model-readmission" name="models" value="readmission" checked> Readmission Risk</label>
+                                <label for="model-complication"><input type="checkbox" id="model-complication" name="models" value="complication" checked> Complication Risk</label>
+                                <label for="model-wellness"><input type="checkbox" id="model-wellness" name="models" value="wellness" checked> Wellness Score</label>
+                                <label for="model-treatment"><input type="checkbox" id="model-treatment" name="models" value="treatment"> Treatment Response</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="update-frequency">Update Frequency</label>
+                            <select id="update-frequency" name="update-frequency">
+                                <option value="3600000">1 hour</option>
+                                <option value="14400000">4 hours</option>
+                                <option value="86400000" selected>24 hours</option>
+                                <option value="604800000">1 week</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary">Update Configuration</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <p>MediSync IoT & Wearable Integration Dashboard &copy; 2025 | HIPAA Compliant | GDPR Ready</p>
+        </footer>
+    </div>
+
+    <script src="../scripts/iot-dashboard.js"></script>
+</body>
+</html>

@@ -24,3 +24,18 @@ hive-mind-prompt-*.txt
 
 prd/
 .claude/
+logs/
+coverage/
+dist/
+healthcare/
+huggingface/huggingface-inference.tgz
+huggingface/node_modules/
+huggingface/test/images/
+memory/
+node_modules/
+package-lock.json.bak
+test/
+.claude-flow/
+.roo/
+.roomodes
+.github/workflows/ci.yml.backup

@@ -10,6 +10,9 @@ const winston = require('winston');
 class ResearchWorkflowService {
   /**
    * Create a new Research Workflow Service
+   * NOTE: This is a simulation implementation for demonstration purposes.
+   * In a production environment, this would execute actual workflow steps
+   * with real processing logic.
    */
   constructor() {
     this.config = config;
@@ -17,6 +20,9 @@ class ResearchWorkflowService {
     this.workflows = new Map();
     this.workflowDefinitions = config.workflows;
     this.stepDefinitions = config.steps;
+
+    // TODO: Replace in-memory Map with persistent storage (e.g., database) for production use
+    // This will prevent data loss when the service restarts
 
     this.logger.info('Research Workflow Service created', {
       service: 'research-workflow-service'
@@ -205,7 +211,8 @@ class ResearchWorkflowService {
         }
       }
 
-      // Simulate step processing
+      // Simulate step processing with random duration
+      // TODO: Replace with actual processing time based on step complexity in production
       await new Promise(resolve => setTimeout(resolve, Math.random() * stepDefinition.timeout));
 
       // Generate step result based on step type
