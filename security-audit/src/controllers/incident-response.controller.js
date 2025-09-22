@@ -382,7 +382,7 @@ class IncidentResponseController {
       if (error.message.includes('not found')) {
         return res.status(404).json({
           error: 'Incident not found',
-          message: error.message
+          message: 'Incident not found'
         });
       }
 

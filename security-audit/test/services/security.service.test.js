@@ -1,12 +1,3 @@
-# Security Service Tests for MediSync Healthcare AI Platform
-
-## Overview
-
-This file contains unit tests for the security service implementation.
-
-## Tests
-
-```javascript
 const SecurityService = require('../../src/services/security.service.js');
 
 describe('SecurityService', () => {
