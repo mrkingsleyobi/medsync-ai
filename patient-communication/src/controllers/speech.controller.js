@@ -56,9 +56,12 @@ class SpeechController {
         wordCount: transcriptionResult.wordCount
       });
     } catch (error) {
-      console.error('Speech to text controller error', {
-        error: error.message
-      });
+      if (this.speechService && this.speechService.logger) {
+        this.speechService.logger.error('Speech to text controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Clean up temporary file if it exists
       if (req.file) {
@@ -121,9 +124,12 @@ class SpeechController {
         context: result.context
       });
     } catch (error) {
-      console.error('Medical journal entry processing controller error', {
-        error: error.message
-      });
+      if (this.speechService && this.speechService.logger) {
+        this.speechService.logger.error('Medical journal entry processing controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Clean up temporary file if it exists
       if (req.file) {
@@ -157,9 +163,12 @@ class SpeechController {
         supportedLanguages: supportedLanguages
       });
     } catch (error) {
-      console.error('Get supported languages controller error', {
-        error: error.message
-      });
+      if (this.speechService && this.speechService.logger) {
+        this.speechService.logger.error('Get supported languages controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve supported languages',
@@ -204,9 +213,12 @@ class SpeechController {
         filename: filename
       });
     } catch (error) {
-      console.error('Save audio file controller error', {
-        error: error.message
-      });
+      if (this.speechService && this.speechService.logger) {
+        this.speechService.logger.error('Save audio file controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Clean up temporary file if it exists
       if (req.file) {

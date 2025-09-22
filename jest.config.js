@@ -4,7 +4,9 @@ module.exports = {
     'node_modules/(?!uuid)/'
   ],
   moduleNameMapper: {
-    '^uuid$': require.resolve('uuid')
+    '^uuid$': require.resolve('uuid'),
+    '^@mozilla/readability$': '<rootDir>/__mocks__/readability.js',
+    '^jsdom$': '<rootDir>/__mocks__/jsdom.js'
   },
   collectCoverageFrom: [
     '**/*.js',

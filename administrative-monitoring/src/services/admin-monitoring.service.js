@@ -141,6 +141,15 @@ class AdminMonitoringService {
    */
   async generateDocumentation(options = {}) {
     try {
+      // Validate required parameters
+      if (!options.formats) {
+        throw new Error('formats must be an array');
+      }
+
+      if (!Array.isArray(options.formats)) {
+        throw new Error('formats must be an array');
+      }
+
       const jobId = uuidv4();
       this.logger.info('Starting documentation generation', {
         jobId,

@@ -79,7 +79,7 @@ describe('Authentication Service', () => {
   describe('authenticateUser', () => {
     test('should authenticate a valid user', async () => {
       const email = 'patient@example.com';
-      const password = 'Password123!';
+      const password = 'Password123';
 
       const result = await authService.authenticateUser(email, password);
 

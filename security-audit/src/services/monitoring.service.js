@@ -51,16 +51,8 @@ class MonitoringService {
    * @param {Object} event - Security event to check
    */
   _checkAlertConditions(event) {
-    // Check for high-severity events
-    if (event.severity === 'error' || event.severity === 'security') {
-      this._generateAlert({
-        type: 'HIGH_SEVERITY_EVENT',
-        severity: 'critical',
-        message: `High severity event detected: ${event.type}`,
-        event: event,
-        timestamp: new Date().toISOString()
-      });
-    }
+    // Check for specific alert conditions first
+    let specificAlertGenerated = false;
 
     // Check for multiple failed login attempts
     if (event.type === 'failed_login' && event.count >= 5) {
@@ -71,6 +63,7 @@ class MonitoringService {
         event: event,
         timestamp: new Date().toISOString()
       });
+      specificAlertGenerated = true;
     }
 
     // Check for unusual data access patterns
@@ -82,6 +75,7 @@ class MonitoringService {
         event: event,
         timestamp: new Date().toISOString()
       });
+      specificAlertGenerated = true;
     }
 
     // Check for brute force attack patterns
@@ -90,6 +84,18 @@ class MonitoringService {
         type: 'BRUTE_FORCE_ATTACK',
         severity: 'critical',
         message: 'Potential brute force attack detected',
+        event: event,
+        timestamp: new Date().toISOString()
+      });
+      specificAlertGenerated = true;
+    }
+
+    // Check for high-severity events (but not for events that already generate specific alerts)
+    if ((event.severity === 'error' || event.severity === 'security') && !specificAlertGenerated) {
+      this._generateAlert({
+        type: 'HIGH_SEVERITY_EVENT',
+        severity: 'critical',
+        message: `High severity event detected: ${event.type}`,
         event: event,
         timestamp: new Date().toISOString()
       });
