@@ -3,16 +3,16 @@
  * Controller for handling real-time health monitoring requests
  */
 
-const HealthMonitoringService = require('../services/iot-wearable.service.js');
+const ContinuousMonitoringDashboardService = require('../services/continuous-monitoring-dashboard.service.js');
 
 class HealthMonitoringController {
   /**
    * Create a new Real-time Health Monitoring Controller
    */
   constructor() {
-    this.healthMonitoringService = new HealthMonitoringService();
+    this.continuousMonitoringDashboardService = new ContinuousMonitoringDashboardService();
     // Use the service's logger
-    this.logger = this.healthMonitoringService.logger;
+    this.logger = this.continuousMonitoringDashboardService.logger;
   }
 
 
@@ -26,7 +26,7 @@ class HealthMonitoringController {
       const { options } = req.body;
 
       // Monitor real-time health data
-      const result = await this.healthMonitoringService.monitorRealTimeHealth(options);
+      const result = await this.continuousMonitoringDashboardService.monitorRealTimeHealth(options);
 
       // Return result
       res.status(200).json({
@@ -53,8 +53,7 @@ class HealthMonitoringController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to monitor real-time health data',
-        message: error.message
+        error: 'Failed to monitor real-time health data'
       });
     }
   }
@@ -68,7 +67,7 @@ class HealthMonitoringController {
   getServiceStatus(req, res) {
     try {
       // Get service status
-      const status = this.healthMonitoringService.getServiceStatus();
+      const status = this.continuousMonitoringDashboardService.getServiceStatus();
 
       // Return status
       res.status(200).json({
@@ -84,8 +83,7 @@ class HealthMonitoringController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve service status',
-        message: error.message
+        error: 'Failed to retrieve service status'
       });
     }
   }
@@ -107,7 +105,7 @@ class HealthMonitoringController {
       }
 
       // Get job status
-      const status = this.healthMonitoringService.getMonitoringStatus(jobId);
+      const status = this.continuousMonitoringDashboardService.getMonitoringStatus(jobId);
 
       // Return status
       if (status) {
@@ -129,8 +127,7 @@ class HealthMonitoringController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve monitoring job status',
-        message: error.message
+        error: 'Failed to retrieve monitoring job status'
       });
     }
   }
@@ -152,7 +149,7 @@ class HealthMonitoringController {
       }
 
       // Get alert status
-      const status = this.healthMonitoringService.getAlertStatus(alertId);
+      const status = this.continuousMonitoringDashboardService.getAlertStatus(alertId);
 
       // Return status
       if (status) {
@@ -174,8 +171,7 @@ class HealthMonitoringController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve alert status',
-        message: error.message
+        error: 'Failed to retrieve alert status'
       });
     }
   }
@@ -197,7 +193,7 @@ class HealthMonitoringController {
       }
 
       // Acknowledge alert
-      const result = this.healthMonitoringService.acknowledgeAlert(alertId);
+      const result = this.continuousMonitoringDashboardService.acknowledgeAlert(alertId);
 
       // Return result
       if (result) {
@@ -220,8 +216,7 @@ class HealthMonitoringController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to acknowledge alert',
-        message: error.message
+        error: 'Failed to acknowledge alert'
       });
     }
   }
@@ -243,7 +238,7 @@ class HealthMonitoringController {
       }
 
       // Resolve alert
-      const result = this.healthMonitoringService.resolveAlert(alertId);
+      const result = this.continuousMonitoringDashboardService.resolveAlert(alertId);
 
       // Return result
       if (result) {
@@ -266,8 +261,7 @@ class HealthMonitoringController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to resolve alert',
-        message: error.message
+        error: 'Failed to resolve alert'
       });
     }
   }

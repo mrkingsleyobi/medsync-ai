@@ -3,7 +3,7 @@
  * Unit tests for the real-time health monitoring service
  */
 
-const HealthMonitoringService = require('../../src/services/iot-wearable.service.js');
+const HealthMonitoringService = require('../../src/services/continuous-monitoring-dashboard.service.js');
 
 describe('HealthMonitoringService', () => {
   let healthMonitoringService;

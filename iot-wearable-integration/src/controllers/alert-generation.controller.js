@@ -3,7 +3,7 @@
  * Controller for handling alert generation and notification requests
  */
 
-const AlertGenerationService = require('../services/iot-wearable.service.js');
+const AlertGenerationService = require('../services/alert-generation.service.js');
 
 class AlertGenerationController {
   /**
@@ -50,8 +50,7 @@ class AlertGenerationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to create alert',
-        message: error.message
+        error: 'Failed to create alert'
       });
     }
   }
@@ -81,8 +80,7 @@ class AlertGenerationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve service status',
-        message: error.message
+        error: 'Failed to retrieve service status'
       });
     }
   }
@@ -126,8 +124,7 @@ class AlertGenerationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve alert status',
-        message: error.message
+        error: 'Failed to retrieve alert status'
       });
     }
   }
@@ -172,8 +169,7 @@ class AlertGenerationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to acknowledge alert',
-        message: error.message
+        error: 'Failed to acknowledge alert'
       });
     }
   }
@@ -218,8 +214,7 @@ class AlertGenerationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to resolve alert',
-        message: error.message
+        error: 'Failed to resolve alert'
       });
     }
   }
