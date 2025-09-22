@@ -40,3 +40,5 @@ test/
 .roo/
 .roomodes
 .github/workflows/ci.yml.backup
+.hive-mind/
+demo/
