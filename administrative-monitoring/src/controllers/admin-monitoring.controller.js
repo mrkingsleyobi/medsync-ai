@@ -62,8 +62,7 @@ class AdminMonitoringController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to generate documentation',
-        message: error.message
+        error: 'Failed to generate documentation'
       });
     }
   }
@@ -124,8 +123,7 @@ class AdminMonitoringController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to schedule task',
-        message: error.message
+        error: 'Failed to schedule task'
       });
     }
   }
@@ -160,8 +158,7 @@ class AdminMonitoringController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to optimize resource allocation',
-        message: error.message
+        error: 'Failed to optimize resource allocation'
       });
     }
   }
@@ -211,8 +208,7 @@ class AdminMonitoringController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to process billing',
-        message: error.message
+        error: 'Failed to process billing'
       });
     }
   }
@@ -243,8 +239,7 @@ class AdminMonitoringController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve service status',
-        message: error.message
+        error: 'Failed to retrieve service status'
       });
     }
   }
@@ -290,8 +285,7 @@ class AdminMonitoringController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve documentation job status',
-        message: error.message
+        error: 'Failed to retrieve documentation job status'
       });
     }
   }
@@ -322,8 +316,7 @@ class AdminMonitoringController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve scheduled tasks',
-        message: error.message
+        error: 'Failed to retrieve scheduled tasks'
       });
     }
   }
@@ -354,8 +347,7 @@ class AdminMonitoringController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve billing records',
-        message: error.message
+        error: 'Failed to retrieve billing records'
       });
     }
   }
@@ -396,8 +388,7 @@ class AdminMonitoringController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to generate usage report',
-        message: error.message
+        error: 'Failed to generate usage report'
       });
     }
   }
@@ -428,8 +419,7 @@ class AdminMonitoringController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve active alerts',
-        message: error.message
+        error: 'Failed to retrieve active alerts'
       });
     }
   }
@@ -476,8 +466,7 @@ class AdminMonitoringController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to acknowledge alert',
-        message: error.message
+        error: 'Failed to acknowledge alert'
       });
     }
   }
@@ -524,8 +513,7 @@ class AdminMonitoringController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to resolve alert',
-        message: error.message
+        error: 'Failed to resolve alert'
       });
     }
   }

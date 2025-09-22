@@ -147,6 +147,7 @@ class MedicalSwarmExecutor {
 
     // Initialize swarm with healthcare compliance
     this.swarm = await swarmInitializer.initializeSwarm();
+    this.swarmInitializer = swarmInitializer;
 
     // Verify swarm health and security
     await this.verifySwarmHealth();
@@ -161,7 +162,7 @@ class MedicalSwarmExecutor {
    * Verify swarm health and security
    */
   async verifySwarmHealth() {
-    const swarmStatus = this.swarm.getSwarmStatus();
+    const swarmStatus = this.swarmInitializer.getSwarmStatus();
 
     if (swarmStatus.healthScore < 0.95) {
       throw new Error(`Swarm health score too low: ${swarmStatus.healthScore} (minimum: 0.95)`);
@@ -438,7 +439,7 @@ class MedicalSwarmExecutor {
    * Check system health
    */
   async checkSystemHealth() {
-    const healthStatus = this.swarm.getSwarmStatus();
+    const healthStatus = this.swarmInitializer.getSwarmStatus();
 
     if (healthStatus.healthScore < 0.95) {
       healthcareLogger.warn('System health degradation detected');

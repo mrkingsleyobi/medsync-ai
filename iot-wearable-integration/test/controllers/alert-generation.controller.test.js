@@ -1,31 +1,36 @@
 /**
- * Real-time Health Monitoring Controller Tests
- * Unit tests for the real-time health monitoring controller
+ * Alert Generation and Notification Controller Tests
+ * Unit tests for the alert generation and notification controller
  */
 
-const HealthMonitoringController = require('../../src/controllers/iot-wearable.controller.js');
+const AlertGenerationController = require('../../src/controllers/alert-generation.controller.js');
 
 // Mock the service
 jest.mock('../../src/services/iot-wearable.service.js');
 
-describe('HealthMonitoringController', () => {
-  let healthMonitoringController;
-  let mockHealthMonitoringService;
+describe('AlertGenerationController', () => {
+  let alertGenerationController;
+  let mockAlertGenerationService;
 
   beforeEach(() => {
-    healthMonitoringController = new HealthMonitoringController();
-    mockHealthMonitoringService = healthMonitoringController.healthMonitoringService;
+    alertGenerationController = new AlertGenerationController();
+    mockAlertGenerationService = alertGenerationController.alertGenerationService;
     // Mock the logger
-    healthMonitoringController.logger = {
+    alertGenerationController.logger = {
       error: jest.fn()
     };
   });
 
-  describe('monitorRealTimeHealth', () => {
-    test('should monitor real-time health data successfully', async () => {
+  describe('createAlert', () => {
+    test('should create an alert successfully', () => {
       const req = {
         body: {
-          options: { frequency: 10000 }
+          alertData: {
+            type: 'high_heart_rate',
+            value: 120,
+            threshold: { min: 60, max: 100 },
+            severity: 'high'
+          }
         }
       };
 
@@ -35,32 +40,31 @@ describe('HealthMonitoringController', () => {
       };
 
       const mockResult = {
-        jobId: 'monitoring-job-123',
-        vitals: { heartRate: 72, bloodPressure: { systolic: 118, diastolic: 76 } },
-        alerts: [],
-        processingTime: 1000
+        id: 'alert-123',
+        type: 'high_heart_rate',
+        value: 120,
+        threshold: { min: 60, max: 100 },
+        severity: 'high',
+        createdAt: '2025-09-19T14:30:00Z',
+        acknowledged: false,
+        resolved: false
       };
 
-      mockHealthMonitoringService.monitorRealTimeHealth.mockResolvedValue(mockResult);
+      mockAlertGenerationService.createAlert.mockReturnValue(mockResult);
 
-      await healthMonitoringController.monitorRealTimeHealth(req, res);
+      alertGenerationController.createAlert(req, res);
 
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         success: true,
-        message: 'Real-time health monitoring completed successfully',
-        jobId: mockResult.jobId,
-        vitals: mockResult.vitals,
-        alerts: mockResult.alerts,
-        processingTime: mockResult.processingTime
+        message: 'Alert created successfully',
+        alert: mockResult
       });
     });
 
-    test('should return 400 when real-time health monitoring is not enabled', async () => {
+    test('should return 400 when alert data is not provided', () => {
       const req = {
-        body: {
-          options: { frequency: 10000 }
-        }
+        body: {}
       };
 
       const res = {
@@ -68,20 +72,23 @@ describe('HealthMonitoringController', () => {
         json: jest.fn()
       };
 
-      mockHealthMonitoringService.monitorRealTimeHealth.mockRejectedValue(new Error('Real-time health monitoring is not enabled'));
-
-      await healthMonitoringController.monitorRealTimeHealth(req, res);
+      alertGenerationController.createAlert(req, res);
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Real-time health monitoring is not enabled'
+        error: 'Alert data is required'
       });
     });
 
-    test('should return 500 when service throws an error', async () => {
+    test('should return 500 when service throws an error', () => {
       const req = {
         body: {
-          options: { frequency: 10000 }
+          alertData: {
+            type: 'high_heart_rate',
+            value: 120,
+            threshold: { min: 60, max: 100 },
+            severity: 'high'
+          }
         }
       };
 
@@ -90,13 +97,15 @@ describe('HealthMonitoringController', () => {
         json: jest.fn()
       };
 
-      mockHealthMonitoringService.monitorRealTimeHealth.mockRejectedValue(new Error('Service error'));
+      mockAlertGenerationService.createAlert.mockImplementation(() => {
+        throw new Error('Service error');
+      });
 
-      await healthMonitoringController.monitorRealTimeHealth(req, res);
+      alertGenerationController.createAlert(req, res);
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to monitor real-time health data',
+        error: 'Failed to create alert',
         message: 'Service error'
       });
     });
@@ -112,13 +121,12 @@ describe('HealthMonitoringController', () => {
       };
 
       const mockStatus = {
-        monitoring: { enabled: true, activeMonitoring: 1 },
-        alerts: { enabled: true, activeAlerts: 0 }
+        alerts: { enabled: true, activeAlerts: 1 }
       };
 
-      mockHealthMonitoringService.getServiceStatus.mockReturnValue(mockStatus);
+      mockAlertGenerationService.getServiceStatus.mockReturnValue(mockStatus);
 
-      healthMonitoringController.getServiceStatus(req, res);
+      alertGenerationController.getServiceStatus(req, res);
 
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
@@ -135,113 +143,15 @@ describe('HealthMonitoringController', () => {
         json: jest.fn()
       };
 
-      mockHealthMonitoringService.getServiceStatus.mockImplementation(() => {
+      mockAlertGenerationService.getServiceStatus.mockImplementation(() => {
         throw new Error('Service error');
       });
 
-      healthMonitoringController.getServiceStatus(req, res);
+      alertGenerationController.getServiceStatus(req, res);
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
         error: 'Failed to retrieve service status',
-        message: 'Service error'
-      });
-    });
-  });
-
-  describe('getMonitoringStatus', () => {
-    test('should return monitoring job status successfully', () => {
-      const req = {
-        params: {
-          jobId: 'monitoring-job-123'
-        }
-      };
-
-      const res = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn()
-      };
-
-      const mockStatus = {
-        jobId: 'monitoring-job-123',
-        status: 'completed',
-        createdAt: '2025-09-19T14:30:00Z',
-        startedAt: '2025-09-19T14:30:00Z',
-        completedAt: '2025-09-19T14:30:01Z'
-      };
-
-      mockHealthMonitoringService.getMonitoringStatus.mockReturnValue(mockStatus);
-
-      healthMonitoringController.getMonitoringStatus(req, res);
-
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({
-        success: true,
-        status: mockStatus
-      });
-    });
-
-    test('should return 400 when job ID is not provided', () => {
-      const req = {
-        params: {}
-      };
-
-      const res = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn()
-      };
-
-      healthMonitoringController.getMonitoringStatus(req, res);
-
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({
-        error: 'Job ID is required'
-      });
-    });
-
-    test('should return 404 when job is not found', () => {
-      const req = {
-        params: {
-          jobId: 'non-existent-id'
-        }
-      };
-
-      const res = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn()
-      };
-
-      mockHealthMonitoringService.getMonitoringStatus.mockReturnValue(null);
-
-      healthMonitoringController.getMonitoringStatus(req, res);
-
-      expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({
-        error: 'Monitoring job not found'
-      });
-    });
-
-    test('should return 500 when service throws an error', () => {
-      const req = {
-        params: {
-          jobId: 'monitoring-job-123'
-        }
-      };
-
-      const res = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn()
-      };
-
-      mockHealthMonitoringService.getMonitoringStatus.mockImplementation(() => {
-        throw new Error('Service error');
-      });
-
-      healthMonitoringController.getMonitoringStatus(req, res);
-
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to retrieve monitoring job status',
         message: 'Service error'
       });
     });
@@ -269,9 +179,9 @@ describe('HealthMonitoringController', () => {
         resolved: false
       };
 
-      mockHealthMonitoringService.getAlertStatus.mockReturnValue(mockStatus);
+      mockAlertGenerationService.getAlertStatus.mockReturnValue(mockStatus);
 
-      healthMonitoringController.getAlertStatus(req, res);
+      alertGenerationController.getAlertStatus(req, res);
 
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
@@ -290,7 +200,7 @@ describe('HealthMonitoringController', () => {
         json: jest.fn()
       };
 
-      healthMonitoringController.getAlertStatus(req, res);
+      alertGenerationController.getAlertStatus(req, res);
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
@@ -310,9 +220,9 @@ describe('HealthMonitoringController', () => {
         json: jest.fn()
       };
 
-      mockHealthMonitoringService.getAlertStatus.mockReturnValue(null);
+      mockAlertGenerationService.getAlertStatus.mockReturnValue(null);
 
-      healthMonitoringController.getAlertStatus(req, res);
+      alertGenerationController.getAlertStatus(req, res);
 
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
@@ -332,11 +242,11 @@ describe('HealthMonitoringController', () => {
         json: jest.fn()
       };
 
-      mockHealthMonitoringService.getAlertStatus.mockImplementation(() => {
+      mockAlertGenerationService.getAlertStatus.mockImplementation(() => {
         throw new Error('Service error');
       });
 
-      healthMonitoringController.getAlertStatus(req, res);
+      alertGenerationController.getAlertStatus(req, res);
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
@@ -365,9 +275,9 @@ describe('HealthMonitoringController', () => {
         acknowledgedAt: '2025-09-19T14:30:01Z'
       };
 
-      mockHealthMonitoringService.acknowledgeAlert.mockReturnValue(mockResult);
+      mockAlertGenerationService.acknowledgeAlert.mockReturnValue(mockResult);
 
-      healthMonitoringController.acknowledgeAlert(req, res);
+      alertGenerationController.acknowledgeAlert(req, res);
 
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
@@ -387,7 +297,7 @@ describe('HealthMonitoringController', () => {
         json: jest.fn()
       };
 
-      healthMonitoringController.acknowledgeAlert(req, res);
+      alertGenerationController.acknowledgeAlert(req, res);
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
@@ -407,9 +317,9 @@ describe('HealthMonitoringController', () => {
         json: jest.fn()
       };
 
-      mockHealthMonitoringService.acknowledgeAlert.mockReturnValue(null);
+      mockAlertGenerationService.acknowledgeAlert.mockReturnValue(null);
 
-      healthMonitoringController.acknowledgeAlert(req, res);
+      alertGenerationController.acknowledgeAlert(req, res);
 
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
@@ -429,11 +339,11 @@ describe('HealthMonitoringController', () => {
         json: jest.fn()
       };
 
-      mockHealthMonitoringService.acknowledgeAlert.mockImplementation(() => {
+      mockAlertGenerationService.acknowledgeAlert.mockImplementation(() => {
         throw new Error('Service error');
       });
 
-      healthMonitoringController.acknowledgeAlert(req, res);
+      alertGenerationController.acknowledgeAlert(req, res);
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
@@ -462,9 +372,9 @@ describe('HealthMonitoringController', () => {
         resolvedAt: '2025-09-19T14:30:01Z'
       };
 
-      mockHealthMonitoringService.resolveAlert.mockReturnValue(mockResult);
+      mockAlertGenerationService.resolveAlert.mockReturnValue(mockResult);
 
-      healthMonitoringController.resolveAlert(req, res);
+      alertGenerationController.resolveAlert(req, res);
 
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
@@ -484,7 +394,7 @@ describe('HealthMonitoringController', () => {
         json: jest.fn()
       };
 
-      healthMonitoringController.resolveAlert(req, res);
+      alertGenerationController.resolveAlert(req, res);
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
@@ -504,9 +414,9 @@ describe('HealthMonitoringController', () => {
         json: jest.fn()
       };
 
-      mockHealthMonitoringService.resolveAlert.mockReturnValue(null);
+      mockAlertGenerationService.resolveAlert.mockReturnValue(null);
 
-      healthMonitoringController.resolveAlert(req, res);
+      alertGenerationController.resolveAlert(req, res);
 
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
@@ -526,11 +436,11 @@ describe('HealthMonitoringController', () => {
         json: jest.fn()
       };
 
-      mockHealthMonitoringService.resolveAlert.mockImplementation(() => {
+      mockAlertGenerationService.resolveAlert.mockImplementation(() => {
         throw new Error('Service error');
       });
 
-      healthMonitoringController.resolveAlert(req, res);
+      alertGenerationController.resolveAlert(req, res);
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({

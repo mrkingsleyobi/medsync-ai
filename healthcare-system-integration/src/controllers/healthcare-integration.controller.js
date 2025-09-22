@@ -52,8 +52,7 @@ class HealthcareIntegrationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to integrate with FHIR API',
-        message: error.message
+        error: 'Failed to integrate with FHIR API'
       });
     }
   }
@@ -105,8 +104,7 @@ class HealthcareIntegrationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to process HL7 messages',
-        message: error.message
+        error: 'Failed to process HL7 messages'
       });
     }
   }
@@ -150,8 +148,7 @@ class HealthcareIntegrationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to integrate with DICOM',
-        message: error.message
+        error: 'Failed to integrate with DICOM'
       });
     }
   }
@@ -196,8 +193,7 @@ class HealthcareIntegrationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to synchronize EHR data',
-        message: error.message
+        error: 'Failed to synchronize EHR data'
       });
     }
   }
@@ -261,8 +257,7 @@ class HealthcareIntegrationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to match patient records',
-        message: error.message
+        error: 'Failed to match patient records'
       });
     }
   }
@@ -322,8 +317,7 @@ class HealthcareIntegrationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to process medical images',
-        message: error.message
+        error: 'Failed to process medical images'
       });
     }
   }
@@ -354,8 +348,7 @@ class HealthcareIntegrationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve service status',
-        message: error.message
+        error: 'Failed to retrieve service status'
       });
     }
   }
@@ -401,8 +394,7 @@ class HealthcareIntegrationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve FHIR integration job status',
-        message: error.message
+        error: 'Failed to retrieve FHIR integration job status'
       });
     }
   }
@@ -448,8 +440,7 @@ class HealthcareIntegrationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve HL7 processing job status',
-        message: error.message
+        error: 'Failed to retrieve HL7 processing job status'
       });
     }
   }
@@ -495,8 +486,7 @@ class HealthcareIntegrationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve DICOM integration job status',
-        message: error.message
+        error: 'Failed to retrieve DICOM integration job status'
       });
     }
   }
@@ -542,8 +532,7 @@ class HealthcareIntegrationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve synchronization job status',
-        message: error.message
+        error: 'Failed to retrieve synchronization job status'
       });
     }
   }
@@ -589,8 +578,7 @@ class HealthcareIntegrationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve patient matching job status',
-        message: error.message
+        error: 'Failed to retrieve patient matching job status'
       });
     }
   }
@@ -636,8 +624,7 @@ class HealthcareIntegrationController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve image processing job status',
-        message: error.message
+        error: 'Failed to retrieve image processing job status'
       });
     }
   }

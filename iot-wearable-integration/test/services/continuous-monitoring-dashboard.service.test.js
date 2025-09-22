@@ -1,15 +1,15 @@
 /**
- * Real-time Health Monitoring Service Tests
- * Unit tests for the real-time health monitoring service
+ * Continuous Health Monitoring Dashboard Service Tests
+ * Unit tests for the continuous health monitoring dashboard service
  */
 
-const HealthMonitoringService = require('../../src/services/continuous-monitoring-dashboard.service.js');
+const ContinuousMonitoringDashboardService = require('../../src/services/continuous-monitoring-dashboard.service.js');
 
-describe('HealthMonitoringService', () => {
-  let healthMonitoringService;
+describe('ContinuousMonitoringDashboardService', () => {
+  let continuousMonitoringDashboardService;
 
   beforeEach(() => {
-    healthMonitoringService = new HealthMonitoringService();
+    continuousMonitoringDashboardService = new ContinuousMonitoringDashboardService();
   });
 
   describe('monitorRealTimeHealth', () => {
@@ -18,7 +18,7 @@ describe('HealthMonitoringService', () => {
         frequency: 10000
       };
 
-      const result = await healthMonitoringService.monitorRealTimeHealth(options);
+      const result = await continuousMonitoringDashboardService.monitorRealTimeHealth(options);
 
       expect(result).toBeDefined();
       expect(result.jobId).toBeDefined();
@@ -30,15 +30,15 @@ describe('HealthMonitoringService', () => {
 
     test('should throw error when real-time health monitoring is not enabled', async () => {
       // Temporarily disable monitoring
-      const originalEnabled = healthMonitoringService.config.monitoring.enabled;
-      healthMonitoringService.config.monitoring.enabled = false;
+      const originalEnabled = continuousMonitoringDashboardService.config.monitoring.enabled;
+      continuousMonitoringDashboardService.config.monitoring.enabled = false;
 
-      await expect(healthMonitoringService.monitorRealTimeHealth({}))
+      await expect(continuousMonitoringDashboardService.monitorRealTimeHealth({}))
         .rejects
         .toThrow('Real-time health monitoring is not enabled');
 
       // Restore original setting
-      healthMonitoringService.config.monitoring.enabled = originalEnabled;
+      continuousMonitoringDashboardService.config.monitoring.enabled = originalEnabled;
     });
   });
 
@@ -51,7 +51,7 @@ describe('HealthMonitoringService', () => {
         severity: 'high'
       };
 
-      const result = healthMonitoringService.createAlert(alertData);
+      const result = continuousMonitoringDashboardService.createAlert(alertData);
 
       expect(result).toBeDefined();
       expect(result.id).toBeDefined();
@@ -65,7 +65,7 @@ describe('HealthMonitoringService', () => {
 
   describe('getServiceStatus', () => {
     test('should return service status', () => {
-      const status = healthMonitoringService.getServiceStatus();
+      const status = continuousMonitoringDashboardService.getServiceStatus();
 
       expect(status).toBeDefined();
       expect(status.monitoring).toBeDefined();
@@ -78,9 +78,9 @@ describe('HealthMonitoringService', () => {
   describe('getMonitoringStatus', () => {
     test('should return monitoring job status', async () => {
       // First create a monitoring job
-      const result = await healthMonitoringService.monitorRealTimeHealth({});
+      const result = await continuousMonitoringDashboardService.monitorRealTimeHealth({});
 
-      const status = healthMonitoringService.getMonitoringStatus(result.jobId);
+      const status = continuousMonitoringDashboardService.getMonitoringStatus(result.jobId);
 
       expect(status).toBeDefined();
       expect(status.jobId).toBe(result.jobId);
@@ -88,7 +88,7 @@ describe('HealthMonitoringService', () => {
     });
 
     test('should return null for non-existent job', () => {
-      const status = healthMonitoringService.getMonitoringStatus('non-existent-id');
+      const status = continuousMonitoringDashboardService.getMonitoringStatus('non-existent-id');
       expect(status).toBeNull();
     });
   });
@@ -102,8 +102,8 @@ describe('HealthMonitoringService', () => {
         severity: 'high'
       };
 
-      const alert = healthMonitoringService.createAlert(alertData);
-      const status = healthMonitoringService.getAlertStatus(alert.id);
+      const alert = continuousMonitoringDashboardService.createAlert(alertData);
+      const status = continuousMonitoringDashboardService.getAlertStatus(alert.id);
 
       expect(status).toBeDefined();
       expect(status.id).toBe(alert.id);
@@ -114,7 +114,7 @@ describe('HealthMonitoringService', () => {
     });
 
     test('should return null for non-existent alert', () => {
-      const status = healthMonitoringService.getAlertStatus('non-existent-id');
+      const status = continuousMonitoringDashboardService.getAlertStatus('non-existent-id');
       expect(status).toBeNull();
     });
   });
@@ -128,8 +128,8 @@ describe('HealthMonitoringService', () => {
         severity: 'high'
       };
 
-      const alert = healthMonitoringService.createAlert(alertData);
-      const result = healthMonitoringService.acknowledgeAlert(alert.id);
+      const alert = continuousMonitoringDashboardService.createAlert(alertData);
+      const result = continuousMonitoringDashboardService.acknowledgeAlert(alert.id);
 
       expect(result).toBeDefined();
       expect(result.id).toBe(alert.id);
@@ -138,7 +138,7 @@ describe('HealthMonitoringService', () => {
     });
 
     test('should return null for non-existent alert', () => {
-      const result = healthMonitoringService.acknowledgeAlert('non-existent-id');
+      const result = continuousMonitoringDashboardService.acknowledgeAlert('non-existent-id');
       expect(result).toBeNull();
     });
   });
@@ -152,8 +152,8 @@ describe('HealthMonitoringService', () => {
         severity: 'medium'
       };
 
-      const alert = healthMonitoringService.createAlert(alertData);
-      const result = healthMonitoringService.resolveAlert(alert.id);
+      const alert = continuousMonitoringDashboardService.createAlert(alertData);
+      const result = continuousMonitoringDashboardService.resolveAlert(alert.id);
 
       expect(result).toBeDefined();
       expect(result.id).toBe(alert.id);
@@ -162,7 +162,7 @@ describe('HealthMonitoringService', () => {
     });
 
     test('should return null for non-existent alert', () => {
-      const result = healthMonitoringService.resolveAlert('non-existent-id');
+      const result = continuousMonitoringDashboardService.resolveAlert('non-existent-id');
       expect(result).toBeNull();
     });
   });
