@@ -5,9 +5,9 @@
 
 const fs = require('fs');
 const path = require('path');
+const config = require('../config/healthcare-integration.config.js');
 const { v4: uuidv4 } = require('uuid');
 const winston = require('winston');
-const config = require('../config/healthcare-integration.config.js');
 const { cleanupOldEntries } = require('../../../src/utils/cleanup.util.js');
 
 class HealthcareIntegrationService {
@@ -141,6 +141,9 @@ class HealthcareIntegrationService {
    * @private
    */
   _initializeFhirClients() {
+    // Check for required environment variables
+    this._checkRequiredEnvironmentVariables();
+
     // In a real implementation, this would initialize FHIR client connections
     this.logger.info('FHIR clients initialized');
   }

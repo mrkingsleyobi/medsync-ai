@@ -3,11 +3,11 @@
  * Service for managing administrative and monitoring functions
  */
 
+const fs = require('fs');
+const path = require('path');
 const config = require('../config/admin-monitoring.config.js');
 const { v4: uuidv4 } = require('uuid');
 const winston = require('winston');
-const fs = require('fs');
-const path = require('path');
 const { cleanupOldEntries } = require('../../../src/utils/cleanup.util.js');
 
 class AdminMonitoringService {
@@ -93,7 +93,10 @@ class AdminMonitoringService {
         try {
           await asyncTask();
         } catch (error) {
-          this.logger.error('Scheduled task failed', { error: error.message, stack: error.stack });
+          this.logger.error('Scheduled task failed', {
+            error: error.message,
+            stack: error.stack
+          });
         } finally {
           setTimeout(run, interval);
         }
@@ -1027,6 +1030,7 @@ class AdminMonitoringService {
       });
     }
   }
+
 }
 
 module.exports = AdminMonitoringService;

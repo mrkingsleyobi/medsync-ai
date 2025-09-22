@@ -65,6 +65,7 @@ class AdminMonitoringController {
         error: 'Failed to generate documentation',
         message: error.message
       });
+      });
     }
   }
 
@@ -127,6 +128,7 @@ class AdminMonitoringController {
         error: 'Failed to schedule task',
         message: error.message
       });
+      });
     }
   }
 
@@ -162,6 +164,7 @@ class AdminMonitoringController {
       res.status(500).json({
         error: 'Failed to optimize resource allocation',
         message: error.message
+      });
       });
     }
   }
@@ -214,6 +217,7 @@ class AdminMonitoringController {
         error: 'Failed to process billing',
         message: error.message
       });
+      });
     }
   }
 
@@ -245,6 +249,7 @@ class AdminMonitoringController {
       res.status(500).json({
         error: 'Failed to retrieve service status',
         message: error.message
+      });
       });
     }
   }
@@ -293,6 +298,7 @@ class AdminMonitoringController {
         error: 'Failed to retrieve documentation job status',
         message: error.message
       });
+      });
     }
   }
 
@@ -325,6 +331,7 @@ class AdminMonitoringController {
         error: 'Failed to retrieve scheduled tasks',
         message: error.message
       });
+      });
     }
   }
 
@@ -356,6 +363,7 @@ class AdminMonitoringController {
       res.status(500).json({
         error: 'Failed to retrieve billing records',
         message: error.message
+      });
       });
     }
   }
@@ -399,6 +407,7 @@ class AdminMonitoringController {
         error: 'Failed to generate usage report',
         message: error.message
       });
+      });
     }
   }
 
@@ -430,6 +439,7 @@ class AdminMonitoringController {
       res.status(500).json({
         error: 'Failed to retrieve active alerts',
         message: error.message
+      });
       });
     }
   }
@@ -479,6 +489,7 @@ class AdminMonitoringController {
         error: 'Failed to acknowledge alert',
         message: error.message
       });
+      });
     }
   }
 
@@ -526,6 +537,7 @@ class AdminMonitoringController {
       res.status(500).json({
         error: 'Failed to resolve alert',
         message: error.message
+      });
       });
     }
   }

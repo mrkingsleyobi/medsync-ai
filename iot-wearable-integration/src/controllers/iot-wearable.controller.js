@@ -11,8 +11,6 @@ class IoTWearableController {
    */
   constructor() {
     this.iotWearableService = new IoTWearableService();
-    // In a real implementation, we would use the service's logger
-    // For now, we'll create a simple logger
     // Use the service's logger
     this.logger = this.iotWearableService.logger;
   }
@@ -58,6 +56,7 @@ class IoTWearableController {
       res.status(500).json({
         error: 'Failed to integrate with wearable devices',
         message: error.message
+      });
       });
     }
   }
@@ -118,6 +117,7 @@ class IoTWearableController {
         error: 'Failed to process IoT sensor data',
         message: error.message
       });
+      });
     }
   }
 
@@ -162,6 +162,7 @@ class IoTWearableController {
       res.status(500).json({
         error: 'Failed to monitor real-time health data',
         message: error.message
+      });
       });
     }
   }
@@ -223,6 +224,7 @@ class IoTWearableController {
         error: 'Failed to generate early warning',
         message: error.message
       });
+      });
     }
   }
 
@@ -268,6 +270,7 @@ class IoTWearableController {
       res.status(500).json({
         error: 'Failed to generate population health analytics',
         message: error.message
+      });
       });
     }
   }
@@ -329,6 +332,7 @@ class IoTWearableController {
         error: 'Failed to generate personalized health predictions',
         message: error.message
       });
+      });
     }
   }
 
@@ -360,6 +364,7 @@ class IoTWearableController {
       res.status(500).json({
         error: 'Failed to retrieve service status',
         message: error.message
+      });
       });
     }
   }
@@ -408,6 +413,7 @@ class IoTWearableController {
         error: 'Failed to retrieve wearable integration job status',
         message: error.message
       });
+      });
     }
   }
 
@@ -454,6 +460,7 @@ class IoTWearableController {
       res.status(500).json({
         error: 'Failed to retrieve sensor data processing job status',
         message: error.message
+      });
       });
     }
   }
@@ -502,6 +509,7 @@ class IoTWearableController {
         error: 'Failed to retrieve monitoring job status',
         message: error.message
       });
+      });
     }
   }
 
@@ -548,6 +556,7 @@ class IoTWearableController {
       res.status(500).json({
         error: 'Failed to retrieve alert status',
         message: error.message
+      });
       });
     }
   }
@@ -596,6 +605,7 @@ class IoTWearableController {
         error: 'Failed to retrieve prediction job status',
         message: error.message
       });
+      });
     }
   }
 
@@ -642,6 +652,7 @@ class IoTWearableController {
       res.status(500).json({
         error: 'Failed to retrieve analytics job status',
         message: error.message
+      });
       });
     }
   }
@@ -691,6 +702,7 @@ class IoTWearableController {
         error: 'Failed to acknowledge alert',
         message: error.message
       });
+      });
     }
   }
 
@@ -738,6 +750,7 @@ class IoTWearableController {
       res.status(500).json({
         error: 'Failed to resolve alert',
         message: error.message
+      });
       });
     }
   }
