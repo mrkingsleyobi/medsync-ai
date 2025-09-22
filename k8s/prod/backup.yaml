@@ -1,0 +1,142 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: medisync-database-backup
+  namespace: medisync-prod
+spec:
+  schedule: "0 2 * * *"  # Daily at 2 AM
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: mongodb-backup
+            image: mongo:5.0
+            command:
+            - /bin/bash
+            - -c
+            - |
+              mongodump --host medisync-mongodb-service:27017 \
+                --username $MONGO_USERNAME \
+                --password $MONGO_PASSWORD \
+                --db medisync \
+                --out /backup/$(date +%Y%m%d_%H%M%S) && \
+              find /backup -type d -mtime +7 -exec rm -rf {} +  # Keep 7 days of backups
+            env:
+            - name: MONGO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: medisync-db-secrets
+                  key: mongodb-root-username
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: medisync-db-secrets
+                  key: mongodb-root-password
+            volumeMounts:
+            - name: backup-storage
+              mountPath: /backup
+          restartPolicy: OnFailure
+          volumes:
+          - name: backup-storage
+            persistentVolumeClaim:
+              claimName: backup-pvc
+
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: medisync-database-backup-full
+  namespace: medisync-prod
+spec:
+  schedule: "0 3 * * 0"  # Weekly on Sunday at 3 AM
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: mongodb-backup-full
+            image: mongo:5.0
+            command:
+            - /bin/bash
+            - -c
+            - |
+              mongodump --host medisync-mongodb-service:27017 \
+                --username $MONGO_USERNAME \
+                --password $MONGO_PASSWORD \
+                --out /backup/full_$(date +%Y%m%d_%H%M%S) && \
+              find /backup -type d -name "full_*" -mtime +30 -exec rm -rf {} +  # Keep 30 days of full backups
+            env:
+            - name: MONGO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: medisync-db-secrets
+                  key: mongodb-root-username
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: medisync-db-secrets
+                  key: mongodb-root-password
+            volumeMounts:
+            - name: backup-storage
+              mountPath: /backup
+          restartPolicy: OnFailure
+          volumes:
+          - name: backup-storage
+            persistentVolumeClaim:
+              claimName: backup-pvc
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: backup-pvc
+  namespace: medisync-prod
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Gi
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: medisync-restore-database
+  namespace: medisync-prod
+spec:
+  template:
+    spec:
+      containers:
+      - name: mongodb-restore
+        image: mongo:5.0
+        command:
+        - /bin/bash
+        - -c
+        - |
+          # This job would be used to restore from a specific backup
+          # Example: mongorestore --host medisync-mongodb-service:27017 \
+          #   --username $MONGO_USERNAME \
+          #   --password $MONGO_PASSWORD \
+          #   /backup/20231201_020000
+          echo "Restore job template - update with specific backup timestamp"
+        env:
+        - name: MONGO_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: medisync-db-secrets
+              key: mongodb-root-username
+        - name: MONGO_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: medisync-db-secrets
+              key: mongodb-root-password
+        volumeMounts:
+        - name: backup-storage
+          mountPath: /backup
+      restartPolicy: Never
+      volumes:
+      - name: backup-storage
+        persistentVolumeClaim:
+          claimName: backup-pvc

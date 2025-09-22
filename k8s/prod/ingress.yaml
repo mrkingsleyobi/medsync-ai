@@ -1,0 +1,99 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: medisync-ingress
+  namespace: medisync-prod
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "X-Frame-Options: SAMEORIGIN";
+      more_set_headers "X-Content-Type-Options: nosniff";
+      more_set_headers "X-XSS-Protection: 1; mode=block";
+spec:
+  tls:
+  - hosts:
+    - api.medsync-ai.com
+    - portal.medsync-ai.com
+    - admin.medsync-ai.com
+    secretName: medisync-tls
+  rules:
+  # Main API endpoints
+  - host: api.medsync-ai.com
+    http:
+      paths:
+      - path: /decision-support
+        pathType: Prefix
+        backend:
+          service:
+            name: medisync-platform-service
+            port:
+              number: 3001
+      - path: /patient-portal
+        pathType: Prefix
+        backend:
+          service:
+            name: medisync-platform-service
+            port:
+              number: 3002
+      - path: /health-monitoring
+        pathType: Prefix
+        backend:
+          service:
+            name: medisync-platform-service
+            port:
+              number: 3003
+      - path: /admin
+        pathType: Prefix
+        backend:
+          service:
+            name: medisync-platform-service
+            port:
+              number: 3004
+      - path: /research
+        pathType: Prefix
+        backend:
+          service:
+            name: medisync-platform-service
+            port:
+              number: 3005
+      - path: /integration
+        pathType: Prefix
+        backend:
+          service:
+            name: medisync-platform-service
+            port:
+              number: 3006
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: medisync-platform-service
+            port:
+              number: 80
+
+  # Patient Portal
+  - host: portal.medsync-ai.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: medisync-platform-service
+            port:
+              number: 3002
+
+  # Administrative Dashboard
+  - host: admin.medsync-ai.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: medisync-platform-service
+            port:
+              number: 3004

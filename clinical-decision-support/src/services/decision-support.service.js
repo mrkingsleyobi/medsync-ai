@@ -584,7 +584,7 @@ class ClinicalDecisionSupportService {
 
       // Check for common dangerous combinations
       const hasWarfarin = medications.some(med => med.name.toLowerCase().includes('warfarin'));
-      const hasNSAIDs = medications.some(med => med.name.toLowerCase().includes('ibuprofen') || med.name.toLowerCase().includes('naproxen'));
+      const hasNSAIDs = medications.some(med => med.name.toLowerCase().includes('ibuprofen') || med.name.toLowerCase().includes('naproxen') || med.name.toLowerCase().includes('aspirin'));
 
       if (hasWarfarin && hasNSAIDs) {
         alerts.push({

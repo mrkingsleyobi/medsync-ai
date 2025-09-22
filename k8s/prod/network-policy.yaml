@@ -1,0 +1,137 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: medisync-platform-policy
+  namespace: medisync-prod
+spec:
+  podSelector:
+    matchLabels:
+      app: medisync-platform
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  # Allow traffic from ingress controller
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    ports:
+    - protocol: TCP
+      port: 3000
+    - protocol: TCP
+      port: 3001
+    - protocol: TCP
+      port: 3002
+    - protocol: TCP
+      port: 3003
+    - protocol: TCP
+      port: 3004
+    - protocol: TCP
+      port: 3005
+    - protocol: TCP
+      port: 3006
+
+  # Allow internal service communication
+  - from:
+    - podSelector:
+        matchLabels:
+          app: medisync-platform
+    ports:
+    - protocol: TCP
+      port: 3000
+    - protocol: TCP
+      port: 3001
+    - protocol: TCP
+      port: 3002
+    - protocol: TCP
+      port: 3003
+    - protocol: TCP
+      port: 3004
+    - protocol: TCP
+      port: 3005
+    - protocol: TCP
+      port: 3006
+
+  egress:
+  # Allow database connections
+  - to:
+    - podSelector:
+        matchLabels:
+          app: medisync-mongodb
+    ports:
+    - protocol: TCP
+      port: 27017
+
+  # Allow Redis connections
+  - to:
+    - podSelector:
+        matchLabels:
+          app: medisync-redis
+    ports:
+    - protocol: TCP
+      port: 6379
+
+  # Allow external API calls (for research integration, etc.)
+  - to:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+        except:
+        - 10.0.0.0/8
+        - 192.168.0.0/16
+        - 172.16.0.0/12
+  ports:
+  - protocol: TCP
+    port: 443
+  - protocol: TCP
+    port: 80
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: medisync-database-policy
+  namespace: medisync-prod
+spec:
+  podSelector:
+    matchLabels:
+      app: medisync-mongodb
+  policyTypes:
+  - Ingress
+  ingress:
+  # Only allow connections from platform services
+  - from:
+    - podSelector:
+        matchLabels:
+          app: medisync-platform
+    ports:
+    - protocol: TCP
+      port: 27017
+  egress:
+  # Allow all outgoing connections for database operations
+  - {}
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: medisync-redis-policy
+  namespace: medisync-prod
+spec:
+  podSelector:
+    matchLabels:
+      app: medisync-redis
+  policyTypes:
+  - Ingress
+  ingress:
+  # Only allow connections from platform services
+  - from:
+    - podSelector:
+        matchLabels:
+          app: medisync-platform
+    ports:
+    - protocol: TCP
+      port: 6379
+  egress:
+  # Allow all outgoing connections for Redis operations
+  - {}

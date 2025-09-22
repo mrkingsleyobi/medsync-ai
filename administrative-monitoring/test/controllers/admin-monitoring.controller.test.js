@@ -92,8 +92,7 @@ describe('AdminMonitoringController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to generate documentation',
-        message: 'Service error'
+        error: 'Failed to generate documentation'
       });
     });
   });
@@ -199,8 +198,7 @@ describe('AdminMonitoringController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to schedule task',
-        message: 'Service error'
+        error: 'Failed to schedule task'
       });
     });
   });
@@ -250,8 +248,7 @@ describe('AdminMonitoringController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to optimize resource allocation',
-        message: 'Service error'
+        error: 'Failed to optimize resource allocation'
       });
     });
   });
@@ -335,8 +332,7 @@ describe('AdminMonitoringController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to process billing',
-        message: 'Service error'
+        error: 'Failed to process billing'
       });
     });
   });
@@ -382,8 +378,7 @@ describe('AdminMonitoringController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to retrieve service status',
-        message: 'Service error'
+        error: 'Failed to retrieve service status'
       });
     });
   });
@@ -479,8 +474,7 @@ describe('AdminMonitoringController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to retrieve documentation job status',
-        message: 'Service error'
+        error: 'Failed to retrieve documentation job status'
       });
     });
   });
@@ -532,8 +526,7 @@ describe('AdminMonitoringController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to retrieve scheduled tasks',
-        message: 'Service error'
+        error: 'Failed to retrieve scheduled tasks'
       });
     });
   });
@@ -585,8 +578,7 @@ describe('AdminMonitoringController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to retrieve billing records',
-        message: 'Service error'
+        error: 'Failed to retrieve billing records'
       });
     });
   });
@@ -648,8 +640,7 @@ describe('AdminMonitoringController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to generate usage report',
-        message: 'Service error'
+        error: 'Failed to generate usage report'
       });
     });
   });
@@ -701,8 +692,7 @@ describe('AdminMonitoringController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to retrieve active alerts',
-        message: 'Service error'
+        error: 'Failed to retrieve active alerts'
       });
     });
   });
@@ -798,8 +788,7 @@ describe('AdminMonitoringController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to acknowledge alert',
-        message: 'Service error'
+        error: 'Failed to acknowledge alert'
       });
     });
   });
@@ -895,8 +884,7 @@ describe('AdminMonitoringController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to resolve alert',
-        message: 'Service error'
+        error: 'Failed to resolve alert'
       });
     });
   });

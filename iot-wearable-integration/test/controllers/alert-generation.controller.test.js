@@ -6,7 +6,7 @@
 const AlertGenerationController = require('../../src/controllers/alert-generation.controller.js');
 
 // Mock the service
-jest.mock('../../src/services/iot-wearable.service.js');
+jest.mock('../../src/services/alert-generation.service.js');
 
 describe('AlertGenerationController', () => {
   let alertGenerationController;
@@ -105,8 +105,7 @@ describe('AlertGenerationController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to create alert',
-        message: 'Service error'
+        error: 'Failed to create alert'
       });
     });
   });
@@ -151,8 +150,7 @@ describe('AlertGenerationController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to retrieve service status',
-        message: 'Service error'
+        error: 'Failed to retrieve service status'
       });
     });
   });
@@ -250,8 +248,7 @@ describe('AlertGenerationController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to retrieve alert status',
-        message: 'Service error'
+        error: 'Failed to retrieve alert status'
       });
     });
   });
@@ -347,8 +344,7 @@ describe('AlertGenerationController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to acknowledge alert',
-        message: 'Service error'
+        error: 'Failed to acknowledge alert'
       });
     });
   });
@@ -444,8 +440,7 @@ describe('AlertGenerationController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to resolve alert',
-        message: 'Service error'
+        error: 'Failed to resolve alert'
       });
     });
   });

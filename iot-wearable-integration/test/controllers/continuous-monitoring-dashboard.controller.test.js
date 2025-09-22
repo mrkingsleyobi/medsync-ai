@@ -96,8 +96,7 @@ describe('ContinuousMonitoringDashboardController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to monitor real-time health data',
-        message: 'Service error'
+        error: 'Failed to monitor real-time health data'
       });
     });
   });
@@ -143,8 +142,7 @@ describe('ContinuousMonitoringDashboardController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to retrieve service status',
-        message: 'Service error'
+        error: 'Failed to retrieve service status'
       });
     });
   });
@@ -241,8 +239,7 @@ describe('ContinuousMonitoringDashboardController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to retrieve monitoring job status',
-        message: 'Service error'
+        error: 'Failed to retrieve monitoring job status'
       });
     });
   });
@@ -340,8 +337,7 @@ describe('ContinuousMonitoringDashboardController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to retrieve alert status',
-        message: 'Service error'
+        error: 'Failed to retrieve alert status'
       });
     });
   });
@@ -437,8 +433,7 @@ describe('ContinuousMonitoringDashboardController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to acknowledge alert',
-        message: 'Service error'
+        error: 'Failed to acknowledge alert'
       });
     });
   });
@@ -534,8 +529,7 @@ describe('ContinuousMonitoringDashboardController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to resolve alert',
-        message: 'Service error'
+        error: 'Failed to resolve alert'
       });
     });
   });

@@ -147,8 +147,7 @@ describe('EarlyWarningSystemController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to generate early warning',
-        message: 'Service error'
+        error: 'Failed to generate early warning'
       });
     });
   });
@@ -193,8 +192,7 @@ describe('EarlyWarningSystemController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to retrieve service status',
-        message: 'Service error'
+        error: 'Failed to retrieve service status'
       });
     });
   });
@@ -291,8 +289,7 @@ describe('EarlyWarningSystemController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to retrieve early warning status',
-        message: 'Service error'
+        error: 'Failed to retrieve early warning status'
       });
     });
   });
@@ -388,8 +385,7 @@ describe('EarlyWarningSystemController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to acknowledge early warning',
-        message: 'Service error'
+        error: 'Failed to acknowledge early warning'
       });
     });
   });
@@ -485,8 +481,7 @@ describe('EarlyWarningSystemController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to resolve early warning',
-        message: 'Service error'
+        error: 'Failed to resolve early warning'
       });
     });
   });

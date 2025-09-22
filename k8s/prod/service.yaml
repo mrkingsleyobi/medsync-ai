@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: medisync-platform-service
+  namespace: medisync-prod
+  labels:
+    app: medisync-platform
+spec:
+  selector:
+    app: medisync-platform
+  ports:
+    # Main API Service
+    - name: api
+      protocol: TCP
+      port: 80
+      targetPort: 3000
+    # Clinical Decision Support
+    - name: decision-support
+      protocol: TCP
+      port: 3001
+      targetPort: 3001
+    # Patient Communication
+    - name: patient-communication
+      protocol: TCP
+      port: 3002
+      targetPort: 3002
+    # IoT & Wearable Integration
+    - name: iot-wearable
+      protocol: TCP
+      port: 3003
+      targetPort: 3003
+    # Administrative & Monitoring
+    - name: admin-monitoring
+      protocol: TCP
+      port: 3004
+      targetPort: 3004
+    # Research Integration
+    - name: research-integration
+      protocol: TCP
+      port: 3005
+      targetPort: 3005
+    # Healthcare System Integration
+    - name: healthcare-integration
+      protocol: TCP
+      port: 3006
+      targetPort: 3006
+  type: LoadBalancer

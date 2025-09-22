@@ -92,8 +92,7 @@ describe('HealthcareIntegrationController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to integrate with FHIR API',
-        message: 'Service error'
+        error: 'Failed to integrate with FHIR API'
       });
     });
   });
@@ -193,8 +192,7 @@ describe('HealthcareIntegrationController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to process HL7 messages',
-        message: 'Service error'
+        error: 'Failed to process HL7 messages'
       });
     });
   });
@@ -274,8 +272,7 @@ describe('HealthcareIntegrationController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to integrate with DICOM',
-        message: 'Service error'
+        error: 'Failed to integrate with DICOM'
       });
     });
   });
@@ -357,8 +354,7 @@ describe('HealthcareIntegrationController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to synchronize EHR data',
-        message: 'Service error'
+        error: 'Failed to synchronize EHR data'
       });
     });
   });
@@ -520,8 +516,7 @@ describe('HealthcareIntegrationController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to match patient records',
-        message: 'Service error'
+        error: 'Failed to match patient records'
       });
     });
   });
@@ -646,8 +641,7 @@ describe('HealthcareIntegrationController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to process medical images',
-        message: 'Service error'
+        error: 'Failed to process medical images'
       });
     });
   });
@@ -693,8 +687,7 @@ describe('HealthcareIntegrationController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to retrieve service status',
-        message: 'Service error'
+        error: 'Failed to retrieve service status'
       });
     });
   });
@@ -791,8 +784,7 @@ describe('HealthcareIntegrationController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to retrieve FHIR integration job status',
-        message: 'Service error'
+        error: 'Failed to retrieve FHIR integration job status'
       });
     });
   });
@@ -891,8 +883,7 @@ describe('HealthcareIntegrationController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to retrieve HL7 processing job status',
-        message: 'Service error'
+        error: 'Failed to retrieve HL7 processing job status'
       });
     });
   });
@@ -990,8 +981,7 @@ describe('HealthcareIntegrationController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to retrieve DICOM integration job status',
-        message: 'Service error'
+        error: 'Failed to retrieve DICOM integration job status'
       });
     });
   });
@@ -1088,8 +1078,7 @@ describe('HealthcareIntegrationController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to retrieve synchronization job status',
-        message: 'Service error'
+        error: 'Failed to retrieve synchronization job status'
       });
     });
   });
@@ -1186,8 +1175,7 @@ describe('HealthcareIntegrationController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to retrieve patient matching job status',
-        message: 'Service error'
+        error: 'Failed to retrieve patient matching job status'
       });
     });
   });
@@ -1284,8 +1272,7 @@ describe('HealthcareIntegrationController', () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        error: 'Failed to retrieve image processing job status',
-        message: 'Service error'
+        error: 'Failed to retrieve image processing job status'
       });
     });
   });
