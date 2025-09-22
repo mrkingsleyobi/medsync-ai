@@ -149,6 +149,19 @@ class HealthcareIntegrationService {
   }
 
   /**
+   * Check for required environment variables
+   * @private
+   */
+  _checkRequiredEnvironmentVariables() {
+    const requiredVars = ['FHIR_CLIENT_ID', 'FHIR_CLIENT_SECRET'];
+    const missingVars = requiredVars.filter(v => !process.env[v]);
+
+    if (missingVars.length > 0) {
+      throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`);
+    }
+  }
+
+  /**
    * Initialize HL7 processors
    * @private
    */
