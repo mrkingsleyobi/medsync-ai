@@ -11,7 +11,10 @@ class PersonalizedHealthPredictionsController {
    */
   constructor() {
     this.personalizedHealthPredictionsService = new PersonalizedHealthPredictionsService();
+    // Use the service's logger
+    this.logger = this.personalizedHealthPredictionsService.logger;
   }
+
 
   /**
    * Generate personalized health predictions
@@ -44,12 +47,10 @@ class PersonalizedHealthPredictionsController {
       });
     } catch (error) {
       // Log the full error details server-side
-      if (this.personalizedHealthPredictionsService && this.personalizedHealthPredictionsService.logger) {
-        this.personalizedHealthPredictionsService.logger.error('Personalized health predictions generation controller error', {
-          error: error.message,
-          stack: error.stack
-        });
-      }
+      this.logger.error('Personalized health predictions generation controller error', {
+        error: error.message,
+        stack: error.stack
+      });
 
       // Handle validation errors with user-friendly messages
       if (error.message.includes('Patient data is required')) {
@@ -72,6 +73,7 @@ class PersonalizedHealthPredictionsController {
     }
   }
 
+
   /**
    * Get service status
    * @param {Object} req - Express request object
@@ -89,12 +91,10 @@ class PersonalizedHealthPredictionsController {
       });
     } catch (error) {
       // Log the full error details server-side
-      if (this.personalizedHealthPredictionsService && this.personalizedHealthPredictionsService.logger) {
-        this.personalizedHealthPredictionsService.logger.error('Get service status controller error', {
-          error: error.message,
-          stack: error.stack
-        });
-      }
+      this.logger.error('Get service status controller error', {
+        error: error.message,
+        stack: error.stack
+      });
 
       // Return generic error message to client
       res.status(500).json({
@@ -135,12 +135,10 @@ class PersonalizedHealthPredictionsController {
       }
     } catch (error) {
       // Log the full error details server-side
-      if (this.personalizedHealthPredictionsService && this.personalizedHealthPredictionsService.logger) {
-        this.personalizedHealthPredictionsService.logger.error('Get prediction job status controller error', {
-          error: error.message,
-          stack: error.stack
-        });
-      }
+      this.logger.error('Get prediction job status controller error', {
+        error: error.message,
+        stack: error.stack
+      });
 
       // Return generic error message to client
       res.status(500).json({
