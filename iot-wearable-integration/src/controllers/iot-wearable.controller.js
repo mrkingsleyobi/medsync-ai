@@ -1,18 +1,18 @@
 /**
- * IoT & Wearable Integration Controller
- * Controller for handling IoT and wearable integration requests
+ * Real-time Health Monitoring Controller
+ * Controller for handling real-time health monitoring requests
  */
 
-const IoTWearableService = require('../services/iot-wearable.service.js');
+const HealthMonitoringService = require('../services/iot-wearable.service.js');
 
-class IoTWearableController {
+class HealthMonitoringController {
   /**
-   * Create a new IoT & Wearable Integration Controller
+   * Create a new Real-time Health Monitoring Controller
    */
   constructor() {
-    this.iotWearableService = new IoTWearableService();
+    this.healthMonitoringService = new HealthMonitoringService();
     // Use the service's logger
-    this.logger = this.iotWearableService.logger;
+    this.logger = this.healthMonitoringService.logger;
   }
 
   /**
@@ -25,7 +25,7 @@ class IoTWearableController {
       const { options } = req.body;
 
       // Integrate with wearable devices
-      const result = await this.iotWearableService.integrateWithWearables(options);
+      const result = await this.healthMonitoringService.integrateWithWearables(options);
 
       // Return result
       res.status(200).json({
@@ -77,7 +77,7 @@ class IoTWearableController {
       }
 
       // Process IoT sensor data
-      const result = await this.iotWearableService.processSensorData(sensorData);
+      const result = await this.healthMonitoringService.processSensorData(sensorData);
 
       // Return result
       res.status(200).json({
@@ -129,7 +129,7 @@ class IoTWearableController {
       const { options } = req.body;
 
       // Monitor real-time health data
-      const result = await this.iotWearableService.monitorRealTimeHealth(options);
+      const result = await this.healthMonitoringService.monitorRealTimeHealth(options);
 
       // Return result
       res.status(200).json({
@@ -181,7 +181,7 @@ class IoTWearableController {
       }
 
       // Generate early warning
-      const result = await this.iotWearableService.generateEarlyWarning(patientData);
+      const result = await this.healthMonitoringService.generateEarlyWarning(patientData);
 
       // Return result
       res.status(200).json({
@@ -234,7 +234,7 @@ class IoTWearableController {
       const { options } = req.body;
 
       // Generate population health analytics
-      const result = await this.iotWearableService.generatePopulationAnalytics(options);
+      const result = await this.healthMonitoringService.generatePopulationAnalytics(options);
 
       // Return result
       res.status(200).json({
@@ -287,7 +287,7 @@ class IoTWearableController {
       }
 
       // Generate personalized health predictions
-      const result = await this.iotWearableService.generateHealthPredictions(patientData);
+      const result = await this.healthMonitoringService.generateHealthPredictions(patientData);
 
       // Return result
       res.status(200).json({
@@ -338,7 +338,7 @@ class IoTWearableController {
   getServiceStatus(req, res) {
     try {
       // Get service status
-      const status = this.iotWearableService.getServiceStatus();
+      const status = this.healthMonitoringService.getServiceStatus();
 
       // Return status
       res.status(200).json({
@@ -379,7 +379,7 @@ class IoTWearableController {
       }
 
       // Get job status
-      const status = this.iotWearableService.getWearableIntegrationStatus(jobId);
+      const status = this.healthMonitoringService.getWearableIntegrationStatus(jobId);
 
       // Return status
       if (status) {
@@ -426,7 +426,7 @@ class IoTWearableController {
       }
 
       // Get job status
-      const status = this.iotWearableService.getSensorDataProcessingStatus(jobId);
+      const status = this.healthMonitoringService.getSensorDataProcessingStatus(jobId);
 
       // Return status
       if (status) {
@@ -473,7 +473,7 @@ class IoTWearableController {
       }
 
       // Get job status
-      const status = this.iotWearableService.getMonitoringStatus(jobId);
+      const status = this.healthMonitoringService.getMonitoringStatus(jobId);
 
       // Return status
       if (status) {
@@ -520,7 +520,7 @@ class IoTWearableController {
       }
 
       // Get alert status
-      const status = this.iotWearableService.getAlertStatus(alertId);
+      const status = this.healthMonitoringService.getAlertStatus(alertId);
 
       // Return status
       if (status) {
@@ -567,7 +567,7 @@ class IoTWearableController {
       }
 
       // Get job status
-      const status = this.iotWearableService.getPredictionStatus(jobId);
+      const status = this.healthMonitoringService.getPredictionStatus(jobId);
 
       // Return status
       if (status) {
@@ -614,7 +614,7 @@ class IoTWearableController {
       }
 
       // Get job status
-      const status = this.iotWearableService.getAnalyticsStatus(jobId);
+      const status = this.healthMonitoringService.getAnalyticsStatus(jobId);
 
       // Return status
       if (status) {
@@ -661,7 +661,7 @@ class IoTWearableController {
       }
 
       // Acknowledge alert
-      const result = this.iotWearableService.acknowledgeAlert(alertId);
+      const result = this.healthMonitoringService.acknowledgeAlert(alertId);
 
       // Return result
       if (result) {
@@ -709,7 +709,7 @@ class IoTWearableController {
       }
 
       // Resolve alert
-      const result = this.iotWearableService.resolveAlert(alertId);
+      const result = this.healthMonitoringService.resolveAlert(alertId);
 
       // Return result
       if (result) {
@@ -741,4 +741,4 @@ class IoTWearableController {
   }
 }
 
-module.exports = IoTWearableController;
+module.exports = HealthMonitoringController;

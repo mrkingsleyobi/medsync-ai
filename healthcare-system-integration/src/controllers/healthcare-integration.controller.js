@@ -404,7 +404,6 @@ class HealthcareIntegrationController {
         error: 'Failed to retrieve FHIR integration job status',
         message: error.message
       });
-      });
     }
   }
 
@@ -451,7 +450,6 @@ class HealthcareIntegrationController {
       res.status(500).json({
         error: 'Failed to retrieve HL7 processing job status',
         message: error.message
-      });
       });
     }
   }
@@ -500,7 +498,6 @@ class HealthcareIntegrationController {
         error: 'Failed to retrieve DICOM integration job status',
         message: error.message
       });
-      });
     }
   }
 
@@ -547,7 +544,6 @@ class HealthcareIntegrationController {
       res.status(500).json({
         error: 'Failed to retrieve synchronization job status',
         message: error.message
-      });
       });
     }
   }
@@ -596,7 +592,6 @@ class HealthcareIntegrationController {
         error: 'Failed to retrieve patient matching job status',
         message: error.message
       });
-      });
     }
   }
 
@@ -643,7 +638,6 @@ class HealthcareIntegrationController {
       res.status(500).json({
         error: 'Failed to retrieve image processing job status',
         message: error.message
-      });
       });
     }
   }
