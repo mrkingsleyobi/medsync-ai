@@ -1,0 +1,92 @@
+{
+  "patientId": "PAT-001",
+  "demographics": {
+    "firstName": "John",
+    "lastName": "Doe",
+    "dateOfBirth": "1985-06-15",
+    "gender": "Male",
+    "contact": {
+      "email": "john.doe@example.com",
+      "phone": "+1-555-0123",
+      "address": {
+        "street": "123 Main St",
+        "city": "Boston",
+        "state": "MA",
+        "zipCode": "02101"
+      }
+    }
+  },
+  "medicalHistory": {
+    "conditions": [
+      {
+        "condition": "Hypertension",
+        "diagnosedDate": "2018-03-10",
+        "status": "Active",
+        "severity": "Moderate"
+      },
+      {
+        "condition": "Type 2 Diabetes",
+        "diagnosedDate": "2020-11-22",
+        "status": "Active",
+        "severity": "Mild"
+      }
+    ],
+    "medications": [
+      {
+        "name": "Lisinopril",
+        "dosage": "10mg",
+        "frequency": "Daily",
+        "startDate": "2018-03-15"
+      },
+      {
+        "name": "Metformin",
+        "dosage": "500mg",
+        "frequency": "Twice daily",
+        "startDate": "2020-11-25"
+      }
+    ],
+    "allergies": [
+      {
+        "allergen": "Penicillin",
+        "reaction": "Rash",
+        "severity": "Moderate"
+      }
+    ]
+  },
+  "recentVitals": {
+    "bloodPressure": {
+      "systolic": 145,
+      "diastolic": 92,
+      "date": "2025-09-20"
+    },
+    "bloodGlucose": {
+      "level": 165,
+      "unit": "mg/dL",
+      "date": "2025-09-20"
+    },
+    "weight": {
+      "value": 82.5,
+      "unit": "kg",
+      "date": "2025-09-20"
+    }
+  },
+  "wearableData": {
+    "heartRate": {
+      "average": 78,
+      "resting": 62,
+      "max": 156,
+      "date": "2025-09-20"
+    },
+    "activity": {
+      "steps": 8432,
+      "distance": 6.2,
+      "calories": 420,
+      "date": "2025-09-20"
+    },
+    "sleep": {
+      "duration": 7.2,
+      "quality": "Good",
+      "date": "2025-09-20"
+    }
+  }
+}

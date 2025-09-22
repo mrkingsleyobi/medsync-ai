@@ -18,6 +18,12 @@ The MediSync platform follows a microservices architecture with the following ke
 
 All services communicate through secure, encrypted channels with centralized authentication and authorization.
 
+### High-Level Architecture Diagram
+![High-Level Architecture](docs/architecture-diagram.md)
+
+### Use Case Diagram
+![Use Case Diagram](docs/use-case-diagram.md)
+
 ## Tech Stack
 - **Backend**: Node.js with Express.js
 - **AI Framework**: HuggingFace Transformers
@@ -93,42 +99,174 @@ docker-compose up
 
 ## Project Structure
 ```
-├── prd/                    # Project Requirements Documentation
-│   ├── project_concept.md
-│   ├── technical_architecture.md
-│   ├── huggingface_integration.md
-│   ├── implementation_roadmap.md
-│   └── architecture_diagram.md
-├── plans/                  # Technical Implementation Plans
-│   ├── medisync_development_summary.md
-│   ├── architecture/
-│   ├── agents/
-│   ├── implementation/
-│   ├── data/
-│   └── validation/
-├── data/                   # Sample Healthcare Data
+├── administrative-monitoring/  # Admin & monitoring service
+│   ├── docs/
+│   ├── src/
+│   │   ├── analytics/
+│   │   ├── billing/
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── monitoring/
+│   │   ├── scheduling/
+│   │   ├── services/
+│   │   └── ui/
+│   │       ├── pages/
+│   │       ├── scripts/
+│   │       └── styles/
+│   └── test/
+├── apps/                      # Frontend Applications
+│   ├── admin-console/        # Administrative console UI
+│   ├── patient-portal/       # Patient-facing web application
+│   ├── provider-dashboard/   # Healthcare provider dashboard
+│   └── research-interface/   # Research collaboration interface
+├── clinical-decision-support/ # Clinical decision support service
+│   ├── src/
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── preferences/
+│   │   ├── services/
+│   │   ├── visualization/
+│   │   ├── workflows/
+│   │   └── ui/
+│   │       ├── components/
+│   │       ├── pages/
+│   │       ├── scripts/
+│   │       └── styles/
+│   └── test/
+├── data/                      # Sample Healthcare Data
 │   ├── patients/
 │   ├── conditions/
 │   ├── treatments/
 │   ├── research/
 │   └── images/
-├── src/                    # Source Code
-│   ├── api/               # API Server and Routes
-│   └── services/          # Backend Services
-├── neural-mesh/           # Synaptic Neural Mesh Implementation
+├── database/                  # Database schemas and migrations
+│   ├── migrations/
+│   ├── schemas/
+│   └── seeds/
+├── docs/                      # Documentation
+│   ├── architecture/
+│   ├── blog/
+│   └── user-guide/
+├── healthcare-system-integration/ # Healthcare system integration service
+│   ├── docs/
+│   ├── src/
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── data/
+│   │   ├── dicom/
+│   │   ├── fhir/
+│   │   ├── hl7/
+│   │   ├── matching/
+│   │   ├── services/
+│   │   ├── sync/
+│   │   └── ui/
+│   │       ├── pages/
+│   │       ├── scripts/
+│   │       └── styles/
+│   └── test/
+├── iot-wearable-integration/  # IoT & wearable integration service
+│   ├── docs/
+│   ├── logs/
+│   ├── src/
+│   │   ├── alerts/
+│   │   ├── analytics/
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── monitoring/
+│   │   ├── prediction/
+│   │   ├── sensors/
+│   │   ├── services/
+│   │   ├── wearables/
+│   │   └── ui/
+│   │       ├── pages/
+│   │       ├── scripts/
+│   │       └── styles/
+│   └── test/
+├── k8s/                       # Kubernetes configurations
+│   ├── dev/
+│   ├── prod/
+│   └── staging/
+├── neural-mesh/               # Synaptic Neural Mesh Implementation
+│   ├── agents/
+│   ├── communication/
 │   ├── config/
+│   ├── consensus/
+│   ├── dashboard/
+│   ├── data/
 │   ├── decision/
+│   ├── logs/
+│   ├── models/
+│   ├── monitoring/
 │   ├── nodes/
-│   ├── protocols/
-│   ├── utils/
-│   ├── mesh.js
-│   ├── mesh.test.js
-│   └── README.md
-├── docs/                  # Documentation
-├── CLAUDE.md              # Project Configuration and Methodology
-├── .mcp.json              # MCP Server Configuration
-└── README.md              # This file
+│   ├── processing/
+│   └── security/
+├── patient-communication/     # Patient communication service
+│   ├── docs/
+│   ├── src/
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   ├── ui/
+│   │   │   ├── components/
+│   │   │   ├── pages/
+│   │   │   ├── scripts/
+│   │   │   └── styles/
+│   │   └── utils/
+│   └── test/
+├── research-integration/      # Research integration service
+│   ├── docs/
+│   ├── src/
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── preferences/
+│   │   ├── services/
+│   │   ├── visualization/
+│   │   ├── workflows/
+│   │   └── ui/
+│   │       ├── components/
+│   │       ├── pages/
+│   │       ├── scripts/
+│   │       └── styles/
+│   └── test/
+├── scripts/                   # Deployment and utility scripts
+├── src/                       # Core API and shared services
+│   ├── api/                  # Main API server and routes
+│   ├── config/               # Configuration files
+│   ├── models/               # Shared data models
+│   ├── services/             # Shared backend services
+│   ├── swarm/                # Swarm orchestration
+│   ├── tests/                # Shared tests
+│   └── utils/                # Utility functions
+└── test/                      # Shared test configurations
 ```
+
+## Frontend Access
+The MediSync platform includes several frontend applications that provide different interfaces for various user roles:
+
+### Patient Portal
+A user-friendly interface for patients to access their health information, communicate with providers, view recommendations, and track their health data from IoT devices and wearables.
+
+### Provider Dashboard
+A comprehensive dashboard for healthcare providers to view patient records, access clinical decision support, monitor patient health trends, and communicate with patients.
+
+### Administrative Console
+An administrative interface for system administrators to manage user accounts, monitor system performance, configure settings, and review audit logs.
+
+### Research Interface
+A specialized interface for researchers to access anonymized medical data, conduct studies, analyze population health trends, and collaborate with the medical team.
+
+### Accessing the Frontend Applications
+The frontend applications are served through the main API server. After starting the server with `npm start` or `npm run dev`, the applications can be accessed at:
+
+- Patient Portal: http://localhost:3000/patient
+- Provider Dashboard: http://localhost:3000/provider
+- Administrative Console: http://localhost:3000/admin
+- Research Interface: http://localhost:3000/research
+
+Each frontend application is built with modern web technologies and provides a responsive, accessible interface optimized for its specific user role.
 
 ## API Documentation
 Detailed API documentation is available through Swagger UI when the application is running at `/api-docs`. The API includes endpoints for:
