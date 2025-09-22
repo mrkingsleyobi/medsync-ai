@@ -11,6 +11,8 @@ class PopulationHealthAnalyticsController {
    */
   constructor() {
     this.populationHealthAnalyticsService = new PopulationHealthAnalyticsService();
+    // Use the service's logger
+    this.logger = this.populationHealthAnalyticsService.logger;
   }
 
   /**
@@ -20,7 +22,7 @@ class PopulationHealthAnalyticsController {
    */
   async generatePopulationAnalytics(req, res) {
     try {
-      const options = req.body;
+      const { options } = req.body;
 
       // Generate population health analytics
       const result = await this.populationHealthAnalyticsService.generatePopulationAnalytics(options);
@@ -37,12 +39,10 @@ class PopulationHealthAnalyticsController {
       });
     } catch (error) {
       // Log the full error details server-side
-      if (this.populationHealthAnalyticsService && this.populationHealthAnalyticsService.logger) {
-        this.populationHealthAnalyticsService.logger.error('Population health analytics generation controller error', {
-          error: error.message,
-          stack: error.stack
-        });
-      }
+      this.logger.error('Generate population health analytics controller error', {
+        error: error.message,
+        stack: error.stack
+      });
 
       // Handle specific errors with user-friendly messages
       if (error.message.includes('Population health analytics is not enabled')) {
@@ -53,8 +53,7 @@ class PopulationHealthAnalyticsController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to generate population health analytics',
-        message: error.message
+        error: 'Failed to generate population health analytics'
       });
     }
   }
@@ -76,17 +75,14 @@ class PopulationHealthAnalyticsController {
       });
     } catch (error) {
       // Log the full error details server-side
-      if (this.populationHealthAnalyticsService && this.populationHealthAnalyticsService.logger) {
-        this.populationHealthAnalyticsService.logger.error('Get service status controller error', {
-          error: error.message,
-          stack: error.stack
-        });
-      }
+      this.logger.error('Get service status controller error', {
+        error: error.message,
+        stack: error.stack
+      });
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve service status',
-        message: error.message
+        error: 'Failed to retrieve service status'
       });
     }
   }
@@ -107,7 +103,7 @@ class PopulationHealthAnalyticsController {
         });
       }
 
-      // Get job status
+      // Get analytics job status
       const status = this.populationHealthAnalyticsService.getAnalyticsStatus(jobId);
 
       // Return status
@@ -123,17 +119,14 @@ class PopulationHealthAnalyticsController {
       }
     } catch (error) {
       // Log the full error details server-side
-      if (this.populationHealthAnalyticsService && this.populationHealthAnalyticsService.logger) {
-        this.populationHealthAnalyticsService.logger.error('Get analytics job status controller error', {
-          error: error.message,
-          stack: error.stack
-        });
-      }
+      this.logger.error('Get analytics job status controller error', {
+        error: error.message,
+        stack: error.stack
+      });
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve analytics job status',
-        message: error.message
+        error: 'Failed to retrieve analytics job status'
       });
     }
   }

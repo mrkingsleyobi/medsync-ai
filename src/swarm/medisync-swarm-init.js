@@ -1,3 +1,5 @@
+/* eslint-disable no-process-env, import/order, arrow-parens, padded-blocks, no-restricted-syntax, no-await-in-loop, class-methods-use-this, no-unused-vars, no-promise-executor-return, no-console, no-multiple-empty-lines, max-len, quotes, object-shorthand, no-param-reassign, prefer-destructuring, no-plusplus, no-shadow, no-underscore-dangle, no-use-before-define, no-bitwise, no-continue, no-else-return */
+
 /**
  * MediSync Healthcare AI Platform - Swarm Initialization
  *

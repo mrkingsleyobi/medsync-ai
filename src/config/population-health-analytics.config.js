@@ -3,7 +3,7 @@
  * Configuration for the population health analytics service
  */
 
-module.exports = {
+const config = {
   enabled: process.env.POPULATION_HEALTH_ANALYTICS_ENABLED !== 'false',
   models: {
     trendAnalysis: {
@@ -27,3 +27,5 @@ module.exports = {
     maxRetries: 3
   }
 };
+
+module.exports = config;
