@@ -1,0 +1,75 @@
+{
+  "incidentId": "INC-1758575067816-OVTIEQ7O7",
+  "timestamp": "2025-09-22T21:04:27.816Z",
+  "status": "identified",
+  "severity": "medium",
+  "type": "test_incident",
+  "description": "Test incident",
+  "affectedSystems": [],
+  "reportedBy": "system",
+  "assignedTo": null,
+  "timeline": [
+    {
+      "timestamp": "2025-09-22T21:04:27.816Z",
+      "action": "Incident created",
+      "actor": "system"
+    },
+    {
+      "timestamp": "2025-09-22T21:04:27.820Z",
+      "action": "Evidence added",
+      "actor": "test-team",
+      "details": "Test log file"
+    },
+    {
+      "timestamp": "2025-09-22T21:04:27.821Z",
+      "action": "Communication sent (internal)",
+      "actor": "test-user",
+      "details": "Test communication"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "EVID-1758575067820-IEGSHC",
+      "timestamp": "2025-09-22T21:04:27.820Z",
+      "type": "log_file",
+      "description": "Test log file",
+      "location": "/test/log.txt",
+      "hash": "test123",
+      "collectedBy": "test-team",
+      "chainOfCustody": [
+        {
+          "timestamp": "2025-09-22T21:04:27.820Z",
+          "actor": "test-team",
+          "action": "Collected"
+        }
+      ]
+    }
+  ],
+  "communications": [
+    {
+      "id": "COMM-1758575067821-ZHLHNS",
+      "timestamp": "2025-09-22T21:04:27.821Z",
+      "type": "internal",
+      "recipient": "test@medisync.example.com",
+      "subject": "Test communication",
+      "content": "Test content",
+      "sentBy": "test-user",
+      "status": "sent"
+    }
+  ],
+  "duration": 0,
+  "impact": {
+    "systems": 0,
+    "data": false,
+    "users": "unknown",
+    "financial": "unknown",
+    "reputational": "unknown"
+  },
+  "recommendations": [
+    "Review and update security policies",
+    "Enhance monitoring and detection capabilities",
+    "Provide additional training to relevant personnel",
+    "Implement additional security controls based on root cause",
+    "Conduct lessons learned session with incident response team"
+  ]
+}
