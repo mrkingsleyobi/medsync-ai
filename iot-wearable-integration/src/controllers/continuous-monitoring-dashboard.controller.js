@@ -53,8 +53,7 @@ class ContinuousMonitoringDashboardController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to monitor real-time health data',
-        message: error.message
+        error: 'Failed to monitor real-time health data'
       });
     }
   }
@@ -84,8 +83,7 @@ class ContinuousMonitoringDashboardController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve service status',
-        message: error.message
+        error: 'Failed to retrieve service status'
       });
     }
   }
@@ -129,8 +127,7 @@ class ContinuousMonitoringDashboardController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve monitoring job status',
-        message: error.message
+        error: 'Failed to retrieve monitoring job status'
       });
     }
   }
@@ -174,8 +171,7 @@ class ContinuousMonitoringDashboardController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve alert status',
-        message: error.message
+        error: 'Failed to retrieve alert status'
       });
     }
   }
@@ -220,8 +216,7 @@ class ContinuousMonitoringDashboardController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to acknowledge alert',
-        message: error.message
+        error: 'Failed to acknowledge alert'
       });
     }
   }
@@ -266,8 +261,7 @@ class ContinuousMonitoringDashboardController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to resolve alert',
-        message: error.message
+        error: 'Failed to resolve alert'
       });
     }
   }

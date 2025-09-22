@@ -54,8 +54,7 @@ class PopulationHealthAnalyticsController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to generate population health analytics',
-        message: error.message
+        error: 'Failed to generate population health analytics'
       });
     }
   }
@@ -85,8 +84,7 @@ class PopulationHealthAnalyticsController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve service status',
-        message: error.message
+        error: 'Failed to retrieve service status'
       });
     }
   }
@@ -130,8 +128,7 @@ class PopulationHealthAnalyticsController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve analytics job status',
-        message: error.message
+        error: 'Failed to retrieve analytics job status'
       });
     }
   }

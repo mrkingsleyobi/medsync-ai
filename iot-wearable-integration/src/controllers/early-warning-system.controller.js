@@ -67,8 +67,7 @@ class EarlyWarningSystemController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to generate early warning',
-        message: error.message
+        error: 'Failed to generate early warning'
       });
     }
   }
@@ -98,8 +97,7 @@ class EarlyWarningSystemController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve service status',
-        message: error.message
+        error: 'Failed to retrieve service status'
       });
     }
   }
@@ -143,8 +141,7 @@ class EarlyWarningSystemController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve early warning status',
-        message: error.message
+        error: 'Failed to retrieve early warning status'
       });
     }
   }
@@ -189,8 +186,7 @@ class EarlyWarningSystemController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to acknowledge early warning',
-        message: error.message
+        error: 'Failed to acknowledge early warning'
       });
     }
   }
@@ -235,8 +231,7 @@ class EarlyWarningSystemController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to resolve early warning',
-        message: error.message
+        error: 'Failed to resolve early warning'
       });
     }
   }
