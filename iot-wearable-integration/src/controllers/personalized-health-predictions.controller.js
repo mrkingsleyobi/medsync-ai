@@ -67,8 +67,7 @@ class PersonalizedHealthPredictionsController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to generate personalized health predictions',
-        message: error.message
+        error: 'Failed to generate personalized health predictions'
       });
     }
   }
@@ -99,8 +98,7 @@ class PersonalizedHealthPredictionsController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve service status',
-        message: error.message
+        error: 'Failed to retrieve service status'
       });
     }
   }
@@ -146,8 +144,7 @@ class PersonalizedHealthPredictionsController {
 
       // Return generic error message to client
       res.status(500).json({
-        error: 'Failed to retrieve prediction job status',
-        message: error.message
+        error: 'Failed to retrieve prediction job status'
       });
     }
   }
