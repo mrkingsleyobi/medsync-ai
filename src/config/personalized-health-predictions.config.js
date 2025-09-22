@@ -3,7 +3,7 @@
  * Configuration for the personalized health predictions service
  */
 
-module.exports = {
+const config = {
   enabled: process.env.PERSONALIZED_HEALTH_PREDICTIONS_ENABLED !== 'false',
   models: {
     diabetes: {
@@ -27,3 +27,5 @@ module.exports = {
     maxRetries: 3
   }
 };
+
+module.exports = config;

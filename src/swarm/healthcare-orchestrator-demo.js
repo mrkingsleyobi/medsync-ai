@@ -1,3 +1,5 @@
+/* eslint-disable no-console, max-len, quotes, padded-blocks */
+
 /**
  * Healthcare Task Orchestrator Usage Example
  *
