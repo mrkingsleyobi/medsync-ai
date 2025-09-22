@@ -59,9 +59,12 @@ class NotificationController {
         results: result.results
       });
     } catch (error) {
-      console.error('Send notification controller error', {
-        error: error.message
-      });
+      if (this.notificationService && this.notificationService.logger) {
+        this.notificationService.logger.error('Send notification controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to send notification',
@@ -98,9 +101,12 @@ class NotificationController {
         notifications: notifications
       });
     } catch (error) {
-      console.error('Get user notifications controller error', {
-        error: error.message
-      });
+      if (this.notificationService && this.notificationService.logger) {
+        this.notificationService.logger.error('Get user notifications controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve notifications',
@@ -135,9 +141,12 @@ class NotificationController {
         message: result.message
       });
     } catch (error) {
-      console.error('Mark as read controller error', {
-        error: error.message
-      });
+      if (this.notificationService && this.notificationService.logger) {
+        this.notificationService.logger.error('Mark as read controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to mark notification as read',
@@ -172,9 +181,12 @@ class NotificationController {
         message: result.message
       });
     } catch (error) {
-      console.error('Delete notification controller error', {
-        error: error.message
-      });
+      if (this.notificationService && this.notificationService.logger) {
+        this.notificationService.logger.error('Delete notification controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to delete notification',
@@ -201,9 +213,12 @@ class NotificationController {
         preferences: preferences
       });
     } catch (error) {
-      console.error('Get user preferences controller error', {
-        error: error.message
-      });
+      if (this.notificationService && this.notificationService.logger) {
+        this.notificationService.logger.error('Get user preferences controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve notification preferences',
@@ -239,9 +254,12 @@ class NotificationController {
         preferences: result.preferences
       });
     } catch (error) {
-      console.error('Update user preferences controller error', {
-        error: error.message
-      });
+      if (this.notificationService && this.notificationService.logger) {
+        this.notificationService.logger.error('Update user preferences controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to update notification preferences',
@@ -303,9 +321,12 @@ class NotificationController {
         results: result.results
       });
     } catch (error) {
-      console.error('Send appointment reminder controller error', {
-        error: error.message
-      });
+      if (this.notificationService && this.notificationService.logger) {
+        this.notificationService.logger.error('Send appointment reminder controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to send appointment reminder',
@@ -366,9 +387,12 @@ class NotificationController {
         results: result.results
       });
     } catch (error) {
-      console.error('Send medication reminder controller error', {
-        error: error.message
-      });
+      if (this.notificationService && this.notificationService.logger) {
+        this.notificationService.logger.error('Send medication reminder controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to send medication reminder',

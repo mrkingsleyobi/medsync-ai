@@ -1,12 +1,8 @@
-# Security Configuration for MediSync Healthcare AI Platform
+/**
+ * Security Configuration for MediSync Healthcare AI Platform
+ * Configuration for encryption, authentication, API security, logging and compliance
+ */
 
-## Overview
-
-This configuration file contains security settings for the MediSync platform, implementing the recommendations from the security audit.
-
-## Encryption Settings
-
-```javascript
 class SecurityConfig {
   constructor() {
     // Data encryption settings

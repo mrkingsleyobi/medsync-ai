@@ -1,6 +1,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 const config = require('../config/security.config.js');
+const winston = require('winston');
 
 class IncidentResponseService {
   constructor() {
@@ -15,6 +16,47 @@ class IncidentResponseService {
       pr: null,
       executives: []
     };
+    this.logger = this._createLogger();
+  }
+
+  /**
+   * Create logger instance
+   * @returns {Object} Winston logger instance
+   */
+  _createLogger() {
+    // In test environment, use a simple console logger to avoid fs issues
+    if (process.env.NODE_ENV === 'test') {
+      return winston.createLogger({
+        level: 'info',
+        format: winston.format.combine(
+          winston.format.timestamp(),
+          winston.format.errors({ stack: true }),
+          winston.format.splat(),
+          winston.format.printf(({ timestamp, level, message, ...meta }) => {
+            return `${timestamp} [${level.toUpperCase()}] ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`;
+          })
+        ),
+        defaultMeta: { service: 'incident-response-service' },
+        transports: [
+          new winston.transports.Console()
+        ]
+      });
+    }
+
+    return winston.createLogger({
+      level: 'info',
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.errors({ stack: true }),
+        winston.format.splat(),
+        winston.format.json()
+      ),
+      defaultMeta: { service: 'incident-response-service' },
+      transports: [
+        new winston.transports.File({ filename: 'logs/incident-response-service-error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'logs/incident-response-service-combined.log' })
+      ]
+    });
   }
 
   /**
@@ -56,7 +98,11 @@ class IncidentResponseService {
       await this._notifyTeam(incident);
 
       // Log incident creation
-      console.log(`Incident ${incident.id} created: ${incident.type} - ${incident.description}`);
+      if (this.logger) {
+        this.logger.info(`Incident ${incident.id} created: ${incident.type} - ${incident.description}`);
+      } else {
+        console.log(`Incident ${incident.id} created: ${incident.type} - ${incident.description}`);
+      }
 
       return incident;
     } catch (error) {
@@ -139,7 +185,11 @@ class IncidentResponseService {
       await this._notifyTeam(incident);
 
       // Log status update
-      console.log(`Incident ${incidentId} status updated to ${status}`);
+      if (this.logger) {
+        this.logger.info(`Incident ${incidentId} status updated to ${status}`);
+      } else {
+        console.log(`Incident ${incidentId} status updated to ${status}`);
+      }
 
       return incident;
     } catch (error) {
@@ -186,7 +236,11 @@ class IncidentResponseService {
       });
 
       // Log evidence addition
-      console.log(`Evidence added to incident ${incidentId}: ${evidence.description}`);
+      if (this.logger) {
+        this.logger.info(`Evidence added to incident ${incidentId}: ${evidence.description}`);
+      } else {
+        console.log(`Evidence added to incident ${incidentId}: ${evidence.description}`);
+      }
 
       return incident;
     } catch (error) {
@@ -229,7 +283,11 @@ class IncidentResponseService {
       });
 
       // Log communication
-      console.log(`Communication added to incident ${incidentId}: ${communication.subject}`);
+      if (this.logger) {
+        this.logger.info(`Communication added to incident ${incidentId}: ${communication.subject}`);
+      } else {
+        console.log(`Communication added to incident ${incidentId}: ${communication.subject}`);
+      }
 
       return incident;
     } catch (error) {
@@ -263,7 +321,11 @@ class IncidentResponseService {
       await this._notifyAssignee(incident, teamMember);
 
       // Log assignment
-      console.log(`Incident ${incidentId} assigned to ${teamMember}`);
+      if (this.logger) {
+        this.logger.info(`Incident ${incidentId} assigned to ${teamMember}`);
+      } else {
+        console.log(`Incident ${incidentId} assigned to ${teamMember}`);
+      }
 
       return incident;
     } catch (error) {
@@ -301,12 +363,24 @@ class IncidentResponseService {
         recommendations: this._generateRecommendations(incident)
       };
 
+      // Ensure reports directory exists
+      const reportsDir = path.join(__dirname, '../../reports');
+      try {
+        await fs.access(reportsDir);
+      } catch (err) {
+        await fs.mkdir(reportsDir, { recursive: true });
+      }
+
       // Save report to file
-      const reportPath = path.join(__dirname, `../../reports/incident-${incidentId}.json`);
+      const reportPath = path.join(reportsDir, `incident-${incidentId}.json`);
       await fs.writeFile(reportPath, JSON.stringify(report, null, 2));
 
       // Log report generation
-      console.log(`Incident report generated for ${incidentId}`);
+      if (this.logger) {
+        this.logger.info(`Incident report generated for ${incidentId}`);
+      } else {
+        console.log(`Incident report generated for ${incidentId}`);
+      }
 
       return report;
     } catch (error) {
@@ -359,7 +433,13 @@ class IncidentResponseService {
       channels: ['email', 'sms']
     };
 
-    console.log('Sending incident notification:', JSON.stringify(notification, null, 2));
+    if (this.logger) {
+      this.logger.info('Sending incident notification', {
+        notification: notification
+      });
+    } else {
+      console.log('Sending incident notification:', JSON.stringify(notification, null, 2));
+    }
   }
 
   /**
@@ -410,7 +490,13 @@ class IncidentResponseService {
       channels: ['email']
     };
 
-    console.log('Sending assignment notification:', JSON.stringify(notification, null, 2));
+    if (this.logger) {
+      this.logger.info('Sending assignment notification', {
+        notification: notification
+      });
+    } else {
+      console.log('Sending assignment notification:', JSON.stringify(notification, null, 2));
+    }
   }
 
   /**
@@ -422,7 +508,13 @@ class IncidentResponseService {
     // In production, this would implement actual containment measures
     // For demonstration, we'll just log the action
 
-    console.log(`Containment actions for incident ${incident.id}:`, updateData.containmentActions || 'Standard procedures');
+    if (this.logger) {
+      this.logger.info(`Containment actions for incident ${incident.id}`, {
+        actions: updateData.containmentActions || 'Standard procedures'
+      });
+    } else {
+      console.log(`Containment actions for incident ${incident.id}:`, updateData.containmentActions || 'Standard procedures');
+    }
   }
 
   /**
@@ -434,7 +526,13 @@ class IncidentResponseService {
     // In production, this would implement actual eradication measures
     // For demonstration, we'll just log the action
 
-    console.log(`Eradication actions for incident ${incident.id}:`, updateData.eradicationActions || 'Standard procedures');
+    if (this.logger) {
+      this.logger.info(`Eradication actions for incident ${incident.id}`, {
+        actions: updateData.eradicationActions || 'Standard procedures'
+      });
+    } else {
+      console.log(`Eradication actions for incident ${incident.id}:`, updateData.eradicationActions || 'Standard procedures');
+    }
   }
 
   /**
@@ -446,7 +544,13 @@ class IncidentResponseService {
     // In production, this would implement actual recovery measures
     // For demonstration, we'll just log the action
 
-    console.log(`Recovery actions for incident ${incident.id}:`, updateData.recoveryActions || 'Standard procedures');
+    if (this.logger) {
+      this.logger.info(`Recovery actions for incident ${incident.id}`, {
+        actions: updateData.recoveryActions || 'Standard procedures'
+      });
+    } else {
+      console.log(`Recovery actions for incident ${incident.id}:`, updateData.recoveryActions || 'Standard procedures');
+    }
   }
 
   /**
@@ -461,7 +565,13 @@ class IncidentResponseService {
     // In production, this would implement actual closure measures
     // For demonstration, we'll just log the action
 
-    console.log(`Incident ${incident.id} closed:`, updateData.closureNotes || 'Standard closure');
+    if (this.logger) {
+      this.logger.info(`Incident ${incident.id} closed`, {
+        notes: updateData.closureNotes || 'Standard closure'
+      });
+    } else {
+      console.log(`Incident ${incident.id} closed:`, updateData.closureNotes || 'Standard closure');
+    }
   }
 
   /**

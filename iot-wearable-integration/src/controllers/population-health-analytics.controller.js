@@ -15,7 +15,6 @@ class PopulationHealthAnalyticsController {
     this.logger = this.populationHealthAnalyticsService.logger;
   }
 
-
   /**
    * Generate population health analytics
    * @param {Object} req - Express request object
@@ -58,7 +57,6 @@ class PopulationHealthAnalyticsController {
       });
     }
   }
-
 
   /**
    * Get service status

@@ -3,7 +3,7 @@
  * Unit tests for the alert generation and notification service
  */
 
-const AlertGenerationService = require('../../src/services/iot-wearable.service.js');
+const AlertGenerationService = require('../../src/services/alert-generation.service.js');
 
 describe('AlertGenerationService', () => {
   let alertGenerationService;

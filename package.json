@@ -17,7 +17,10 @@
     "docker:down": "docker-compose down",
     "k8s:apply-dev": "kubectl apply -f k8s/dev/",
     "k8s:apply-staging": "kubectl apply -f k8s/staging/",
-    "k8s:apply-prod": "kubectl apply -f k8s/prod/"
+    "k8s:apply-prod": "kubectl apply -f k8s/prod/",
+    "swarm:init": "node src/swarm/medisync-swarm-init.js",
+    "swarm:execute": "node src/swarm/execute-medical-swarm.js",
+    "swarm:dev": "nodemon src/swarm/execute-medical-swarm.js"
   },
   "keywords": [
     "healthcare",

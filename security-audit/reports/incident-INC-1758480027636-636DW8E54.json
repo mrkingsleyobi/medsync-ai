@@ -1,0 +1,35 @@
+{
+  "incidentId": "INC-1758480027636-636DW8E54",
+  "timestamp": "2025-09-21T18:40:27.636Z",
+  "status": "identified",
+  "severity": "low",
+  "type": "test_incident",
+  "description": "Test incident",
+  "affectedSystems": [],
+  "reportedBy": "system",
+  "assignedTo": null,
+  "timeline": [
+    {
+      "timestamp": "2025-09-21T18:40:27.636Z",
+      "action": "Incident created",
+      "actor": "system"
+    }
+  ],
+  "evidence": [],
+  "communications": [],
+  "duration": 0,
+  "impact": {
+    "systems": 0,
+    "data": false,
+    "users": "unknown",
+    "financial": "unknown",
+    "reputational": "unknown"
+  },
+  "recommendations": [
+    "Review and update security policies",
+    "Enhance monitoring and detection capabilities",
+    "Provide additional training to relevant personnel",
+    "Implement additional security controls based on root cause",
+    "Conduct lessons learned session with incident response team"
+  ]
+}

@@ -16,6 +16,10 @@ jest.mock('fs', () => ({
   }
 }));
 
+// Mock Date.now to return a fixed timestamp for predictable filenames
+const originalDateNow = Date.now;
+Date.now = jest.fn(() => 1234567890);
+
 describe('Speech Controller', () => {
   let speechController;
   let mockReq;

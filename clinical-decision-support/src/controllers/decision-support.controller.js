@@ -50,9 +50,12 @@ class ClinicalDecisionSupportController {
         processingTime: result.processingTime
       });
     } catch (error) {
-      console.error('Generate decision support controller error', {
-        error: error.message
-      });
+      if (this.decisionSupportService && this.decisionSupportService.logger) {
+        this.decisionSupportService.logger.error('Generate decision support controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       // Handle specific error cases
       if (error.message.includes('Patient context')) {
@@ -100,9 +103,12 @@ class ClinicalDecisionSupportController {
         history: history
       });
     } catch (error) {
-      console.error('Get decision history controller error', {
-        error: error.message
-      });
+      if (this.decisionSupportService && this.decisionSupportService.logger) {
+        this.decisionSupportService.logger.error('Get decision history controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve decision history',
@@ -128,9 +134,12 @@ class ClinicalDecisionSupportController {
         alerts: alerts
       });
     } catch (error) {
-      console.error('Get active alerts controller error', {
-        error: error.message
-      });
+      if (this.decisionSupportService && this.decisionSupportService.logger) {
+        this.decisionSupportService.logger.error('Get active alerts controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve active alerts',
@@ -170,9 +179,12 @@ class ClinicalDecisionSupportController {
         });
       }
     } catch (error) {
-      console.error('Acknowledge alert controller error', {
-        error: error.message
-      });
+      if (this.decisionSupportService && this.decisionSupportService.logger) {
+        this.decisionSupportService.logger.error('Acknowledge alert controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to acknowledge alert',
@@ -197,9 +209,12 @@ class ClinicalDecisionSupportController {
         models: models
       });
     } catch (error) {
-      console.error('Get available decision models controller error', {
-        error: error.message
-      });
+      if (this.decisionSupportService && this.decisionSupportService.logger) {
+        this.decisionSupportService.logger.error('Get available decision models controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve available decision models',
@@ -239,9 +254,12 @@ class ClinicalDecisionSupportController {
         });
       }
     } catch (error) {
-      console.error('Get clinical guidelines controller error', {
-        error: error.message
-      });
+      if (this.decisionSupportService && this.decisionSupportService.logger) {
+        this.decisionSupportService.logger.error('Get clinical guidelines controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to retrieve clinical guidelines',
@@ -275,9 +293,12 @@ class ClinicalDecisionSupportController {
         message: 'Custom decision model registered successfully'
       });
     } catch (error) {
-      console.error('Register custom decision model controller error', {
-        error: error.message
-      });
+      if (this.decisionSupportService && this.decisionSupportService.logger) {
+        this.decisionSupportService.logger.error('Register custom decision model controller error', {
+          error: error.message,
+          stack: error.stack
+        });
+      }
 
       res.status(500).json({
         error: 'Failed to register custom decision model',

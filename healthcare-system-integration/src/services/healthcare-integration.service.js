@@ -126,6 +126,17 @@ class HealthcareIntegrationService {
   }
 
   /**
+   * Check for required environment variables
+   * @private
+   */
+  _checkRequiredEnvironmentVariables() {
+    // Check for required environment variables
+    if (this.config.fhir.enabled && (!process.env.FHIR_CLIENT_ID || !process.env.FHIR_CLIENT_SECRET)) {
+      throw new Error('FATAL: Missing required environment variables FHIR_CLIENT_ID and/or FHIR_CLIENT_SECRET');
+    }
+  }
+
+  /**
    * Initialize FHIR clients
    * @private
    */
@@ -135,6 +146,19 @@ class HealthcareIntegrationService {
 
     // In a real implementation, this would initialize FHIR client connections
     this.logger.info('FHIR clients initialized');
+  }
+
+  /**
+   * Check for required environment variables
+   * @private
+   */
+  _checkRequiredEnvironmentVariables() {
+    const requiredVars = ['FHIR_CLIENT_ID', 'FHIR_CLIENT_SECRET'];
+    const missingVars = requiredVars.filter(v => !process.env[v]);
+
+    if (missingVars.length > 0) {
+      throw new Error(`Missing required environment variables: ${missingVars.join(', ')}`);
+    }
   }
 
   /**

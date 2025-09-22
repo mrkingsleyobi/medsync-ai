@@ -3,7 +3,7 @@
  * Controller for handling alert generation and notification requests
  */
 
-const AlertGenerationService = require('../services/iot-wearable.service.js');
+const AlertGenerationService = require('../services/alert-generation.service.js');
 
 class AlertGenerationController {
   /**
