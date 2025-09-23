@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediSync Admin Console</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: linear-gradient(135deg, #6f42c1, #5a32a3);
+            color: white;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 0;
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        .nav-links li {
+            margin-left: 1.5rem;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+        .content {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        h1 {
+            color: #6f42c1;
+        }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .dashboard-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .dashboard-card h3 {
+            color: #6f42c1;
+            margin-top: 0;
+        }
+        .system-status {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin: 2rem 0;
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .status-item {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 4px;
+        }
+        .status-item.ok {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-item.warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-item.critical {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            padding: 1rem;
+            color: #666;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1 class="logo">MediSync</h1>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#dashboard">Dashboard</a></li>
+                    <li><a href="#users">User Management</a></li>
+                    <li><a href="#system">System Monitoring</a></li>
+                    <li><a href="#settings">Settings</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="content">
+            <h1>Admin Console</h1>
+            <p>Welcome to MediSync Admin Console. Manage users, monitor system performance, and configure platform settings.</p>
+
+            <div class="system-status">
+                <h2>System Status</h2>
+                <div class="status-grid">
+                    <div class="status-item ok">
+                        <h3>API Services</h3>
+                        <p>Operational</p>
+                    </div>
+                    <div class="status-item ok">
+                        <h3>Database</h3>
+                        <p>Operational</p>
+                    </div>
+                    <div class="status-item warning">
+                        <h3>AI Models</h3>
+                        <p>Degraded</p>
+                    </div>
+                    <div class="status-item ok">
+                        <h3>Security</h3>
+                        <p>Operational</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard">
+                <div class="dashboard-card">
+                    <h3>User Management</h3>
+                    <p>Create, modify, and manage user accounts, roles, and permissions across the platform.</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>System Monitoring</h3>
+                    <p>Monitor system performance, resource utilization, and identify potential issues.</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Security Management</h3>
+                    <p>Configure security policies, audit logs, and manage compliance requirements.</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Platform Configuration</h3>
+                    <p>Manage system settings, integrations, and customize platform behavior.</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Audit & Compliance</h3>
+                    <p>Review audit trails, compliance reports, and ensure regulatory adherence.</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Backup & Recovery</h3>
+                    <p>Manage data backup schedules, disaster recovery plans, and data retention policies.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 MediSync Healthcare AI Platform. All rights reserved.</p>
+    </footer>
+</body>
+</html>

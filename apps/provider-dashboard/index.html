@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediSync Provider Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            color: white;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 0;
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        .nav-links li {
+            margin-left: 1.5rem;
+        }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+        .content {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        h1 {
+            color: #28a745;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #28a745;
+            margin: 0.5rem 0;
+        }
+        .tools {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .tool-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .tool-card h3 {
+            color: #28a745;
+            margin-top: 0;
+        }
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            padding: 1rem;
+            color: #666;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1 class="logo">MediSync</h1>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#dashboard">Dashboard</a></li>
+                    <li><a href="#patients">Patient List</a></li>
+                    <li><a href="#analytics">Analytics</a></li>
+                    <li><a href="#profile">Profile</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="content">
+            <h1>Provider Dashboard</h1>
+            <p>Welcome to MediSync Provider Dashboard. Access patient records, clinical decision support, and practice analytics.</p>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>Active Patients</h3>
+                    <div class="stat-value">142</div>
+                    <p>Currently under care</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Pending Reviews</h3>
+                    <div class="stat-value">8</div>
+                    <p>Requires attention</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Appointments</h3>
+                    <div class="stat-value">24</div>
+                    <p>Scheduled today</p>
+                </div>
+                <div class="stat-card">
+                    <h3>AI Insights</h3>
+                    <div class="stat-value">3</div>
+                    <p>New recommendations</p>
+                </div>
+            </div>
+
+            <div class="tools">
+                <div class="tool-card">
+                    <h3>Clinical Decision Support</h3>
+                    <p>Access AI-powered diagnostic and treatment recommendations based on the latest medical evidence.</p>
+                </div>
+                <div class="tool-card">
+                    <h3>Patient Records</h3>
+                    <p>View comprehensive health records, test results, and treatment histories for all patients.</p>
+                </div>
+                <div class="tool-card">
+                    <h3>Telemedicine</h3>
+                    <p>Conduct secure video consultations with patients and collaborate with other healthcare providers.</p>
+                </div>
+                <div class="tool-card">
+                    <h3>Practice Analytics</h3>
+                    <p>Monitor practice performance, patient outcomes, and quality metrics with real-time dashboards.</p>
+                </div>
+                <div class="tool-card">
+                    <h3>Research Integration</h3>
+                    <p>Access the latest medical research and clinical trials relevant to your practice and patients.</p>
+                </div>
+                <div class="tool-card">
+                    <h3>Collaboration Tools</h3>
+                    <p>Coordinate care with specialists, share patient information securely, and participate in case discussions.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 MediSync Healthcare AI Platform. All rights reserved.</p>
+    </footer>
+</body>
+</html>

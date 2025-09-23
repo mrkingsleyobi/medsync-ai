@@ -2,6 +2,7 @@
 // This file implements the basic microservices architecture for MediSync
 
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
 const winston = require('winston');
@@ -22,8 +23,33 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Serve frontend applications as static files
+app.use('/patient', express.static(path.join(__dirname, '../../apps/patient-portal')));
+app.use('/provider', express.static(path.join(__dirname, '../../apps/provider-dashboard')));
+app.use('/admin', express.static(path.join(__dirname, '../../apps/admin-console')));
+app.use('/research', express.static(path.join(__dirname, '../../apps/research-interface')));
+
 // Decision support routes
 app.use('/api/decision-support', decisionSupportRoutes);
+
+// Fallback to serve index.html for frontend applications (for client-side routing)
+app.get(['/patient/*', '/provider/*', '/admin/*', '/research/*'], (req, res) => {
+  const basePath = req.baseUrl || req.path.split('/')[1];
+  const appPath = path.join(__dirname, '../../apps',
+    basePath === 'patient' ? 'patient-portal' :
+    basePath === 'provider' ? 'provider-dashboard' :
+    basePath === 'admin' ? 'admin-console' : 'research-interface');
+
+  res.sendFile(path.join(appPath, 'index.html'), (err) => {
+    if (err) {
+      logger.warn(`Index file not found for ${basePath}, sending 404`);
+      res.status(404).json({
+        error: 'Not Found',
+        message: 'The requested frontend resource was not found'
+      });
+    }
+  });
+});
 
 // Logger setup
 const logger = winston.createLogger({
